@@ -1,6 +1,7 @@
 "use client";
 import Navbar from "@/components/common/common-headers/Navbar";
 import classNames from "classnames";
+import { useMotionValueEvent, useScroll } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -10,7 +11,12 @@ export interface IHeaderProps {
 }
 export default function Header({ dynamic = true }: IHeaderProps) {
   const [isChangeBg, setIsChangeBg] = useState(false);
+  const { scrollY } = useScroll();
   const user = null;
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsChangeBg(latest > 0);
+  });
 
   const handleClickLogin = () => {};
   return (
