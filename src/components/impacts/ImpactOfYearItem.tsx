@@ -1,4 +1,5 @@
 import { IImpact } from "@/configs/interface";
+import classNames from "classnames";
 import { Source_Serif_4 } from "next/font/google";
 import Image from "next/image";
 import React from "react";
@@ -12,9 +13,11 @@ export interface IImpactOfYearItemProps {
 }
 export default function ImpactOfYearItem({ data }: IImpactOfYearItemProps) {
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <div className="relative w-[100px] h-[100px]">
-        <Image src={`/icons/${data.image}`} fill alt="image-icon" />
+    <div
+      className={classNames("flex flex-col items-center justify-center gap-4")}
+    >
+      <div className={classNames("relative w-[100px] h-[100px]")}>
+        <Image fill src={`/icons/${data.image}`} alt="img-icon" />
       </div>
       <h4 className="font-bold text-green-main-dark text-2xl lg:text-[48px] py-2 tracking-wider">
         {data.prefix && data.prefix}
