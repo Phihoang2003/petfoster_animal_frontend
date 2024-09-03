@@ -9,7 +9,7 @@ export const homePageData = {
     },
     {
       image: "cats.svg",
-      quantity: "$12,000",
+      quantity: "12000",
       title: "In products  & donations",
       prefix: "$",
     },

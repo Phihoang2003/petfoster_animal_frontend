@@ -37,22 +37,22 @@ export default function Banner(props: IBannerProps) {
 
   return (
     <div
-      className={`w-full max-h-[166px] md:max-h-[220px] lg:max-h-[540px] relative overflow-hidden select-none ${style["box-btn"]}`}
+      className={`w-full max-h-[175px] md:max-h-[220px] lg:max-h-[530px] relative overflow-hidden select-none ${style["box-btn"]}`}
     >
       <Slider ref={slider} {...settings}>
         <Image
-          className="object-cover h-full"
           src="/images/1.svg"
+          style={{ objectFit: "cover" }}
           alt="slide"
           width={500}
-          height={500}
+          height={540}
         />
         <Image
-          className="object-cover h-full "
           src="/images/2.svg"
+          style={{ objectFit: "cover" }}
           alt="slide"
           width={500}
-          height={500}
+          height={540}
         />
         <div className="w-full h-[300px] md:h-[550px]  relative">
           <Image

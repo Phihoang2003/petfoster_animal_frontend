@@ -42,7 +42,7 @@ export default function ImpactOfYear({ data }: IImpactOfYearProps) {
             </div>
           </div>
         </div>
-        <div className="">
+        <div>
           <Image
             src="/images/clip-path.svg"
             alt="clip-path"
