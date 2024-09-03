@@ -48,18 +48,18 @@ export default function Banner(props: IBannerProps) {
           height={500}
         />
         <Image
-          className="object-cover h-full"
+          className="object-cover h-full "
           src="/images/2.svg"
           alt="slide"
           width={500}
           height={500}
         />
-        <div className="w-full h-[500px] relative">
+        <div className="w-full h-[300px] md:h-[550px]  relative">
           <Image
-            className="object-cover w-full h-full"
+            className=" w-full h-full"
             src="/images/4.svg"
             alt="slide"
-            layout="fill"
+            fill
             style={{ objectFit: "cover" }}
           />
 
