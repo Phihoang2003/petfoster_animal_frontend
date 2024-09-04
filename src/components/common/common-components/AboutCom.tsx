@@ -27,7 +27,7 @@ export default function AboutCom({ hideTitle = true }: IAboutComProps) {
             alt="about-com-img"
             width={500}
             height={500}
-            layout="responsive"
+            sizes="100vw"
           />
         </DivAnimation>
 
