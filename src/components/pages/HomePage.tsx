@@ -5,6 +5,7 @@ import AboutCom from "@/components/common/common-components/AboutCom";
 import Pets from "@/components/products-and-pets/Pets";
 import { links } from "@/data/links";
 import { dataTakeAction } from "@/data/adopt";
+import Feedback from "@/components/common/common-components/Feedback";
 export default function HomePage() {
   return (
     <>
@@ -17,6 +18,7 @@ export default function HomePage() {
         }}
         data={(dataTakeAction && dataTakeAction.pets) || []}
       />
+      <Feedback />
     </>
   );
 }
