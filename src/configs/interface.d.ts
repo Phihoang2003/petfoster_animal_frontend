@@ -29,3 +29,21 @@ export interface IPost {
   comments: number;
   user: IProfile;
 }
+export interface IPet {
+  id: string | number;
+  name: string;
+  image: string;
+  breed: string;
+  type: string;
+  size: string;
+  sex: string;
+  fostered: string | number;
+  description: string;
+  fosterDate: number;
+  like: boolean;
+  adoptAt?: string | null;
+}
+export interface IFilter {
+  id: string | number[];
+  name: string;
+}
