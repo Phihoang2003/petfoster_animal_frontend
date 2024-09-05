@@ -47,3 +47,13 @@ export interface IFilter {
   id: string | number[];
   name: string;
 }
+export interface IFeedBackRequest {
+  fullname: string;
+  phone: string;
+  email: string;
+  message: string;
+}
+export interface IDataReview {
+  star: number;
+  content: string;
+}
