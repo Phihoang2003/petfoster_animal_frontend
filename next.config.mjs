@@ -10,6 +10,18 @@ const nextConfig = {
         protocol: "https",
         hostname: "ichef.bbci.co.uk",
       },
+      {
+        protocol: "https",
+        hostname: "bizweb.dktcdn.net",
+      },
+      {
+        protocol: "https",
+        hostname: "product.hstatic.net",
+      },
+      {
+        protocol: "https",
+        hostname: "product.hstatic.net",
+      },
     ],
   },
 };

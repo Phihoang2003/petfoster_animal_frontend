@@ -137,6 +137,54 @@ export const takeActionPageData = {
       price: 27000,
       rating: 5,
     },
+    {
+      id: 5,
+      brand: "Kagewl Hesin",
+      size: [200, 350, 700, 1000],
+      discount: 10,
+      image:
+        "https://bizweb.dktcdn.net/100/438/021/products/705569d7-86fa-40a7-ae95-becd17a5fa31.jpg?v=1640251981283",
+      name: "Hạt Royal Canin X-Small Adult Cho Chó Trưởng Thành Giống Siêu Nhỏ",
+      oldPrice: 39000,
+      price: 27000,
+      rating: 4,
+    },
+    {
+      id: 6,
+      brand: "Royal Canin",
+      size: [200, 350, 400, 1000],
+      discount: 10,
+      image:
+        "https://bizweb.dktcdn.net/100/438/021/products/705569d7-86fa-40a7-ae95-becd17a5fa31.jpg?v=1640251981283",
+      name: "Hạt Royal Canin X-Small Adult Cho Chó Trưởng Thành Giống Siêu Nhỏ",
+      oldPrice: 39000,
+      price: 27000,
+      rating: 5,
+    },
+    {
+      id: 7,
+      brand: "Royal Canin",
+      size: [200, 350, 400, 1000],
+      discount: 10,
+      image:
+        "https://bizweb.dktcdn.net/100/438/021/products/705569d7-86fa-40a7-ae95-becd17a5fa31.jpg?v=1640251981283",
+      name: "Hạt Royal Canin X-Small Adult Cho Chó Trưởng Thành Giống Siêu Nhỏ",
+      oldPrice: 39000,
+      price: 27000,
+      rating: 3,
+    },
+    {
+      id: 8,
+      brand: "Royal Canin",
+      size: [200, 350, 400, 1000],
+      discount: 10,
+      image:
+        "https://bizweb.dktcdn.net/100/438/021/products/705569d7-86fa-40a7-ae95-becd17a5fa31.jpg?v=1640251981283",
+      name: "Hạt Royal Canin X-Small Adult Cho Chó Trưởng Thành Giống Siêu Nhỏ",
+      oldPrice: 39000,
+      price: 27000,
+      rating: 4,
+    },
   ] as IProduct[],
   bestSellers: {
     data: [
