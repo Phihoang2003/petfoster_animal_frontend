@@ -3,7 +3,7 @@ const commonPet = "/pet/";
 export const links = {
   home: "/",
   pet: commonPet,
-  produt: "/product/",
+  product: "/product/",
   products: "/take-action/",
   admin: commonAdmin + "/",
   adminMidleware: commonAdmin,
