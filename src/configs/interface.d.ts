@@ -57,3 +57,14 @@ export interface IDataReview {
   star: number;
   content: string;
 }
+export interface IProduct {
+  id: string | number;
+  name: string;
+  image: string;
+  brand: string;
+  size: string[] | number[];
+  rating: number;
+  price: number;
+  oldPrice: number;
+  discount: number;
+}
