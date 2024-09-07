@@ -1,3 +1,4 @@
+import BannerTakeAction from "@/components/common/BannerTakeAction";
 import ContainerContent from "@/components/common/common-components/ContainerContent";
 import CategoriesOverview from "@/components/pages/take-action/CategoriesOverview";
 import Overview from "@/components/pages/take-action/Overview";
@@ -16,6 +17,7 @@ export default function TakeActionPage() {
         data={takeActionPageData.newArrivals || []}
         title="NEW ARRIVALS"
       />
+      <BannerTakeAction />
     </>
   );
 }
