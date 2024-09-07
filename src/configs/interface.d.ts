@@ -68,3 +68,22 @@ export interface IProduct {
   oldPrice: number;
   discount: number;
 }
+export interface IRequestFilterPet {
+  name?: string;
+  page?: string;
+  typeName?: string;
+  age?: string;
+  colors?: string;
+  gender?: boolean;
+  sort?: string;
+}
+export interface IBaseResponse<T> {
+  message: string;
+  status: number;
+  errors: boolean | {};
+  data: T;
+}
+export interface PagiantionResponse<T> {
+  data: T[];
+  pages: number;
+}
