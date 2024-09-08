@@ -1,5 +1,6 @@
 import ThemeRegistry from "@/theme/ThemeRegistry";
 import "../styles/global.css";
+import { ToastProvider } from "@/providers";
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -8,7 +9,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ThemeRegistry>
-        <body>{children}</body>
+        <body>
+          <ToastProvider>{children}</ToastProvider>
+        </body>
       </ThemeRegistry>
     </html>
   );

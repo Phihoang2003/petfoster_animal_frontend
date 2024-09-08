@@ -2,7 +2,7 @@
 import SocialButton from "@/components/buttons/SocialButton";
 import ContainerContent from "@/components/common/common-components/ContainerContent";
 import { Box, Grid2, MenuItem, Stack, Typography } from "@mui/material";
-import React, { ChangeEvent, FocusEvent, useState } from "react";
+import React, { ChangeEvent, FocusEvent, FormEvent, useState } from "react";
 import {
   faSquareFacebook,
   faSquareGooglePlus,
@@ -12,8 +12,11 @@ import { RegisterFormData } from "@/configs/types";
 import Link from "next/link";
 import RoundedButton from "@/components/buttons/RoundedButton";
 import Validate from "@/utils/validate";
-import { log } from "console";
-
+import { register } from "@/apis/user";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import LoadingPrimary from "@/components/common/loadings/LoadingPrimary";
+import { contants } from "@/utils/constant";
 const initData = {
   username: "",
   gender: "",
@@ -26,7 +29,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState<RegisterFormData>(initData);
   const [errors, setErrors] = useState<RegisterFormData>(initData);
   const [loading, setLoading] = useState(false);
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {};
+  const router = useRouter();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -46,8 +49,63 @@ export default function RegisterPage() {
       [dynamicKey]: message,
     });
   };
-  console.log({ form });
-  console.log({ errors });
+  const validate = () => {
+    let flag = false;
+    const validateErrors: RegisterFormData = { ...initData };
+
+    const keys: string[] = Object.keys(validateErrors);
+
+    keys.forEach((key) => {
+      const dynamic = key as keyof RegisterFormData;
+
+      if (dynamic === "confirmPassword") {
+        const { message, error } = Validate[dynamic](
+          form[dynamic],
+          form.password
+        );
+        validateErrors[dynamic] = message;
+        flag = error;
+      } else {
+        const { message, error } = Validate[dynamic](form[dynamic].toString());
+        validateErrors[dynamic] = message;
+        flag = error;
+      }
+    });
+
+    setErrors(validateErrors);
+
+    return flag;
+  };
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (validate()) return;
+
+    try {
+      setLoading(true);
+      const res = await register({
+        ...form,
+        gender: Boolean(form.gender === "Male"),
+      });
+      setLoading(false);
+
+      if (res.errors && Object.keys(res.errors).length > 0) {
+        setErrors({
+          ...errors,
+          ...res.errors,
+        });
+        return;
+      }
+      toast.success(
+        "Register successfuly, please check your email to verify your account ❤️"
+      );
+      router.push("/login");
+    } catch (error) {
+      setLoading(false);
+      console.log("error in register page: " + error);
+      toast.error(contants.messages.errors.server);
+    }
+  };
 
   return (
     <ContainerContent className="pt-24">
@@ -196,6 +254,7 @@ export default function RegisterPage() {
           </Box>
         </Grid2>
       </Grid2>
+      {loading && <LoadingPrimary />}
     </ContainerContent>
   );
 }
