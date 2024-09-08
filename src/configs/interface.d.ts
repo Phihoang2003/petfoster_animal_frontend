@@ -87,3 +87,8 @@ export interface PagiantionResponse<T> {
   data: T[];
   pages: number;
 }
+export interface ISignDataResponse {
+  message: string;
+  token: string;
+  errors: UserFormType | null;
+}
