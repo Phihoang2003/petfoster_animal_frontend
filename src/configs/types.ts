@@ -11,3 +11,12 @@ export type ValidateType = { message: string; error: boolean };
 export type ApiFilterPets = (
   params: IRequestFilterPet
 ) => Promise<IBaseResponse<PagiantionResponse<IPet>>>;
+
+export type RegisterFormData = {
+  username: string;
+  gender: string | boolean;
+  fullname: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
