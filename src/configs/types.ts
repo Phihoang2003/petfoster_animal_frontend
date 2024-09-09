@@ -11,7 +11,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 export type ValidTags = keyof JSX.IntrinsicElements;
 
 export type LocationTileType = "center" | "left" | "right";
-
+export type SortType = string | null;
 export type StateType =
   | "placed"
   | "shipping"
