@@ -1,12 +1,18 @@
 "use client";
 import WrapperTippy from "@/components/boxs/WrapperTippy";
+import Select from "@/components/common/inputs/Select";
 import SearchItem from "@/components/common/sorts/SearchItem";
 import { IFilter } from "@/configs/interface";
 import { SortType } from "@/configs/types";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { capitalize } from "@/utils/format";
+import {
+  faChevronDown,
+  faChevronUp,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { TextField } from "@mui/material";
-import React, { useState } from "react";
+import { FormControl, MenuItem, TextField } from "@mui/material";
+import React, { useRef, useState } from "react";
 
 export interface ISortProps {
   initDataCategory?: string;
@@ -45,6 +51,7 @@ export default function Sort({
   const [sort, setSort] = useState<"high" | "low">("low");
   const [search, setSearch] = useState("");
   const [toggleHistory, setToggleHistory] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
   const searchHistoriesData = [
     {
       id: 1,
@@ -57,6 +64,7 @@ export default function Sort({
   ];
   const handleDeleteSearchItem = () => {};
   const handlePushSearchHistory = () => {};
+  const handleChangeCategory = () => {};
   const handleOpenHistory = () => {
     setToggleHistory(true);
   };
@@ -110,6 +118,52 @@ export default function Sort({
             )}
           </div>
         </WrapperTippy>
+      </div>
+      <div className="flex-1">
+        <div className="flex md:items-center flex-row w-full gap-3 justify-between">
+          <div className="flex items-center gap-[10px] flex-1">
+            <h4 className="text-lg">{options.categorie?.title}</h4>
+            <div ref={ref} className="w-full md:max-w-[210px]">
+              <FormControl fullWidth size="small">
+                <Select
+                  name="category"
+                  displayEmpty
+                  id="category"
+                  value={category}
+                  onChange={handleChangeCategory}
+                >
+                  <MenuItem value={""}>{capitalize("all")}</MenuItem>
+                  {categories.map((category) => {
+                    return (
+                      <MenuItem
+                        key={category.name}
+                        value={
+                          (options.categorie?.useId
+                            ? String(category.id)
+                            : category.name) || category.name
+                        }
+                      >
+                        {capitalize(category.name)}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+          <div className="w-[28%] lg:w-[14%] flex items-center justify-end select-none">
+            <div
+              onClick={() => setSort(sort === "high" ? "low" : "high")}
+              className="cursor-pointer flex items-center gap-2 justify-end h-full hover:underline"
+            >
+              <span className="text-lg">{options.sort?.title}</span>
+              <FontAwesomeIcon
+                className="text-sm"
+                icon={sort === "high" ? faChevronUp : faChevronDown}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
