@@ -1,10 +1,17 @@
 "use client";
+import MenuUser from "@/components/common/common-headers/MenuUser";
 import Navbar from "@/components/common/common-headers/Navbar";
+import { RootState } from "@/configs/types";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { fetchUserByToken } from "@/redux/slice/userSlice";
+import { addPreviousUrl } from "@/utils/session";
+import { unwrapResult } from "@reduxjs/toolkit";
 import classNames from "classnames";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import { usePathname } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export interface IHeaderProps {
   dynamic?: boolean;
@@ -12,13 +19,26 @@ export interface IHeaderProps {
 export default function Header({ dynamic = true }: IHeaderProps) {
   const [isChangeBg, setIsChangeBg] = useState(false);
   const { scrollY } = useScroll();
-  const user = null;
+  const dispatch = useAppDispatch();
+  const pathname = usePathname();
+
+  const { user, token } = useAppSelector(
+    (state: RootState) => state.userReducer
+  );
+
+  const handleClickLogin = () => {
+    addPreviousUrl(pathname);
+  };
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsChangeBg(latest > 0);
   });
-
-  const handleClickLogin = () => {};
+  useEffect(() => {
+    (async () => {
+      const actionResult = dispatch(fetchUserByToken());
+      unwrapResult(await actionResult);
+    })();
+  }, [token, dispatch]);
   return (
     <>
       <header
@@ -68,8 +88,7 @@ export default function Header({ dynamic = true }: IHeaderProps) {
               </Link>
             </div>
           ) : (
-            // <MenuUser isChangeBg={isChangeBg} />
-            <h1>Menu</h1>
+            <MenuUser isChangeBg={isChangeBg} />
           )}
         </div>
         {/* responcesive */}

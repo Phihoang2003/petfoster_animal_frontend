@@ -1,4 +1,5 @@
 // import { getTokenFromCookie } from "@/utils/cookie";
+import { getTokenFromCookie } from "@/utils/cookies";
 import axios from "axios";
 
 const axiosConfig = axios.create({
@@ -10,23 +11,23 @@ const axiosConfig = axios.create({
 });
 
 // Add a request interceptor
-// axiosConfig.interceptors.request.use(
-//     function (config) {
-//         // Do something before request is sent
-//         const token = getTokenFromCookie();
+axiosConfig.interceptors.request.use(
+  function (config) {
+    // Do something before request is sent
+    const token = getTokenFromCookie();
 
-//         if (!token || token === '' || token === 'null') {
-//             return config;
-//         } else {
-//             config.headers.Authorization = 'Bearer ' + token;
-//         }
-//         return config;
-//     },
-//     function (error) {
-//         // Do something with request error
-//         return Promise.reject(error);
-//     },
-// );
+    if (!token || token === "" || token === "null") {
+      return config;
+    } else {
+      config.headers.Authorization = "Bearer " + token;
+    }
+    return config;
+  },
+  function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  }
+);
 
 // Add a response interceptor
 axiosConfig.interceptors.response.use(
