@@ -92,3 +92,18 @@ export interface ISignDataResponse {
   token: string;
   errors: UserFormType | null;
 }
+export interface IProfile {
+  id: string;
+  username: string;
+  fullname: string;
+  birthday: string; // Cứ trả về Date trong java bình thường
+  gender: boolean;
+  phone: string;
+  address: string;
+  email: string;
+  avatar: string;
+  role: string;
+  displayName: string;
+  provider: string;
+  createAt: string;
+}
