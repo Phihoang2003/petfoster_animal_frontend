@@ -107,3 +107,16 @@ export interface IProfile {
   provider: string;
   createAt: string;
 }
+export interface IRequestFilterPet {
+  name?: string;
+  page?: string;
+  typeName?: string;
+  age?: string;
+  colors?: string;
+  gender?: boolean;
+  sort?: string;
+}
+export interface ISearchItem {
+  id: number | string;
+  title: string;
+}
