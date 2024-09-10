@@ -1,6 +1,7 @@
 import {
   IBaseResponse,
   IPet,
+  IPetAttribute,
   IProfile,
   IRequestFilterPet,
   ISignDataResponse,
@@ -12,6 +13,7 @@ export type ValidTags = keyof JSX.IntrinsicElements;
 
 export type LocationTileType = "center" | "left" | "right";
 export type SortType = string | null;
+
 export type StateType =
   | "placed"
   | "shipping"
@@ -55,3 +57,4 @@ export type UserFormType = { username: string; password: string };
 export type ApiLogin = (data: UserFormType) => Promise<ISignDataResponse>;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export type ApiPetAttributes = () => Promise<IBaseResponse<IPetAttribute>>;
