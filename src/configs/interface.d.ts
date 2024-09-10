@@ -120,3 +120,9 @@ export interface ISearchItem {
   id: number | string;
   title: string;
 }
+export interface IPetAttribute {
+  colors: IFilter[];
+  states: IFilter[];
+  breeds: IFilter[];
+  typies: IFilter[];
+}

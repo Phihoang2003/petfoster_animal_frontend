@@ -3,9 +3,11 @@ import { filterPets } from "@/apis/pets";
 import ContainerContent from "@/components/common/common-components/ContainerContent";
 import LoadingPrimary from "@/components/common/loadings/LoadingPrimary";
 import Sort from "@/components/common/sorts/Sort";
+import Pagination from "@/components/pages/pagination/Pagination";
 import Pet from "@/components/products-and-pets/Pet";
 import { IRequestFilterPet } from "@/configs/interface";
 import { links } from "@/data/links";
+import useGetPetAttributes from "@/hooks/useGetPetAttributes";
 import { useQuery } from "@tanstack/react-query";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -25,6 +27,7 @@ export default function AdoptPage() {
         page: typeof page === "string" ? parseInt(page) - 1 + "" : "0",
       }),
   });
+  const petAttributes = useGetPetAttributes();
   useEffect(() => {
     setLoading(false);
   }, []);
@@ -36,10 +39,7 @@ export default function AdoptPage() {
   return (
     <ContainerContent>
       <Sort
-        categories={[
-          { id: "1", name: "Dog" },
-          { id: "2", name: "Cat" },
-        ]}
+        categories={petAttributes?.data?.typies || []}
         options={{
           search: {
             placeholder: "Search for name pet...",

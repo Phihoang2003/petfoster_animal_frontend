@@ -4,6 +4,7 @@ import Select from "@/components/common/inputs/Select";
 import SearchItem from "@/components/common/sorts/SearchItem";
 import { IFilter } from "@/configs/interface";
 import { SortType } from "@/configs/types";
+import { useDebounce } from "@/hooks";
 import { capitalize } from "@/utils/format";
 import {
   faChevronDown,
@@ -52,6 +53,7 @@ export default function Sort({
   const [search, setSearch] = useState("");
   const [toggleHistory, setToggleHistory] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const searchDebounce = useDebounce(search, 600);
   const searchHistoriesData = [
     {
       id: 1,
