@@ -82,7 +82,8 @@ export default function Sort({
 
       return addSearchHistories({ id: 0, title: searchDebounce });
     },
-    enabled: !!user && !!searchDebounce,
+    // enabled: !!user && !!searchDebounce,
+    enabled: false,
   });
   useEffect(() => {
     if (addSearchHistory.isFetched) {
@@ -135,8 +136,11 @@ export default function Sort({
   const handleOpenHistory = () => {
     setToggleHistory(true);
   };
-  console.log("toggle", toggleHistory);
-
+  const handleBlur = () => {
+    if (searchDebounce && user) {
+      addSearchHistory.refetch();
+    }
+  };
   return (
     <div className="flex md:flex-row flex-col justify-between gap-[38px] border-b border-[#DBDBDB] mt-24 pb-[22px]">
       <div className="w-full md:w-[24%] lg:w-[20%] h-full text-black-main select-none">
@@ -163,6 +167,7 @@ export default function Sort({
         >
           <div className="w-full relative">
             <TextField
+              onBlur={handleBlur}
               onClick={handleOpenHistory}
               value={search}
               onChange={(e) => {
