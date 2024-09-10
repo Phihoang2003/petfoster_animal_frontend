@@ -4,6 +4,7 @@ import {
   IPetAttribute,
   IProfile,
   IRequestFilterPet,
+  ISearchItem,
   ISignDataResponse,
   PagiantionResponse,
 } from "@/configs/interface";
@@ -58,3 +59,7 @@ export type ApiLogin = (data: UserFormType) => Promise<ISignDataResponse>;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export type ApiPetAttributes = () => Promise<IBaseResponse<IPetAttribute>>;
+export type ApiGetSearchHistories = () => Promise<IBaseResponse<ISearchItem[]>>;
+export type ApiActionSearchHistories = (
+  data: ISearchItem
+) => Promise<IBaseResponse<ISearchItem[]>>;
