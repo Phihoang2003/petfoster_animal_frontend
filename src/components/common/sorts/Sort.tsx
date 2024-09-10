@@ -1,10 +1,17 @@
 "use client";
+import {
+  addSearchHistories,
+  deleteSearchHistories,
+  getSearchHistories,
+} from "@/apis/user";
 import WrapperTippy from "@/components/boxs/WrapperTippy";
 import Select from "@/components/common/inputs/Select";
 import SearchItem from "@/components/common/sorts/SearchItem";
-import { IFilter } from "@/configs/interface";
-import { SortType } from "@/configs/types";
+import { IFilter, ISearchItem } from "@/configs/interface";
+import { RootState, SortType } from "@/configs/types";
 import { useDebounce } from "@/hooks";
+import { useAppSelector } from "@/hooks/reduxHooks";
+import { contants } from "@/utils/constant";
 import { capitalize } from "@/utils/format";
 import {
   faChevronDown,
@@ -13,7 +20,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FormControl, MenuItem, TextField } from "@mui/material";
-import React, { useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import React, {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { toast } from "react-toastify";
 
 export interface ISortProps {
   initDataCategory?: string;
@@ -48,28 +64,78 @@ export default function Sort({
   onSorts,
   onSearch,
 }: ISortProps) {
+  const { user } = useAppSelector((state: RootState) => state.userReducer);
   const [category, setCategory] = useState(initDataCategory || "");
   const [sort, setSort] = useState<"high" | "low">("low");
   const [search, setSearch] = useState("");
   const [toggleHistory, setToggleHistory] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const searchDebounce = useDebounce(search, 600);
-  const searchHistoriesData = [
-    {
-      id: 1,
-      title: "hello",
+  const searchDebounce = useDebounce(search, 1000);
+  const searchHistories = useQuery({
+    queryKey: ["getSearchHistories"],
+    queryFn: () => getSearchHistories(),
+  });
+  const addSearchHistory = useQuery({
+    queryKey: ["addSearchHistories", searchDebounce],
+    queryFn: () => {
+      if (!user || !searchDebounce) return;
+
+      return addSearchHistories({ id: 0, title: searchDebounce });
     },
-    {
-      id: 2,
-      title: "hello2",
-    },
-  ];
-  const handleDeleteSearchItem = () => {};
-  const handlePushSearchHistory = () => {};
+    enabled: !!user && !!searchDebounce,
+  });
+  useEffect(() => {
+    if (addSearchHistory.isFetched) {
+      searchHistories.refetch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addSearchHistory.data]);
+
+  useEffect(() => {
+    if (!onSearch) return;
+    onSearch(searchDebounce);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchDebounce]);
+
+  const searchHistoriesData = useMemo(() => {
+    if (searchHistories.error) {
+      return [];
+    }
+
+    if (!searchHistories.data?.data) {
+      return [];
+    }
+
+    return searchHistories.data.data;
+  }, [searchHistories]);
+
+  const handleDeleteSearchItem = async (data: ISearchItem) => {
+    try {
+      const response = await deleteSearchHistories(data);
+
+      if (!response || response.errors) {
+        toast.warn(contants.messages.errors.handle);
+        return;
+      }
+
+      searchHistories.refetch();
+    } catch (error) {
+      console.log("Sort :" + error);
+    }
+  };
+  const handlePushSearchHistory = (
+    e: MouseEvent<HTMLDivElement>,
+    data: ISearchItem
+  ) => {
+    setSearch(data.title);
+    setToggleHistory(false);
+  };
   const handleChangeCategory = () => {};
+
   const handleOpenHistory = () => {
     setToggleHistory(true);
   };
+  console.log("toggle", toggleHistory);
 
   return (
     <div className="flex md:flex-row flex-col justify-between gap-[38px] border-b border-[#DBDBDB] mt-24 pb-[22px]">
