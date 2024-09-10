@@ -19,9 +19,15 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FormControl, MenuItem, TextField } from "@mui/material";
+import {
+  FormControl,
+  MenuItem,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import React, {
+  memo,
   MouseEvent,
   useCallback,
   useEffect,
@@ -51,7 +57,7 @@ export interface ISortProps {
     };
   };
 }
-export default function Sort({
+function Sort({
   categories,
   sorts,
   initDataCategory,
@@ -131,7 +137,6 @@ export default function Sort({
     setSearch(data.title);
     setToggleHistory(false);
   };
-  const handleChangeCategory = () => {};
 
   const handleOpenHistory = () => {
     setToggleHistory(true);
@@ -139,6 +144,16 @@ export default function Sort({
   const handleBlur = () => {
     if (searchDebounce && user) {
       addSearchHistory.refetch();
+    }
+  };
+  const handleChangeCategory = (event: SelectChangeEvent<any>) => {
+    setCategory(event.target.value);
+    if (onCategories) {
+      onCategories(
+        (event.target.value as string) === ""
+          ? null
+          : (event.target.value as string)
+      );
     }
   };
   return (
@@ -205,7 +220,7 @@ export default function Sort({
                   value={category}
                   onChange={handleChangeCategory}
                 >
-                  <MenuItem value={""}>{capitalize("all")}</MenuItem>
+                  <MenuItem value={""}>{capitalize("All")}</MenuItem>
                   {categories.map((category) => {
                     return (
                       <MenuItem
@@ -241,3 +256,4 @@ export default function Sort({
     </div>
   );
 }
+export default memo(Sort);
