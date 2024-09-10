@@ -40,6 +40,9 @@ export default function AdoptPage() {
     <ContainerContent>
       <Sort
         categories={petAttributes?.data?.typies || []}
+        onSearch={(value) => {
+          setFilter((prev) => ({ ...prev, name: value }));
+        }}
         options={{
           search: {
             placeholder: "Search for name pet...",

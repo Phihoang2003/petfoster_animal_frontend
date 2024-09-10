@@ -126,3 +126,7 @@ export interface IPetAttribute {
   breeds: IFilter[];
   typies: IFilter[];
 }
+export interface ISearchItem {
+  id: number | string;
+  title: string;
+}
