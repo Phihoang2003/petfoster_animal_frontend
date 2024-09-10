@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import classNames from "classnames";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { MouseEvent, useEffect, useState } from "react";
+import React, { memo, MouseEvent, useEffect, useState } from "react";
 
 export interface IPaginationProps {
   pages: number;
@@ -18,7 +18,7 @@ export interface IPaginationProps {
   py?: string;
   baseHref?: string;
 }
-export default function Pagination({
+function Pagination({
   pages,
   pageLimit = 4,
   maxPageLimit = 4,
@@ -141,3 +141,4 @@ export default function Pagination({
     </div>
   );
 }
+export default memo(Pagination);

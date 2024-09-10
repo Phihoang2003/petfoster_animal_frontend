@@ -6,6 +6,7 @@ import Sort from "@/components/common/sorts/Sort";
 import Pagination from "@/components/pages/pagination/Pagination";
 import Pet from "@/components/products-and-pets/Pet";
 import { IRequestFilterPet } from "@/configs/interface";
+import { SortType } from "@/configs/types";
 import { links } from "@/data/links";
 import useGetPetAttributes from "@/hooks/useGetPetAttributes";
 import { useQuery } from "@tanstack/react-query";
@@ -42,6 +43,21 @@ export default function AdoptPage() {
         categories={petAttributes?.data?.typies || []}
         onSearch={(value) => {
           setFilter((prev) => ({ ...prev, name: value }));
+        }}
+        onCategories={(value?: SortType) => {
+          if (!value) {
+            if (filter.typeName) {
+              delete filter.typeName;
+              setFilter({ ...filter });
+            }
+
+            return;
+          }
+
+          setFilter({
+            ...filter,
+            typeName: value.toLowerCase(),
+          });
         }}
         options={{
           search: {
