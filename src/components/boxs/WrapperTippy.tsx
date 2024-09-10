@@ -1,5 +1,6 @@
 "use client";
-import Tippy, { TippyProps } from "@tippyjs/react";
+import Tippy, { TippyProps } from "@tippyjs/react/headless";
+
 import React, {
   JSXElementConstructor,
   ReactElement,
@@ -14,7 +15,8 @@ export interface IWraperTippyProps {
   classNameWraper?: string;
   renderEl: ReactNode;
 }
-export default function WrapperTippy({
+
+export default function WraperTippy({
   children,
   renderEl,
   classNameWraper,
@@ -22,12 +24,13 @@ export default function WrapperTippy({
 }: IWraperTippyProps & TippyProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
+
   useLayoutEffect(() => {
-    if (!ref.current) {
-      return;
-    }
+    if (!ref.current) return;
+
     setWidth(ref.current.clientWidth);
   }, [ref]);
+
   return (
     <div>
       <Tippy
