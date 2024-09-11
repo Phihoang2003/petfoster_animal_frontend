@@ -156,6 +156,12 @@ function Sort({
       );
     }
   };
+  useEffect(() => {
+    if (!onSorts) return;
+    onSorts(sort);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sort]);
+
   return (
     <div className="flex md:flex-row flex-col justify-between gap-[38px] border-b border-[#DBDBDB] mt-24 pb-[22px]">
       <div className="w-full md:w-[24%] lg:w-[20%] h-full text-black-main select-none">
