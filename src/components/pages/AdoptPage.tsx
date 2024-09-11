@@ -9,9 +9,16 @@ import { IRequestFilterPet } from "@/configs/interface";
 import { SortType } from "@/configs/types";
 import { links } from "@/data/links";
 import useGetPetAttributes from "@/hooks/useGetPetAttributes";
+import { colors, Tooltip } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { notFound, useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRotateLeft } from "@fortawesome/free-solid-svg-icons";
+import MenuDropDown from "@/components/common/inputs/MenuDropDown";
+import { dataTakeAction } from "@/data/adopt";
+import MenuDropDownRatio from "@/components/common/inputs/MenuDropDownRatio";
 
 export default function AdoptPage() {
   const baseUrl = links.pets.adoptPage;
@@ -36,7 +43,30 @@ export default function AdoptPage() {
     notFound();
   }
   const data = rawData && rawData.data;
+  const conditionShowClearFiller = useCallback(() => {
+    if (!filter) return false;
 
+    if (
+      filter.colors ||
+      filter.gender ||
+      filter.gender === false ||
+      filter.age
+    ) {
+      return true;
+    }
+  }, [filter]);
+  const handleClearAllFilter = () => {
+    const persitKey = ["name", "typeName", "sort"];
+    if (page) {
+      router.push(baseUrl);
+    }
+    Object.keys(filter).forEach((key) => {
+      if (!persitKey.includes(key)) {
+        delete filter[key as keyof IRequestFilterPet];
+      }
+    });
+    setFilter({ ...filter });
+  };
   return (
     <ContainerContent>
       <Sort
@@ -59,6 +89,12 @@ export default function AdoptPage() {
             typeName: value.toLowerCase(),
           });
         }}
+        onSorts={(value: SortType) => {
+          setFilter({
+            ...filter,
+            sort: value === "low" ? "latest" : "oldest",
+          });
+        }}
         options={{
           search: {
             placeholder: "Search for name pet...",
@@ -73,7 +109,92 @@ export default function AdoptPage() {
       />
       <div className="flex md:flex-row flex-col justify-between min-h-[1000px] mt-9 gap-[38px]">
         <div className="w-full md:w-[24%] lg:w-[20%] h-full text-black-main select-none">
-          Filter Sort
+          <div className="py-5 w-full border-b border-gray-primary flex items-center justify-between">
+            <h6 className="font-medium text-xl">Filters</h6>
+
+            {conditionShowClearFiller() && (
+              <Tooltip title="Clear all filters" placement="top">
+                <motion.div
+                  onClick={handleClearAllFilter}
+                  whileTap={{
+                    scale: 0.9,
+                  }}
+                >
+                  <FontAwesomeIcon
+                    className="cursor-pointer"
+                    icon={faRotateLeft}
+                  />
+                </motion.div>
+              </Tooltip>
+            )}
+          </div>
+          <MenuDropDown
+            clearValue={{
+              value: !conditionShowClearFiller(),
+              option: {
+                closeOnClear: true,
+              },
+            }}
+            onValues={(colors: string[]) => {
+              if (page) {
+                router.push(baseUrl);
+              }
+              if (!colors.length && filter.colors) {
+                delete filter.colors;
+                setFilter({ ...filter });
+                return;
+              }
+              setFilter({
+                ...filter,
+                colors: colors.join(","),
+              });
+            }}
+            title={"Color"}
+            data={petAttributes?.data?.colors.map((color) => color.name) || []}
+          />
+          <MenuDropDownRatio
+            clearValue={{
+              value: !conditionShowClearFiller(),
+              option: {
+                closeOnClear: true,
+              },
+            }}
+            onValues={(age) => {
+              if (age && typeof age === "string") {
+                if (page) {
+                  router.push(baseUrl);
+                }
+                setFilter({
+                  ...filter,
+                  age,
+                });
+              }
+            }}
+            title={"Size"}
+            data={dataTakeAction.fillters.ages}
+          />
+
+          <MenuDropDownRatio
+            clearValue={{
+              value: !conditionShowClearFiller(),
+              option: {
+                closeOnClear: true,
+              },
+            }}
+            onValues={(gender) => {
+              if (gender && typeof gender === "string") {
+                if (page) {
+                  router.push(baseUrl);
+                }
+                setFilter({
+                  ...filter,
+                  gender: gender === "male",
+                });
+              }
+            }}
+            title={"Gender"}
+            data={dataTakeAction.fillters.genthers}
+          />
         </div>
         {((page && data?.data && parseInt(page) - 1 > data?.data.pages) ||
           !data?.data.data.length) &&
