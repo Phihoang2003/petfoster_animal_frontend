@@ -1,8 +1,10 @@
 import {
   IBaseResponse,
   IPet,
+  IPetAttribute,
   IProfile,
   IRequestFilterPet,
+  ISearchItem,
   ISignDataResponse,
   PagiantionResponse,
 } from "@/configs/interface";
@@ -11,6 +13,7 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 export type ValidTags = keyof JSX.IntrinsicElements;
 
 export type LocationTileType = "center" | "left" | "right";
+export type SortType = string | null;
 
 export type StateType =
   | "placed"
@@ -55,3 +58,8 @@ export type UserFormType = { username: string; password: string };
 export type ApiLogin = (data: UserFormType) => Promise<ISignDataResponse>;
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export type ApiPetAttributes = () => Promise<IBaseResponse<IPetAttribute>>;
+export type ApiGetSearchHistories = () => Promise<IBaseResponse<ISearchItem[]>>;
+export type ApiActionSearchHistories = (
+  data: ISearchItem
+) => Promise<IBaseResponse<ISearchItem[]>>;

@@ -11,6 +11,14 @@ export const dataTakeAction = {
       name: "cats",
     },
     {
+      id: "rabbit",
+      name: "rabbits",
+    },
+    {
+      id: "hamster",
+      name: "hamsters",
+    },
+    {
       id: "other",
       name: "others",
     },

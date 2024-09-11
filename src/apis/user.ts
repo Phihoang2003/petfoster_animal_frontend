@@ -1,5 +1,7 @@
 import {
+  ApiActionSearchHistories,
   ApiGetCurUser,
+  ApiGetSearchHistories,
   ApiLogin,
   ApiRefreshVerifyCode,
   ApiRegister,
@@ -7,6 +9,7 @@ import {
 } from "@/configs/types";
 import axios from "../configs/axios";
 import { setTokenToCookie } from "@/utils/cookies";
+import { ISearchItem } from "@/configs/interface";
 export const register: ApiRegister = async (data) => {
   const res = await axios({
     method: "POST",
@@ -60,6 +63,54 @@ export const curUser: ApiGetCurUser = async () => {
   const res = await axios({
     method: "GET",
     url: "user/profile",
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const getSearchHistories: ApiGetSearchHistories = async () => {
+  const res = await axios({
+    method: "GET",
+    url: "user/search-histories",
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const addSearchHistories: ApiActionSearchHistories = async (
+  data: ISearchItem
+) => {
+  const form = new FormData();
+
+  form.append("keyword", data.title);
+  const res = await axios({
+    method: "PUT",
+    url: "user/search-histories",
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+    data: form,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const deleteSearchHistories: ApiActionSearchHistories = async (
+  data: ISearchItem
+) => {
+  const form = new FormData();
+
+  form.append("keyword", data.title);
+  const res = await axios({
+    method: "DELETE",
+    url: "user/search-histories",
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+    data: form,
   });
 
   if (!res) return null;

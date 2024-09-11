@@ -17,6 +17,7 @@ export interface IPetProps {
 }
 export default function Pet({ data }: IPetProps) {
   const [isLike, setIsLike] = useState(data.like);
+
   return (
     <>
       <Link href={links.pet + `${data.id}/${stringToUrl(data.name)}`}>
