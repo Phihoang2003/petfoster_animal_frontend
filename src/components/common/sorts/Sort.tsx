@@ -80,6 +80,7 @@ function Sort({
   const searchHistories = useQuery({
     queryKey: ["getSearchHistories"],
     queryFn: () => getSearchHistories(),
+    enabled: !!user,
   });
   const addSearchHistory = useQuery({
     queryKey: ["addSearchHistories", searchDebounce],

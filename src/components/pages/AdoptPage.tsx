@@ -27,6 +27,7 @@ export default function AdoptPage() {
   const page = searchParams.get("page");
   const [filter, setFilter] = useState<IRequestFilterPet>({});
   const [loading, setLoading] = useState(false);
+
   const rawData = useQuery({
     queryKey: ["petFilterPage/filterPets", filter, page],
     queryFn: () =>
@@ -35,14 +36,19 @@ export default function AdoptPage() {
         page: typeof page === "string" ? parseInt(page) - 1 + "" : "0",
       }),
   });
+  if (rawData.error || rawData.data?.errors) {
+    notFound();
+  }
+  const ageMapping: { [key in "baby" | "medium" | "adult"]: string } = {
+    baby: "1 years",
+    medium: "3 years",
+    adult: "5 years",
+  };
   const petAttributes = useGetPetAttributes();
   useEffect(() => {
     setLoading(false);
   }, []);
-  if (rawData.error || rawData.data?.errors) {
-    notFound();
-  }
-  const data = rawData && rawData.data;
+
   const conditionShowClearFiller = useCallback(() => {
     if (!filter) return false;
 
@@ -67,6 +73,7 @@ export default function AdoptPage() {
     });
     setFilter({ ...filter });
   };
+  const data = rawData && rawData.data;
   return (
     <ContainerContent>
       <Sort
@@ -164,9 +171,11 @@ export default function AdoptPage() {
                 if (page) {
                   router.push(baseUrl);
                 }
+                const mappedAge =
+                  ageMapping[age as keyof typeof ageMapping] || "5 years";
                 setFilter({
                   ...filter,
-                  age,
+                  age: mappedAge,
                 });
               }
             }}
