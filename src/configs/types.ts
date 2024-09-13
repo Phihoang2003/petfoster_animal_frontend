@@ -1,7 +1,9 @@
 import {
   IBaseResponse,
+  IParamsApiPostPage,
   IPet,
   IPetAttribute,
+  IPost,
   IProfile,
   IRequestFilterPet,
   ISearchItem,
@@ -63,3 +65,6 @@ export type ApiGetSearchHistories = () => Promise<IBaseResponse<ISearchItem[]>>;
 export type ApiActionSearchHistories = (
   data: ISearchItem
 ) => Promise<IBaseResponse<ISearchItem[]>>;
+export type ApiPostPage = (
+  params: IParamsApiPostPage
+) => Promise<IBaseResponse<PagiantionResponse<IPost>>>;
