@@ -130,3 +130,9 @@ export interface ISearchItem {
   id: number | string;
   title: string;
 }
+export interface IParamsApiPostPage {
+  page?: number;
+  search?: string;
+  username?: string;
+  type?: string;
+}
