@@ -1,7 +1,7 @@
+import axios from "../configs/axios";
 import { IParamsApiPostPage } from "@/configs/interface";
 import { ApiPostPage } from "@/configs/types";
 import Validate from "@/utils/validate";
-import axios from "axios";
 
 export const getPosts: ApiPostPage = async (prevParams: IParamsApiPostPage) => {
   const params: { page?: number; search?: string } = {};
@@ -18,9 +18,10 @@ export const getPosts: ApiPostPage = async (prevParams: IParamsApiPostPage) => {
       delete params.search;
     }
   }
+
   const res = await axios({
     method: "GET",
-    url: "posts",
+    url: "/posts",
     params,
   });
 
