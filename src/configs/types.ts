@@ -4,6 +4,7 @@ import {
   IPet,
   IPetAttribute,
   IPost,
+  IPostDetail,
   IProfile,
   IRequestFilterPet,
   ISearchItem,
@@ -68,3 +69,8 @@ export type ApiActionSearchHistories = (
 export type ApiPostPage = (
   params: IParamsApiPostPage
 ) => Promise<IBaseResponse<PagiantionResponse<IPost>>>;
+export type ApiDetailPost = (id: string) => Promise<IBaseResponse<IPostDetail>>;
+export type ApiCommentsWithPost = (
+  id: string,
+  page?: number
+) => Promise<IBaseResponse<PagiantionResponse<IComment>>>;
