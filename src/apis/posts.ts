@@ -1,6 +1,10 @@
 import axios from "../configs/axios";
 import { IParamsApiPostPage } from "@/configs/interface";
-import { ApiPostPage } from "@/configs/types";
+import {
+  ApiCommentsWithPost,
+  ApiDetailPost,
+  ApiPostPage,
+} from "@/configs/types";
 import Validate from "@/utils/validate";
 
 export const getPosts: ApiPostPage = async (prevParams: IParamsApiPostPage) => {
@@ -22,6 +26,38 @@ export const getPosts: ApiPostPage = async (prevParams: IParamsApiPostPage) => {
   const res = await axios({
     method: "GET",
     url: "/posts",
+    params,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const getDetailPost: ApiDetailPost = async (id: string) => {
+  const res = await axios({
+    method: "GET",
+    url: "posts/detail/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const getCommentWithPost: ApiCommentsWithPost = async (
+  id: string,
+  page?: number
+) => {
+  const params: { page?: number } = {};
+  if (page) {
+    params.page = Number(page) - 1;
+  } else {
+    if (params.page) {
+      delete params.page;
+    }
+  }
+  const res = await axios({
+    method: "GET",
+    url: "comments/" + id,
     params,
   });
 

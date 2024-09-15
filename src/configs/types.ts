@@ -1,5 +1,6 @@
 import {
   IBaseResponse,
+  IComment,
   IParamsApiPostPage,
   IPet,
   IPetAttribute,

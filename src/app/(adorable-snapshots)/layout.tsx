@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import React, { ReactNode } from "react";
 import Favicon from "/public/favicon.ico";
-import AdorableLayout from "@/components/dialogs/layouts/AdorableSnapshotsLayout";
+import AdorableLayout from "@/components/layouts/AdorableSnapshotsLayout";
 import Header from "@/components/common/Header";
 
 export interface IAdorableSnapshotsLayoutProps {
