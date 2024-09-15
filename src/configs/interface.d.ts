@@ -144,3 +144,13 @@ export interface IPostDetail
   edit: boolean;
   createdAt: string;
 }
+export interface IComment {
+  id: number;
+  user: IProfile;
+  comment: string;
+  createAt: string;
+  likes: number;
+  isLike: boolean;
+  children: IComment[];
+  owner: boolean;
+}
