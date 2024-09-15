@@ -136,3 +136,11 @@ export interface IParamsApiPostPage {
   username?: string;
   type?: string;
 }
+
+export interface IPostDetail
+  extends Omit<IPost, "thumbnail" | "containVideo" | "thumbnail"> {
+  images: IImagePost[];
+  owner: boolean;
+  edit: boolean;
+  createdAt: string;
+}
