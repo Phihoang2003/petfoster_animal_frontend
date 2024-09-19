@@ -154,3 +154,9 @@ export interface IComment {
   children: IComment[];
   owner: boolean;
 }
+export interface IImagePost {
+  id?: number;
+  index: number;
+  url: string;
+  isVideo: boolean;
+}
