@@ -1,3 +1,4 @@
+import moment from "moment";
 export const stringToUrl = (string: string) => {
   if (!string || string.length <= 0) return "";
   return string.toLowerCase().replaceAll(" ", "-");
@@ -34,3 +35,6 @@ export function toAbbrevNumber(n: number) {
   base = abbrev.indexOf(suffix) + 1;
   return suffix ? rnd(n / 1000 ** base, 2) + suffix : "" + n;
 }
+export const secondsToMinute = (inp: number) => {
+  return moment.utc(inp * 1000).format("mm:ss") + "";
+};
