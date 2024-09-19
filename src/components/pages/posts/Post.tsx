@@ -55,6 +55,7 @@ export default function Post({ variant = "circle", data }: IPostProps) {
           alt={data.thumbnail}
           width={300}
           height={300}
+          unoptimized={true}
         />
       )}
       {data.containVideo && (

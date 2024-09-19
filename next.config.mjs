@@ -28,10 +28,8 @@ const nextConfig = {
         hostname: "product.hstatic.net",
       },
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "8019",
-        pathname: "/images/**",
+        protocol: "https",
+        hostname: "hoangphi-1203.s3.ap-southeast-2.amazonaws.com",
       },
     ],
   },
