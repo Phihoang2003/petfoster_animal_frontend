@@ -1,7 +1,16 @@
+"use client";
 import { getCommentWithPost, getDetailPost } from "@/apis/posts";
+import MediasPostDetail from "@/components/dialogs/posts/MediasPostDetail";
+import WrapperDialog from "@/components/dialogs/WrapperDialog";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
-import React, { useCallback, useRef } from "react";
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 export interface IPostDetailDialogProps {
   open: boolean;
@@ -33,6 +42,7 @@ export default function PostDetailDialog({
     },
   });
   const intObserver = useRef<IntersectionObserver | null>(null);
+  const [like, setLike] = useState(false);
   const lastPostRef = useCallback(
     (post: HTMLDivElement | null) => {
       if (rawComments.isFetchingNextPage) return;
@@ -46,6 +56,41 @@ export default function PostDetailDialog({
     },
     [rawComments]
   );
+  const handleClose = () => {
+    if (!onClose) return;
+    onClose();
+  };
+  const data = useMemo(() => {
+    if (rawData.isError || !rawData.data?.data) return null;
 
-  return <></>;
+    return rawData.data?.data;
+  }, [rawData]);
+  const [images, setImages] = useState(data?.images || []);
+  useLayoutEffect(() => {
+    if (data?.images.length) {
+      setImages(data.images);
+    }
+
+    if (data) {
+      setLike(data.isLike);
+    }
+  }, [data]);
+  return (
+    <>
+      <WrapperDialog
+        fullWidth={true}
+        maxWidth={"lg"}
+        open={open}
+        setOpen={setOpen}
+        onClose={handleClose}
+      >
+        <div className="w-full text-post-primary flex items-center justify-between h-[80vh] select-none">
+          <MediasPostDetail images={images} />
+          <div className="md:w-1/2 lg:w-2/5 w-full h-full flex flex-col justify-between">
+            Hello
+          </div>
+        </div>
+      </WrapperDialog>
+    </>
+  );
 }
