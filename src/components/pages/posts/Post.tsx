@@ -16,6 +16,7 @@ import {
   faImage,
   faVideo,
 } from "@fortawesome/free-solid-svg-icons";
+import PostDetailDialog from "@/components/dialogs/posts/PostDetailDialog";
 export interface IPostProps {
   variant?: "rounded" | "circle";
   data: IPost;
@@ -138,7 +139,7 @@ export default function Post({ variant = "circle", data }: IPostProps) {
         )}
       </AnimatePresence>
 
-      {/* {openDetail && (
+      {openDetail && (
         <PostDetailDialog
           open={openDetail}
           setOpen={setOpenDetail}
@@ -147,7 +148,7 @@ export default function Post({ variant = "circle", data }: IPostProps) {
             setModel(false);
           }}
         />
-      )} */}
+      )}
     </div>
   );
 }
