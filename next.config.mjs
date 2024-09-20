@@ -29,7 +29,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "hoangphi-1203.s3.ap-southeast-2.amazonaws.com",
+        hostname: "https://hoangphi-update.s3.ap-southeast-1.amazonaws.com",
       },
     ],
   },
