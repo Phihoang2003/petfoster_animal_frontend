@@ -160,3 +160,13 @@ export interface IImagePost {
   url: string;
   isVideo: boolean;
 }
+export interface IComment {
+  id: number;
+  user: IProfile;
+  comment: string;
+  createAt: string;
+  likes: number;
+  isLike: boolean;
+  children: IComment[];
+  owner: boolean;
+}
