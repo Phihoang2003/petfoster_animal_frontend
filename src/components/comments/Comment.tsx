@@ -1,11 +1,18 @@
+import WrapperAnimation from "@/components/animations/WrapperAnimation";
+import OptionButton from "@/components/buttons/OptionButton";
 import { IComment } from "@/configs/interface";
 import { contants } from "@/utils/constant";
 import { toAbbrevNumber } from "@/utils/format";
+import {
+  faEllipsis,
+  faHeart as faHeartFill,
+} from "@fortawesome/free-solid-svg-icons";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar } from "@mui/material";
 import classNames from "classnames";
 import moment from "moment";
 import React, { useMemo, useState } from "react";
-
 export interface ICommentProps {
   item?: boolean;
   data?: IComment;
@@ -69,10 +76,69 @@ export default function Comment({
               >
                 Reply
               </span>
+              {data?.owner && (
+                <OptionButton
+                  handleDelete={
+                    onDelete && data ? () => onDelete(data) : undefined
+                  }
+                  options={{ size: "small", typeConfirm: "confirm" }}
+                  className="flex items-center justify-center p-1 hover:bg-gray-200 rounded-xl transition-all ease-linear cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faEllipsis} />
+                </OptionButton>
+              )}
             </div>
+            {item && data && data?.children?.length > 2 && (
+              <div className="flex items-center text-sm hover:underline gap-1 mt-1 cursor-pointer">
+                <span className="w-[25px] h-[1px] bg-[#333333]"></span>
+                {!showAllChildren && (
+                  <span onClick={handleCLickShowAll}>
+                    Show more replies ({data?.children.length})
+                  </span>
+                )}
+                {showAllChildren && (
+                  <span onClick={handleCLickShowAll}>Show less</span>
+                )}
+              </div>
+            )}
           </div>
         </div>
+        <WrapperAnimation
+          onClick={onLike && data ? () => onLike(data) : undefined}
+          className="cursor-pointer"
+          hover={{}}
+        >
+          <FontAwesomeIcon
+            className={classNames("w-4 h-w-4", {
+              ["text-inherit"]: !data?.isLike,
+              ["text-fill-heart"]: data?.isLike,
+            })}
+            icon={data?.isLike ? faHeartFill : faHeart}
+          />
+        </WrapperAnimation>
       </div>
+      {item && data && data?.children?.length > 0 && (
+        <div
+          style={{
+            paddingLeft: `calc(${__SIZE_AVARTAR} + 14px)`,
+          }}
+          className="mt-3 flex flex-col gap-2"
+        >
+          {comments &&
+            comments.map((item) => {
+              return (
+                <Comment
+                  onDelete={onDelete}
+                  onReply={onReply}
+                  onLike={onLike}
+                  data={item}
+                  item={true}
+                  key={item.id}
+                />
+              );
+            })}
+        </div>
+      )}
     </div>
   );
 }
