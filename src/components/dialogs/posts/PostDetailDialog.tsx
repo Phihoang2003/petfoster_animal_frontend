@@ -1,8 +1,10 @@
 "use client";
 import { getCommentWithPost, getDetailPost } from "@/apis/posts";
 import OptionButton from "@/components/buttons/OptionButton";
+import Comment from "@/components/comments/Comment";
 import MediasPostDetail from "@/components/dialogs/posts/MediasPostDetail";
 import WrapperDialog from "@/components/dialogs/WrapperDialog";
+import { IComment } from "@/configs/interface";
 import { RootState } from "@/configs/types";
 import { reportReason } from "@/data/reason";
 import { useAppSelector } from "@/hooks/reduxHooks";
@@ -30,6 +32,7 @@ export default function PostDetailDialog({
 }: IPostDetailDialogProps) {
   const [uuid] = useQueryState("uuid");
   const { user } = useAppSelector((state: RootState) => state.userReducer);
+
   const rawData = useQuery({
     queryKey: ["postDetailDialog", uuid],
     queryFn: () => {
@@ -48,7 +51,9 @@ export default function PostDetailDialog({
       return lastPage?.data?.data.length ? allPage.length + 1 : undefined;
     },
   });
+
   const intObserver = useRef<IntersectionObserver | null>(null);
+  const refSpanTop = useRef<HTMLSpanElement>(null);
   const [like, setLike] = useState(false);
   const lastPostRef = useCallback(
     (post: HTMLDivElement | null) => {
@@ -85,6 +90,11 @@ export default function PostDetailDialog({
   const handleDeletePost = () => {};
   const handleEdit = () => {};
   const handleReportPost = () => {};
+  const handleDeleteComment = () => {};
+  const handleReply = () => {};
+  const handleClickLike = () => {};
+  console.log("hello", rawComments?.data?.pages[0]?.data?.data.length);
+
   return (
     <>
       <WrapperDialog
@@ -116,7 +126,7 @@ export default function PostDetailDialog({
                     options={{
                       border: true,
                       reason: reportReason,
-                      showEdit: data.edit,
+                      showEdit: data?.edit,
                       showReport: false,
                       typeConfirm: contants.roles.manageRoles.includes(
                         user?.role || ""
@@ -145,7 +155,38 @@ export default function PostDetailDialog({
                   />
                 )}
               </div>
+              <p className="font-medium text-1xl mt-3 pb-[22px] md:border-b border-[#B5A8FF] text-[#444444]">
+                {data?.title}
+              </p>
             </div>
+            {/* comments */}
+            {rawComments.data &&
+              rawComments.data.pages[0]?.data?.data.length > 0 && (
+                <div className="px-8 flex-1 w-full h-full hidden md:flex flex-col gap-2 overflow-y-auto overflow-x-hidden scroll py-6">
+                  <span ref={refSpanTop}></span>
+                  {!rawComments.isLoading &&
+                    rawComments.data.pages.map((item) => {
+                      return item.data.data.map((i: IComment) => {
+                        return (
+                          <div
+                            className="w-full h-fit"
+                            key={i.id}
+                            ref={lastPostRef}
+                          >
+                            <Comment
+                              key={i.id}
+                              onDelete={handleDeleteComment}
+                              onReply={handleReply}
+                              onLike={handleClickLike}
+                              data={i}
+                              item={true}
+                            />
+                          </div>
+                        );
+                      });
+                    })}
+                </div>
+              )}
           </div>
         </div>
       </WrapperDialog>
