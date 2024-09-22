@@ -2,6 +2,8 @@
 import { getCommentWithPost, getDetailPost } from "@/apis/posts";
 import OptionButton from "@/components/buttons/OptionButton";
 import Comment from "@/components/comments/Comment";
+import MiniLoading from "@/components/common/loadings/MiniLoading";
+import MediaPostDetailMobile from "@/components/dialogs/posts/MediaPostDetailMobile";
 import MediasPostDetail from "@/components/dialogs/posts/MediasPostDetail";
 import WrapperDialog from "@/components/dialogs/WrapperDialog";
 import { IComment } from "@/configs/interface";
@@ -9,6 +11,8 @@ import { RootState } from "@/configs/types";
 import { reportReason } from "@/data/reason";
 import { useAppSelector } from "@/hooks/reduxHooks";
 import { contants } from "@/utils/constant";
+import { faFaceSmileWink } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar } from "@mui/material";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
@@ -93,7 +97,6 @@ export default function PostDetailDialog({
   const handleDeleteComment = () => {};
   const handleReply = () => {};
   const handleClickLike = () => {};
-  console.log("hello", rawComments?.data?.pages[0]?.data?.data.length);
 
   return (
     <>
@@ -185,8 +188,25 @@ export default function PostDetailDialog({
                         );
                       });
                     })}
+                  {rawComments.isFetching && (
+                    <MiniLoading
+                      color="#3E3771"
+                      className="w-full h-full flex items-center justify justify-center"
+                    />
+                  )}
                 </div>
               )}
+            {(!rawComments.data ||
+              (rawComments.data &&
+                rawComments.data.pages[0].data.data.length <= 0)) && (
+              <div className="px-8 hidden md:flex-1 w-full h-full sm:hidden md:flex gap-2 overflow-y-auto overflow-x-hidden scroll py-6 items-center">
+                <span className="text-center text-black-main">
+                  You are the first to comment on this article
+                </span>
+                <FontAwesomeIcon className="" icon={faFaceSmileWink} />
+              </div>
+            )}
+            <MediaPostDetailMobile images={images} />
           </div>
         </div>
       </WrapperDialog>
