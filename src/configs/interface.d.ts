@@ -170,3 +170,8 @@ export interface IComment {
   children: IComment[];
   owner: boolean;
 }
+export interface ICommentRequest {
+  uuid: string;
+  comment: string;
+  replyId: null | number;
+}
