@@ -1,9 +1,10 @@
 import axios from "../configs/axios";
-import { IParamsApiPostPage } from "@/configs/interface";
+import { ICommentRequest, IParamsApiPostPage } from "@/configs/interface";
 import {
   ApiCommentsWithPost,
   ApiDetailPost,
   ApiPostPage,
+  ApiPushCommentsWithPost,
 } from "@/configs/types";
 import Validate from "@/utils/validate";
 
@@ -59,6 +60,19 @@ export const getCommentWithPost: ApiCommentsWithPost = async (
     method: "GET",
     url: "comments/" + id,
     params,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const commentWittPost: ApiPushCommentsWithPost = async (
+  data: ICommentRequest
+) => {
+  const res = await axios({
+    method: "POST",
+    url: "user/comments",
+    data,
   });
 
   if (!res) return null;
