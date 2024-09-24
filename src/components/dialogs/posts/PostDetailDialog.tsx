@@ -252,6 +252,12 @@ export default function PostDetailDialog({
               </p>
             </div>
             {/* comments */}
+            {rawComments.isFetching && (
+              <MiniLoading
+                color="#3E3771"
+                className="w-full h-full flex items-center justify justify-center"
+              />
+            )}
             {rawComments.data &&
               rawComments.data.pages[0]?.data?.data.length > 0 && (
                 <div className="px-8 flex-1 w-full h-full hidden md:flex flex-col gap-2 overflow-y-auto overflow-x-hidden scroll py-6">
@@ -277,12 +283,6 @@ export default function PostDetailDialog({
                         );
                       });
                     })}
-                  {rawComments.isFetching && (
-                    <MiniLoading
-                      color="#3E3771"
-                      className="w-full h-full flex items-center justify justify-center"
-                    />
-                  )}
                 </div>
               )}
             {(!rawComments.data ||
