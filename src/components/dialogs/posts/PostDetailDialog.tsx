@@ -2,6 +2,7 @@
 import {
   commentWittPost,
   deleteCommentWittPost,
+  deletePost,
   getCommentWithPost,
   getDetailPost,
   likeComment,
@@ -137,7 +138,31 @@ export default function PostDetailDialog({
     return "https://www.facebook.com";
   }, [data]);
 
-  const handleDeletePost = () => {};
+  const handleDeletePost = async (reason?: string) => {
+    if (!user) return appService.handleNonLogin(pathName, router);
+    if (!data || !data.owner) return;
+
+    try {
+      const response = await deletePost(data.id as string);
+
+      if (!response) {
+        return toast.warn(contants.messages.errors.handle);
+      }
+
+      if (response.errors) {
+        return toast.warn(response.message);
+      }
+
+      setOpen(false);
+      toast.success("Your post has been successfully deleted");
+
+      // if (reason) {
+      //     firebaseService.publistDeleteOrReportPostsNotification(data, data.user, reason, 'delete');
+      // }
+    } catch (error) {
+      return toast.warn(contants.messages.errors.server);
+    }
+  };
   const handleEdit = () => {};
   const handleReportPost = () => {};
   const handleDeleteComment = async (data: IComment) => {
