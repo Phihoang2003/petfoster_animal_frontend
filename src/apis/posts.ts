@@ -114,3 +114,13 @@ export const likePost: ApiLikePostsWithPost = async (id: string) => {
 
   return res?.data;
 };
+export const deletePost: ApiDetailPost = async (id: string) => {
+  const res = await axios({
+    method: "DELETE",
+    url: "user/posts/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
