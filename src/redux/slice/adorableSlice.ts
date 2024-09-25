@@ -1,19 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface IInitAdorableProps {
-  openPostModel: boolean;
+  openPostModal: boolean;
 }
 const initState: IInitAdorableProps = {
-  openPostModel: false,
+  openPostModal: false,
 };
 export const adorable = createSlice({
   name: "adorable",
   initialState: initState,
   reducers: {
-    setOpenPostModel: (state, action: PayloadAction<boolean>) => {
-      state.openPostModel = action.payload;
+    setOpenPostModal: (state, action: PayloadAction<boolean>) => {
+      state.openPostModal = action.payload;
     },
   },
 });
-export const { setOpenPostModel } = adorable.actions;
+export const { setOpenPostModal } = adorable.actions;
 export default adorable.reducer;
