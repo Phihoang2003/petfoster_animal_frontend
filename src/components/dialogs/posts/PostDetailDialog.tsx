@@ -1,6 +1,7 @@
 "use client";
 import {
   commentWittPost,
+  deleteCommentWittPost,
   getCommentWithPost,
   getDetailPost,
   likeComment,
@@ -138,7 +139,27 @@ export default function PostDetailDialog({
   const handleDeletePost = () => {};
   const handleEdit = () => {};
   const handleReportPost = () => {};
-  const handleDeleteComment = () => {};
+  const handleDeleteComment = async (data: IComment) => {
+    if (!user) return appService.handleNonLogin(pathName, router);
+
+    if (!data.owner) return;
+
+    try {
+      const response = await deleteCommentWittPost(data.id);
+
+      if (!response) {
+        return toast.warn(contants.messages.errors.handle);
+      }
+
+      if (response.errors) {
+        return toast.warn(response.message);
+      }
+
+      rawComments.refetch();
+    } catch (error) {
+      return toast.warn(contants.messages.errors.server);
+    }
+  };
   const handleReply = async (data: IComment) => {
     if (!user) return appService.handleNonLogin(pathName, router);
     setReply(data);

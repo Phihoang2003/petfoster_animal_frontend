@@ -2,6 +2,7 @@ import axios from "../configs/axios";
 import { ICommentRequest, IParamsApiPostPage } from "@/configs/interface";
 import {
   ApiCommentsWithPost,
+  ApiDeleteCommentsWithPost,
   ApiDetailPost,
   ApiLikeCommentsWithPost,
   ApiPostPage,
@@ -84,6 +85,18 @@ export const likeComment: ApiLikeCommentsWithPost = async (id: number) => {
   const res = await axios({
     method: "PUT",
     url: "comments/like/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const deleteCommentWittPost: ApiDeleteCommentsWithPost = async (
+  id: number
+) => {
+  const res = await axios({
+    method: "DELETE",
+    url: "user/comments/" + id,
   });
 
   if (!res) return null;
