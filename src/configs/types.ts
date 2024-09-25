@@ -85,3 +85,6 @@ export type ApiPushCommentsWithPost = (
 export type ApiLikeCommentsWithPost = (
   id: number
 ) => Promise<IBaseResponse<IComment>>;
+export type ApiDeleteCommentsWithPost = (
+  id: number
+) => Promise<IBaseResponse<IComment>>;
