@@ -5,6 +5,7 @@ import {
   getCommentWithPost,
   getDetailPost,
   likeComment,
+  likePost,
 } from "@/apis/posts";
 import OptionButton from "@/components/buttons/OptionButton";
 import Comment from "@/components/comments/Comment";
@@ -178,7 +179,33 @@ export default function PostDetailDialog({
       return toast.warn(contants.messages.errors.server);
     }
   };
-  const handleLike = () => {};
+  const handleLike = async () => {
+    if (!user) return appService.handleNonLogin(pathName, router);
+
+    if (!data) return;
+    setLike((prev) => !prev);
+
+    try {
+      const response = await likePost(data.id as string);
+
+      if (!response) {
+        return toast.warn(contants.messages.errors.handle);
+      }
+
+      if (response.errors) {
+        return toast.warn(response.message);
+      }
+
+      // if (!data.owner && !data.isLike) {
+      //     firebaseService.publistPostsNotification(data, data.user, user, 'like');
+      // }
+
+      rawData.refetch();
+      setLike((prev) => !prev);
+    } catch (error) {
+      return toast.warn(contants.messages.errors.server);
+    }
+  };
   const handleSubmitComment = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user) return appService.handleNonLogin(pathName, router);

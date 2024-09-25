@@ -5,6 +5,7 @@ import {
   ApiDeleteCommentsWithPost,
   ApiDetailPost,
   ApiLikeCommentsWithPost,
+  ApiLikePostsWithPost,
   ApiPostPage,
   ApiPushCommentsWithPost,
 } from "@/configs/types";
@@ -97,6 +98,16 @@ export const deleteCommentWittPost: ApiDeleteCommentsWithPost = async (
   const res = await axios({
     method: "DELETE",
     url: "user/comments/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const likePost: ApiLikePostsWithPost = async (id: string) => {
+  const res = await axios({
+    method: "PUT",
+    url: "user/like-posts/" + id,
   });
 
   if (!res) return null;
