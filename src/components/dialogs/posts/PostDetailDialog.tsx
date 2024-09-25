@@ -3,6 +3,7 @@ import {
   commentWittPost,
   getCommentWithPost,
   getDetailPost,
+  likeComment,
 } from "@/apis/posts";
 import OptionButton from "@/components/buttons/OptionButton";
 import Comment from "@/components/comments/Comment";
@@ -138,8 +139,24 @@ export default function PostDetailDialog({
   const handleEdit = () => {};
   const handleReportPost = () => {};
   const handleDeleteComment = () => {};
-  const handleReply = () => {};
-  const handleClickLike = () => {};
+  const handleReply = async (data: IComment) => {
+    if (!user) return appService.handleNonLogin(pathName, router);
+    setReply(data);
+  };
+  const handleClickLike = async (dataComment: IComment) => {
+    if (!user) return appService.handleNonLogin(pathName, router);
+    try {
+      const response = await likeComment(dataComment.id);
+      if (!response) return toast.warn(contants.messages.errors.handle);
+      if (response.errors) return toast.warn(response.message);
+      //   if (!dataComment.owner && data && !dataComment.isLike) {
+      //     firebaseService.publistPostsNotification(data, dataComment.user, user, 'like-comment');
+      // }
+      rawComments.refetch();
+    } catch (error) {
+      return toast.warn(contants.messages.errors.server);
+    }
+  };
   const handleLike = () => {};
   const handleSubmitComment = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
