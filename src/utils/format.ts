@@ -1,3 +1,4 @@
+import { url } from "inspector";
 import moment from "moment";
 export const stringToUrl = (string: string) => {
   if (!string || string.length <= 0) return "";
@@ -37,4 +38,9 @@ export function toAbbrevNumber(n: number) {
 }
 export const secondsToMinute = (inp: number) => {
   return moment.utc(inp * 1000).format("mm:ss") + "";
+};
+export const fileToUrl = (file: File, callback?: (url: string) => void) => {
+  const urlObject = URL.createObjectURL(file);
+  if (callback) callback(urlObject);
+  return urlObject;
 };
