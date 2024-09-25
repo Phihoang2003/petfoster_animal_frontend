@@ -175,3 +175,9 @@ export interface ICommentRequest {
   comment: string;
   replyId: null | number;
 }
+export interface IMediasPrev {
+  id?: number;
+  link: string;
+  data: File | null;
+  isVideo: boolean;
+}
