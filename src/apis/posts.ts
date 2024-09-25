@@ -3,6 +3,7 @@ import { ICommentRequest, IParamsApiPostPage } from "@/configs/interface";
 import {
   ApiCommentsWithPost,
   ApiDetailPost,
+  ApiLikeCommentsWithPost,
   ApiPostPage,
   ApiPushCommentsWithPost,
 } from "@/configs/types";
@@ -73,6 +74,16 @@ export const commentWittPost: ApiPushCommentsWithPost = async (
     method: "POST",
     url: "user/comments",
     data,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const likeComment: ApiLikeCommentsWithPost = async (id: number) => {
+  const res = await axios({
+    method: "PUT",
+    url: "comments/like/" + id,
   });
 
   if (!res) return null;
