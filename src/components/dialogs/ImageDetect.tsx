@@ -4,7 +4,6 @@ import { detectService } from "@/services/detectService";
 import { contants } from "@/utils/constant";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { log } from "@tensorflow/tfjs-backend-cpu/dist/kernels/Log";
 import classNames from "classnames";
 import React, { memo, useCallback, useEffect, useState } from "react";
 
@@ -35,15 +34,18 @@ function ImageDetect({
       setLoading(false);
       return;
     }
+
     const imgData = await detectService.readImage(data.data);
 
     const imageElement = document.createElement("img");
 
     imageElement.src = imgData as string;
+
     imageElement.onload = async () => {
       const predictions = await detectService.detectObjectsOnImage(
         imageElement
       );
+
       const isAnimal = predictions.some((item) =>
         contants.acceptAnimals.includes(item.class)
       );
@@ -53,7 +55,6 @@ function ImageDetect({
         onDetected({ ...data, result: isAnimal, index });
       }
     };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   useEffect(() => {

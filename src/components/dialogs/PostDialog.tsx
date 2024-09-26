@@ -106,6 +106,14 @@ export default function PostDialog() {
     },
     [images]
   );
+  const onDetected = useCallback((result: IMediadetected) => {
+    if (!detectedArray.current.some((item) => item.index === result.index)) {
+      detectedArray.current = [...detectedArray.current, result];
+    }
+  }, []);
+
+  console.log("detectedArray", detectedArray.current);
+
   return (
     <WrapperDialog
       sx={{
@@ -208,9 +216,7 @@ export default function PostDialog() {
                       data={item}
                       index={index}
                       handleCloseImage={handleCloseImage}
-                      onDetected={(result) => {
-                        detectedArray.current.push(result);
-                      }}
+                      onDetected={onDetected}
                     />
                   );
                 })}
