@@ -91,3 +91,7 @@ export type ApiDeleteCommentsWithPost = (
 export type ApiLikePostsWithPost = (
   id: string
 ) => Promise<IBaseResponse<IComment>>;
+export type ImageType = {
+  link: string;
+  data: File | null;
+};
