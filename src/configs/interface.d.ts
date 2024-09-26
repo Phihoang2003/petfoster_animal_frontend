@@ -181,3 +181,7 @@ export interface IMediasPrev {
   data: File | null;
   isVideo: boolean;
 }
+export interface IMediadetected extends IMediasPrev {
+  result: boolean;
+  index: number;
+}
