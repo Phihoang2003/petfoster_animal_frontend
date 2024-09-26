@@ -3,7 +3,7 @@
 import WrapperAnimation from "@/components/animations/WrapperAnimation";
 import LoadingSecondary from "@/components/common/loadings/LoadingSecondary";
 import WrapperDialog from "@/components/dialogs/WrapperDialog";
-import { RootState } from "@/configs/types";
+import { ImageType, RootState } from "@/configs/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { setOpenPostModal } from "@/redux/slice/adorableSlice";
 import { contants } from "@/utils/constant";
@@ -13,12 +13,15 @@ import { useDropzone } from "react-dropzone";
 import React, { useCallback, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EmojiPicker from "@/components/common/inputs/EmojiPicker";
-import { faPhotoFilm } from "@fortawesome/free-solid-svg-icons";
-import { IMediasPrev } from "@/configs/interface";
+import { faPhotoFilm, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { IMediadetected, IMediasPrev } from "@/configs/interface";
 import { fileToUrl } from "@/utils/format";
+import ImageDetect from "@/components/dialogs/ImageDetect";
 
 export default function PostDialog() {
   const { user } = useAppSelector((state: RootState) => state.userReducer);
+  const dragImage = useRef(0);
+  const draggedOverImage = useRef(0);
   const { openPostModal } = useAppSelector(
     (state: RootState) => state.adorableReducer
   );
@@ -27,6 +30,7 @@ export default function PostDialog() {
   const [messageText, setMessageText] = useState("");
   const [messageMedias, setMessageMedias] = useState<string[]>([]);
   const [images, setImages] = useState<IMediasPrev[]>([]);
+  const detectedArray = useRef<IMediadetected[]>([]);
   const clearFileActive: string[] = [];
   const refInput = useRef<HTMLTextAreaElement>(null);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {};
@@ -53,9 +57,34 @@ export default function PostDialog() {
       setMessageMedias(["Only one video per post is accepted"]);
       return;
     }
+    const messages: string[] = [];
+
+    const visibleFiles = files.filter((item) => {
+      if (validateMedia(item)) {
+        messages.push(`${item.name} photo larger than 5MB`);
+      }
+      return !validateMedia(item);
+    });
+
+    const activeFiles = visibleFiles.map((item) => {
+      return {
+        data: item,
+        link: fileToUrl(item, (url) => {
+          clearFileActive?.push(url);
+        }),
+        isVideo: false,
+      } as IMediasPrev;
+    });
+
+    if (messages.length) {
+      setMessageMedias(messages);
+    }
+
+    setImages((prev) => [...prev, ...activeFiles]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   const validateMedia = (file: File) => {
     //  calculate bytes to megabytes
@@ -63,6 +92,20 @@ export default function PostDialog() {
       file.size / Math.pow(10, 6) > Number(process.env.NEXT_PUBLIC_MEDIAS_SIZE)
     );
   };
+  const handleSort = () => {};
+  const handleCloseImage = useCallback(
+    (image: ImageType, index: number) => {
+      images.splice(index, 1);
+      setImages([...images]);
+
+      if (detectedArray.current.length) {
+        detectedArray.current = detectedArray.current.filter(
+          (item) => item.index !== index
+        );
+      }
+    },
+    [images]
+  );
   return (
     <WrapperDialog
       sx={{
@@ -150,6 +193,43 @@ export default function PostDialog() {
                 );
               })}
             </ul>
+          )}
+          {/* preview medias and images */}
+          {images.length > 0 && (
+            <>
+              <div className="flex items-center gap-3 flex-wrap  mt-4">
+                {images.map((item, index) => {
+                  return (
+                    <ImageDetect
+                      key={item.link}
+                      onDragStart={() => (dragImage.current = index)}
+                      onDragEnter={() => (draggedOverImage.current = index)}
+                      onDragEnd={handleSort}
+                      data={item}
+                      index={index}
+                      handleCloseImage={handleCloseImage}
+                      onDetected={(result) => {
+                        detectedArray.current.push(result);
+                      }}
+                    />
+                  );
+                })}
+
+                {isDragActive && (
+                  <div className="w-20 mt-4 aspect-square rounded border-dashed border-2 border-gray-primary flex items-center justify-center text-2xl text-black-main">
+                    <FontAwesomeIcon icon={faPlus} />
+                  </div>
+                )}
+              </div>
+              {images.length > 1 && (
+                <ul className="text-gray-500 italic text-sm mt-3">
+                  <li>
+                    You can drag and drop to choose the display position for the
+                    article. By default the first image will be displayed
+                  </li>
+                </ul>
+              )}
+            </>
           )}
         </div>
       </form>
