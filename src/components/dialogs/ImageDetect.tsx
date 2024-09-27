@@ -58,6 +58,8 @@ function ImageDetect({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   useEffect(() => {
+    console.log("rerender");
+
     if (data.isVideo) {
       setLoading(false);
     }
@@ -65,6 +67,14 @@ function ImageDetect({
     handleLoad();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    console.log("Component mounted");
+    return () => console.log("Component will unmount");
+  }, []);
+
+  useEffect(() => {
+    console.log("Data changed", data);
+  }, [data]);
   return (
     <div className="flex flex-col gap-1 items-center">
       <div

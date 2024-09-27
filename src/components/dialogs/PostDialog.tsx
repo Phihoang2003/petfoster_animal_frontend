@@ -112,8 +112,6 @@ export default function PostDialog() {
     }
   }, []);
 
-  console.log("detectedArray", detectedArray.current);
-
   return (
     <WrapperDialog
       sx={{
