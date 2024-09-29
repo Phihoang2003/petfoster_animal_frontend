@@ -185,3 +185,7 @@ export interface IMediadetected extends IMediasPrev {
   result: boolean;
   index: number;
 }
+export interface IPostRequest {
+  title: string;
+  medias: IMediasPrev[];
+}
