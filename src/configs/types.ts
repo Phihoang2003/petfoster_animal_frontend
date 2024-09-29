@@ -7,6 +7,7 @@ import {
   IPetAttribute,
   IPost,
   IPostDetail,
+  IPostRequest,
   IProfile,
   IRequestFilterPet,
   ISearchItem,
@@ -95,3 +96,6 @@ export type ImageType = {
   link: string;
   data: File | null;
 };
+export type ApiCreatePost = (
+  data: IPostRequest
+) => Promise<IBaseResponse<IPostDetail>>;
