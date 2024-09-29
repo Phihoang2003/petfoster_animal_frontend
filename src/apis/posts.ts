@@ -1,7 +1,12 @@
 import axios from "../configs/axios";
-import { ICommentRequest, IParamsApiPostPage } from "@/configs/interface";
+import {
+  ICommentRequest,
+  IParamsApiPostPage,
+  IPostRequest,
+} from "@/configs/interface";
 import {
   ApiCommentsWithPost,
+  ApiCreatePost,
   ApiDeleteCommentsWithPost,
   ApiDetailPost,
   ApiLikeCommentsWithPost,
@@ -118,6 +123,28 @@ export const deletePost: ApiDetailPost = async (id: string) => {
   const res = await axios({
     method: "DELETE",
     url: "user/posts/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const createPost: ApiCreatePost = async (data: IPostRequest) => {
+  const formData = new FormData();
+  formData.append("title", data.title);
+  data.medias.forEach((item, index) => {
+    if (item.data) {
+      formData.append(`medias[${index}].index`, index + "");
+      formData.append(`medias[${index}].file`, item.data);
+    }
+  });
+  const res = await axios({
+    method: "POST",
+    url: "user/posts",
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+    data: formData,
   });
 
   if (!res) return null;
