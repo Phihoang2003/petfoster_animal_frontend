@@ -10,7 +10,7 @@ import { contants } from "@/utils/constant";
 import Validate from "@/utils/validate";
 import { Avatar } from "@mui/material";
 import { useDropzone } from "react-dropzone";
-import React, { useCallback, useRef, useState } from "react";
+import React, { FormEvent, useCallback, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EmojiPicker from "@/components/common/inputs/EmojiPicker";
 import { faPhotoFilm, faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -18,6 +18,12 @@ import { IMediadetected, IMediasPrev } from "@/configs/interface";
 import { fileToUrl } from "@/utils/format";
 import ImageDetect from "@/components/dialogs/ImageDetect";
 import { EmojiClickData } from "emoji-picker-react";
+import { createPost } from "@/apis/posts";
+import { toast } from "react-toastify";
+import Link from "next/link";
+import { links } from "@/data/links";
+import PrimaryPostButton from "@/components/buttons/PrimaryPostButton";
+import { useRouter } from "next/navigation";
 
 export default function PostDialog() {
   const { user } = useAppSelector((state: RootState) => state.userReducer);
@@ -155,10 +161,46 @@ export default function PostDialog() {
       media.length > 0
     )
       return true;
-
     return false;
   };
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {};
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (validate()) return;
+
+    try {
+      if (!refInput.current) return;
+      setLoadingForm(true);
+      const response = await createPost({
+        title: refInput.current.value,
+        medias: images,
+      });
+
+      if (!response) return toast.warn(contants.messages.errors.handle);
+
+      if (response.errors) return toast.warn(response.message);
+
+      toast.success(
+        <span className="">
+          <span>Your article has been uploaded successfully.</span>
+          <Link
+            className=" text-blue-primary hover:underline ml-1"
+            href={links.adorables.index + `?uuid=${response.data.id}&open=auto`}
+          >
+            Now everyone can see your posts
+          </Link>
+        </span>
+      );
+
+      requestIdleCallback(() => {
+        dispatch(setOpenPostModal(false));
+      });
+    } catch (error) {
+      toast.warn(contants.messages.errors.server);
+    } finally {
+      setLoadingForm(false);
+    }
+  };
   return (
     <WrapperDialog
       sx={{
@@ -282,6 +324,14 @@ export default function PostDialog() {
               )}
             </>
           )}
+        </div>
+        <div className="flex items-center justify-center mt-5">
+          <PrimaryPostButton
+            title="Post"
+            variant="circle-fill"
+            size="sm"
+            className="uppercase"
+          />
         </div>
       </form>
     </WrapperDialog>
