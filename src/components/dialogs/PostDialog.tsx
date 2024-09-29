@@ -23,7 +23,7 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 import { links } from "@/data/links";
 import PrimaryPostButton from "@/components/buttons/PrimaryPostButton";
-import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function PostDialog() {
   const { user } = useAppSelector((state: RootState) => state.userReducer);
@@ -33,6 +33,7 @@ export default function PostDialog() {
     (state: RootState) => state.adorableReducer
   );
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
   const [loadingForm, setLoadingForm] = useState(false);
   const [messageText, setMessageText] = useState("");
   const [messageMedias, setMessageMedias] = useState<string[]>([]);
@@ -195,6 +196,7 @@ export default function PostDialog() {
       requestIdleCallback(() => {
         dispatch(setOpenPostModal(false));
       });
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     } catch (error) {
       toast.warn(contants.messages.errors.server);
     } finally {
