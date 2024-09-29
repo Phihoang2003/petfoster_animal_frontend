@@ -17,6 +17,7 @@ import { faPhotoFilm, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { IMediadetected, IMediasPrev } from "@/configs/interface";
 import { fileToUrl } from "@/utils/format";
 import ImageDetect from "@/components/dialogs/ImageDetect";
+import { EmojiClickData } from "emoji-picker-react";
 
 export default function PostDialog() {
   const { user } = useAppSelector((state: RootState) => state.userReducer);
@@ -33,8 +34,11 @@ export default function PostDialog() {
   const detectedArray = useRef<IMediadetected[]>([]);
   const clearFileActive: string[] = [];
   const refInput = useRef<HTMLTextAreaElement>(null);
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {};
-  const handleAddIcon = () => {};
+  const handleAddIcon = (emojiObject: EmojiClickData, event: MouseEvent) => {
+    if (!refInput.current) return;
+
+    refInput.current.value += emojiObject.emoji;
+  };
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const files = acceptedFiles;
     if (!files || !files.length) return;
@@ -92,7 +96,13 @@ export default function PostDialog() {
       file.size / Math.pow(10, 6) > Number(process.env.NEXT_PUBLIC_MEDIAS_SIZE)
     );
   };
-  const handleSort = () => {};
+  const handleSort = () => {
+    const imageClone = [...images];
+    const temp = imageClone[dragImage.current];
+    imageClone[dragImage.current] = imageClone[draggedOverImage.current];
+    imageClone[draggedOverImage.current] = temp;
+    setImages(imageClone);
+  };
   const handleCloseImage = useCallback(
     (image: ImageType, index: number) => {
       images.splice(index, 1);
@@ -111,7 +121,44 @@ export default function PostDialog() {
       detectedArray.current = [...detectedArray.current, result];
     }
   }, []);
+  const validate = () => {
+    let text = null;
+    let media: string[] = [];
+    if (!refInput.current) return;
+    if (Validate.isBlank(refInput.current.value || "")) {
+      console.log("valdate text");
+      text = "Please write something for your article";
+      setMessageText(text);
+    } else {
+      setMessageText("");
+    }
+    if (!images.length) {
+      media = ["The post must have at least one photo or only one video"];
+    }
+    if (detectedArray.current.some((item) => !item.result)) {
+      media.push(
+        "Inappropriate images. Only images that contain are accepted " +
+          contants.acceptAnimals.join(", ")
+      );
+    }
+    if (media) {
+      setMessageMedias(media);
+    } else {
+      media = [];
+      setMessageMedias([]);
+    }
 
+    if (
+      text ||
+      !Validate.isBlank(text || "") ||
+      !Validate.isBlank(messageText) ||
+      media.length > 0
+    )
+      return true;
+
+    return false;
+  };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {};
   return (
     <WrapperDialog
       sx={{
