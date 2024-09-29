@@ -5,6 +5,7 @@ import {
   deletePost,
   getCommentWithPost,
   getDetailPost,
+  getPosts,
   likeComment,
   likePost,
 } from "@/apis/posts";
@@ -144,6 +145,7 @@ export default function PostDetailDialog({
 
     try {
       const response = await deletePost(data.id as string);
+      console.log(response);
 
       if (!response) {
         return toast.warn(contants.messages.errors.handle);
@@ -155,7 +157,7 @@ export default function PostDetailDialog({
 
       setOpen(false);
       toast.success("Your post has been successfully deleted");
-
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
       // if (reason) {
       //     firebaseService.publistDeleteOrReportPostsNotification(data, data.user, reason, 'delete');
       // }
