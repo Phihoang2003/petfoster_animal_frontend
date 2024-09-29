@@ -1,4 +1,3 @@
-import "@tensorflow/tfjs-backend-cpu";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 
 const detectObjectsOnImage = async (imageElement: HTMLImageElement) => {
