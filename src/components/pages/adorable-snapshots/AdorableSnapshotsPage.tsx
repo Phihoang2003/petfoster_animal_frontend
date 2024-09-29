@@ -3,14 +3,35 @@ import BoxPost from "@/components/boxs/posts/BoxPost";
 import InfinityPosts from "@/components/boxs/posts/InfinityPosts";
 import PrimaryPostButton from "@/components/buttons/PrimaryPostButton";
 import SearchInput from "@/components/common/inputs/SearchInput";
+import PostDetailDialog from "@/components/dialogs/posts/PostDetailDialog";
+import { RootState } from "@/configs/types";
 import { links } from "@/data/links";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { setOpenPostModal } from "@/redux/slice/adorableSlice";
+import { appService } from "@/services/appService";
+import { usePathname, useRouter } from "next/navigation";
+import { useQueryState } from "nuqs";
+import React, { useEffect, useState } from "react";
 
 export default function AdorableSnapshotsPage() {
   const [search, setSearch] = useState("");
   const router = useRouter();
-  const handleOpenPostModal = () => {};
+  const pathname = usePathname();
+  const [uuid, setUuid] = useQueryState("uuid");
+  const [autoOpen, setAutoOpen] = useQueryState("open");
+  const dispatch = useAppDispatch();
+  const [autoOpenPostDetail, setAutoOpenPostDetail] = useState(false);
+  const { user } = useAppSelector((state: RootState) => state.userReducer);
+  const handleOpenPostModal = () => {
+    if (!user) return appService.handleNonLogin(pathname, router);
+    dispatch(setOpenPostModal(true));
+  };
+  useEffect(() => {
+    if (uuid && !autoOpenPostDetail && autoOpen === "auto") {
+      setAutoOpenPostDetail(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uuid]);
   return (
     <div className="pt-12">
       <div className="flex flex-col md:flex-row md:gap-0 gap-5 items-center justify-between mb-10">
@@ -45,6 +66,18 @@ export default function AdorableSnapshotsPage() {
       <BoxPost title="OTHER POSTS" className="mt-20">
         <InfinityPosts />
       </BoxPost>
+
+      {autoOpenPostDetail && (
+        <PostDetailDialog
+          open={autoOpenPostDetail}
+          setOpen={setAutoOpenPostDetail}
+          onClose={() => {
+            setUuid(null);
+            setAutoOpen(null);
+            setAutoOpenPostDetail(false);
+          }}
+        />
+      )}
     </div>
   );
 }
