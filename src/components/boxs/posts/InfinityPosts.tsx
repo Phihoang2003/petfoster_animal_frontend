@@ -10,26 +10,18 @@ import { delay } from "@/utils/functionals";
 import { faCircleCheck, faFaceSadCry } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Box, Grid2, Skeleton } from "@mui/material";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import { usePathname, useSearchParams } from "next/navigation";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 
 export default function InfinityPosts() {
-  const [loading, setLoading] = useState(false);
   const [rendering, setRendering] = useState(true);
-  const refCountPage = useRef<number>(1);
-  const [posts, setPosts] = useState<IPost[]>([]);
-  const [hasNextPage, setHasNextPage] = useState(true);
   const pathName = usePathname();
   const searchParam = useSearchParams();
   const search = searchParam.get("q");
   const skeletonCount = 8;
+  const intObserver = useRef<IntersectionObserver | null>(null);
   const searchQueries = useMemo(() => {
     if (pathName !== links.adorables.search) return undefined;
 
@@ -37,96 +29,117 @@ export default function InfinityPosts() {
       return search;
     }
   }, [pathName, search]);
-  const fetchPosts = useCallback(async (page = 0, search?: string) => {
-    setLoading(true);
-    await delay(800);
-    const res = await getPosts({ page, search });
-    if (!res || res.errors) {
-      setLoading(false);
+  const rawPosts = useInfiniteQuery({
+    queryKey: ["posts"],
+    queryFn: async ({ pageParam = 1 }) => {
+      const result = await getPosts({ page: pageParam, search: searchQueries });
       setRendering(false);
-      setHasNextPage(false);
-      return [];
-    }
+      return result;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any, allPage) => {
+      return lastPage?.data?.data.length ? allPage.length + 1 : undefined;
+    },
+  });
+  const lastPostRef = useCallback(
+    (post: any) => {
+      if (rawPosts.isFetchingNextPage) {
+        setRendering(true);
+        return;
+      }
 
-    const data = res.data;
+      if (intObserver.current) intObserver.current.disconnect();
 
-    if (page >= data.pages) setHasNextPage(false);
-    setLoading(false);
-    setRendering(false);
-    return data.data;
-  }, []);
-  const lastPostRef = useIntersectionObserver<HTMLDivElement>(() => {
-    refCountPage.current++;
-    fetchPosts(refCountPage.current).then((newPosts) => {
-      setPosts((prev) => [...prev, ...newPosts]);
-    });
-  }, [hasNextPage, !loading]);
-  useEffect(() => {
-    setRendering(true);
-    if (searchQueries) {
-      fetchPosts(refCountPage.current, searchQueries).then((newPosts) =>
-        setPosts((posts) => [...newPosts])
-      );
-      return;
-    }
+      intObserver.current = new IntersectionObserver((posts) => {
+        if (posts[0].isIntersecting && rawPosts.hasNextPage) {
+          rawPosts.fetchNextPage();
+        }
+      });
 
-    fetchPosts().then(setPosts);
-  }, [fetchPosts, searchQueries]);
+      if (post) intObserver.current.observe(post);
+    },
+    [rawPosts]
+  );
+
+  const data = useMemo(() => {
+    if (rawPosts.isError || !rawPosts.data) return null;
+    return rawPosts?.data;
+  }, [rawPosts]);
 
   return (
     <>
-      <div
-        className={classNames("grid", {
-          "lg:grid-cols-4 gap-4 py-4": true,
-          "md:grid-cols-3": true,
-        })}
-      >
-        {rendering
-          ? Array.from({ length: skeletonCount }).map((_, index) => (
-              <Box key={index} sx={{ width: 210, marginRight: 0.5, my: 5 }}>
-                <Box sx={{ pt: 0.5 }}>
-                  <SkeletonAnimation
-                    variant="rectangular"
-                    width="300px"
-                    height="160px"
-                  />
-                  <SkeletonAnimation width="100%" sx={{ mt: 1 }} />
-                  <SkeletonAnimation width="60%" sx={{ mt: 1 }} />
-                </Box>
+      {rendering ? (
+        <div
+          className={classNames("grid", {
+            "lg:grid-cols-4 gap-4 py-4": true,
+            "md:grid-cols-3": true,
+          })}
+        >
+          {Array.from({ length: skeletonCount }).map((_, index) => (
+            <Box key={index} sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+              <Box sx={{ pt: 0.5 }}>
+                <SkeletonAnimation
+                  variant="rectangular"
+                  width="300px"
+                  height="160px"
+                />
+                <SkeletonAnimation width="100%" sx={{ mt: 1 }} />
+                <SkeletonAnimation width="60%" sx={{ mt: 1 }} />
               </Box>
-            ))
-          : posts.map((item, index) => (
-              <div
-                key={index}
-                ref={posts.length - 1 === index ? lastPostRef : null}
-              >
-                <Post variant="rounded" data={item} />
-              </div>
-            ))}
-      </div>
-      {!hasNextPage && posts.length > 0 && (
-        <div className="flex items-center justify-center py-10 overflow-hidden flex-col gap-2 border-2 border-green-600 rounded-xl mb-10 mt-5">
-          <FontAwesomeIcon
-            className="text-green-600 text-4xl"
-            icon={faCircleCheck}
-          />
-          <span className="text-black-main font-medium">
-            All the latest bulletin boards have been loaded
-          </span>
+            </Box>
+          ))}
         </div>
+      ) : (
+        data?.pages[0]?.data?.data.length > 0 && (
+          <div
+            className={classNames("grid", {
+              "lg:grid-cols-4 gap-4 py-4": true,
+              "md:grid-cols-3": true,
+            })}
+          >
+            {!rawPosts.isLoading &&
+              data &&
+              data.pages.map((item) => {
+                return item.data.data.map((i: IPost) => {
+                  return (
+                    <div key={i.id} ref={lastPostRef}>
+                      <Post variant="rounded" data={i} />
+                    </div>
+                  );
+                });
+              })}
+          </div>
+        )
       )}
-      {!hasNextPage && posts.length <= 0 && searchQueries && (
-        <div className="flex items-center justify-center py-10 overflow-hidden flex-col gap-2 border-2 border-green-600 rounded-xl mb-10 mt-5">
-          <FontAwesomeIcon
-            className="text-green-600 text-4xl"
-            icon={faFaceSadCry}
-          />
-          <span className="text-black-main font-medium">
-            There are no results matching the keyword &quot;{searchQueries}
-            &ldquo;
-          </span>
-        </div>
-      )}
+
+      {!rawPosts.hasNextPage &&
+        data &&
+        data.pages[0]?.data?.data.length > 0 && (
+          <div className="flex items-center justify-center py-10 overflow-hidden flex-col gap-2 border-2 border-green-600 rounded-xl mb-10 mt-5">
+            <FontAwesomeIcon
+              className="text-green-600 text-4xl"
+              icon={faCircleCheck}
+            />
+            <span className="text-black-main font-medium">
+              All the latest bulletin boards have been loaded
+            </span>
+          </div>
+        )}
+      {!rawPosts.hasNextPage &&
+        data &&
+        data.pages[0]?.data?.data.length <= 0 &&
+        searchQueries && (
+          <div className="flex items-center justify-center py-10 overflow-hidden flex-col gap-2 border-2 border-green-600 rounded-xl mb-10 mt-5">
+            <FontAwesomeIcon
+              className="text-green-600 text-4xl"
+              icon={faFaceSadCry}
+            />
+            <span className="text-black-main font-medium">
+              There are no results matching the keyword &quot;{searchQueries}
+              &ldquo;
+            </span>
+          </div>
+        )}
     </>
   );
 }
