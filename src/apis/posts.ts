@@ -8,11 +8,14 @@ import {
   ApiCommentsWithPost,
   ApiCreatePost,
   ApiDeleteCommentsWithPost,
+  ApiDeleteImage,
   ApiDetailPost,
+  ApiHightlightPostPage,
   ApiLikeCommentsWithPost,
   ApiLikePostsWithPost,
   ApiPostPage,
   ApiPushCommentsWithPost,
+  ApiUpdatePost,
 } from "@/configs/types";
 import Validate from "@/utils/validate";
 
@@ -145,6 +148,92 @@ export const createPost: ApiCreatePost = async (data: IPostRequest) => {
       "content-type": "multipart/form-data",
     },
     data: formData,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const hightlightOfUserPost: ApiHightlightPostPage = async (
+  data: IParamsApiPostPage
+) => {
+  if (!data.username) return null;
+
+  const res = await axios({
+    method: "GET",
+    url: "posts/highlight/" + data.username,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const deleteImagePost: ApiDeleteImage = async (id: number) => {
+  const res = await axios({
+    method: "DELETE",
+    url: "user/posts/image/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const updatePost: ApiUpdatePost = async (
+  data: IPostRequest,
+  id: string
+) => {
+  const formData = new FormData();
+
+  formData.append("title", data.title);
+
+  data.medias.forEach((item, index) => {
+    if (item.id) {
+      formData.append(`medias[${index}].id`, item.id + "");
+    }
+    formData.append(`medias[${index}].index`, index + "");
+    formData.append(
+      `medias[${index}].file`,
+      item.data || new File(["empty"], "foo.txt")
+    );
+  });
+
+  const res = await axios({
+    method: "PUT",
+    url: "user/posts/" + id,
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+    data: formData,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const getPostsOfUser: ApiPostPage = async (
+  prevParams: IParamsApiPostPage
+) => {
+  if (!prevParams.username) return null;
+
+  const params: { page?: number; type?: string } = {};
+
+  if (prevParams.page && Validate.isNumber(prevParams.page + "")) {
+    params.page = Number(prevParams.page) - 1;
+  } else {
+    if (params.page || params.type) {
+      delete params.page;
+    }
+  }
+  params.type = prevParams.type;
+
+  const res = await axios({
+    method: "GET",
+    url: "posts/" + prevParams.username,
+    params: {
+      ...params,
+      type: params.type ? params.type : "posts",
+    },
   });
 
   if (!res) return null;
