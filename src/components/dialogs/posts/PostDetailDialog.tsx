@@ -59,6 +59,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Validate from "@/utils/validate";
 import { toast } from "react-toastify";
 import { EmojiClickData } from "emoji-picker-react";
+import { links } from "@/data/links";
 
 export interface IPostDetailDialogProps {
   open: boolean;
@@ -165,7 +166,20 @@ export default function PostDetailDialog({
       return toast.warn(contants.messages.errors.server);
     }
   };
-  const handleEdit = () => {};
+  const handleEdit = () => {
+    if (!user) return appService.handleNonLogin(pathName, router);
+    if (!data) return;
+
+    setOpen(false);
+    router.push(
+      links.users.profiles.personalpage +
+        `/${user.username}?post-id=${data?.id}`
+    );
+  };
+
+  if (!data) {
+    return;
+  }
   const handleReportPost = () => {};
   const handleDeleteComment = async (data: IComment) => {
     if (!user) return appService.handleNonLogin(pathName, router);
