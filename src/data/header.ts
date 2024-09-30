@@ -30,3 +30,12 @@ export const listProfile = [
     icon: faRightFromBracket,
   },
 ] as MenuHeaderType[];
+
+export const listTabsPostProfile = [
+  {
+    title: "Posts",
+  },
+  {
+    title: "Likes",
+  },
+];
