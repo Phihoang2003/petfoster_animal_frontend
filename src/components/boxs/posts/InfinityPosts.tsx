@@ -1,5 +1,5 @@
 "use client";
-import { getPosts } from "@/apis/posts";
+import { getPosts, getPostsOfUser } from "@/apis/posts";
 import SkeletonAnimation from "@/components/animations/SkeletonAnimation";
 import LoadingSecondary from "@/components/common/loadings/LoadingSecondary";
 import Post from "@/components/pages/posts/Post";
@@ -13,9 +13,18 @@ import { Box, Grid2, Skeleton } from "@mui/material";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import { usePathname, useSearchParams } from "next/navigation";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-
-export default function InfinityPosts() {
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+export interface IInfinityPostsProps {
+  type?: string;
+  username?: string;
+}
+export default function InfinityPosts({ type, username }: IInfinityPostsProps) {
   const [rendering, setRendering] = useState(true);
   const pathName = usePathname();
   const searchParam = useSearchParams();
@@ -32,15 +41,26 @@ export default function InfinityPosts() {
   const rawPosts = useInfiniteQuery({
     queryKey: ["posts"],
     queryFn: async ({ pageParam = 1 }) => {
-      const result = await getPosts({ page: pageParam, search: searchQueries });
-      setRendering(false);
-      return result;
+      if (!type || !username) {
+        return await getPosts({ page: pageParam, search: searchQueries });
+      } else {
+        return await getPostsOfUser({
+          page: pageParam,
+          type,
+          username,
+        });
+      }
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage: any, allPage) => {
       return lastPage?.data?.data.length ? allPage.length + 1 : undefined;
     },
   });
+  useEffect(() => {
+    if (!rawPosts.isLoading && !rawPosts.isFetching) {
+      setRendering(false);
+    }
+  }, [rawPosts.isLoading, rawPosts.isFetching]);
   const lastPostRef = useCallback(
     (post: any) => {
       if (rawPosts.isFetchingNextPage) {
