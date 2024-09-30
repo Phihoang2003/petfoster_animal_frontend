@@ -2,6 +2,7 @@ import {
   IBaseResponse,
   IComment,
   ICommentRequest,
+  IImagePost,
   IParamsApiPostPage,
   IPet,
   IPetAttribute,
@@ -98,4 +99,16 @@ export type ImageType = {
 };
 export type ApiCreatePost = (
   data: IPostRequest
+) => Promise<IBaseResponse<IPostDetail>>;
+
+export type ApiHightlightPostPage = (
+  params: IParamsApiPostPage
+) => Promise<IBaseResponse<IPost[]>>;
+export type ApiGetCurUserWithUsername = (
+  username: string
+) => Promise<IBaseResponse<IProfile>>;
+export type ApiDeleteImage = (id: number) => Promise<IBaseResponse<IImagePost>>;
+export type ApiUpdatePost = (
+  data: IPostRequest,
+  id: string
 ) => Promise<IBaseResponse<IPostDetail>>;
