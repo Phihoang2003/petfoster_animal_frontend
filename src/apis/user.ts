@@ -1,6 +1,7 @@
 import {
   ApiActionSearchHistories,
   ApiGetCurUser,
+  ApiGetCurUserWithUsername,
   ApiGetSearchHistories,
   ApiLogin,
   ApiRefreshVerifyCode,
@@ -111,6 +112,19 @@ export const deleteSearchHistories: ApiActionSearchHistories = async (
       "content-type": "multipart/form-data",
     },
     data: form,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const getUserWithUsername: ApiGetCurUserWithUsername = async (
+  username: string
+) => {
+  const res = await axios({
+    method: "GET",
+    url: "user/profile/" + username,
   });
 
   if (!res) return null;
