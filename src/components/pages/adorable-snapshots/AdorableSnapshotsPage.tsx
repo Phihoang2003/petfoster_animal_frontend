@@ -1,5 +1,7 @@
 "use client";
+import { hightlightOfUserPost, hightlightPost } from "@/apis/posts";
 import BoxPost from "@/components/boxs/posts/BoxPost";
+import BoxPostHighlight from "@/components/boxs/posts/BoxPostHighlight";
 import InfinityPosts from "@/components/boxs/posts/InfinityPosts";
 import PrimaryPostButton from "@/components/buttons/PrimaryPostButton";
 import SearchInput from "@/components/common/inputs/SearchInput";
@@ -9,9 +11,10 @@ import { links } from "@/data/links";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { setOpenPostModal } from "@/redux/slice/adorableSlice";
 import { appService } from "@/services/appService";
-import { usePathname, useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { notFound, usePathname, useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 export default function AdorableSnapshotsPage() {
   const [search, setSearch] = useState("");
@@ -26,6 +29,21 @@ export default function AdorableSnapshotsPage() {
     if (!user) return appService.handleNonLogin(pathname, router);
     dispatch(setOpenPostModal(true));
   };
+  const rawData = useQuery({
+    queryKey: ["boxPostHighlight"],
+    queryFn: () => {
+      return hightlightPost({});
+    },
+  });
+
+  const data = useMemo(() => {
+    if (rawData.data?.errors || !rawData.data?.data) return [];
+
+    return rawData.data.data;
+  }, [rawData]);
+  if (rawData.isError || rawData.data?.errors) {
+    notFound();
+  }
   useEffect(() => {
     if (uuid && !autoOpenPostDetail && autoOpen === "auto") {
       setAutoOpenPostDetail(true);
@@ -62,7 +80,7 @@ export default function AdorableSnapshotsPage() {
           />
         </form>
       </div>
-      {/* <BoxPostHighlight data={data} title="HIGHLIGHT POSTS" /> */}
+      <BoxPostHighlight data={data} title="HIGHLIGHT POSTS" />
       <BoxPost title="OTHER POSTS" className="mt-20">
         <InfinityPosts />
       </BoxPost>

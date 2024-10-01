@@ -479,7 +479,6 @@ function UpdatePostDialog({ open, setOpen, onClose }: IUpdatePostDialogProps) {
                         showClose: (() => {
                           if (item.id && images.filter((i) => i.id).length <= 1)
                             return false;
-
                           return true;
                         })(),
                       }}
