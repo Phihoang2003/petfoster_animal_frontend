@@ -180,7 +180,15 @@ export default function PostDetailDialog({
   if (!data) {
     return;
   }
-  const handleReportPost = () => {};
+  const handleClear = () => {
+    setOpen(false);
+  };
+  const handleReportPost = (reason?: string) => {
+    if (!reason || !data || !user) return;
+    // firebaseService.publistDeleteOrReportPostsNotification(data, user, reason, 'report');
+
+    handleClear();
+  };
   const handleDeleteComment = async (data: IComment) => {
     if (!user) return appService.handleNonLogin(pathName, router);
 
