@@ -12,8 +12,8 @@ import { useQueryState } from "nuqs";
 import { getUserWithUsername } from "@/apis/user";
 import { contants } from "@/utils/constant";
 import UpdatePostDialog from "@/components/dialogs/posts/UpdatePostDialog";
-import InfinityProfilePosts from "@/components/boxs/posts/InfinityProfilePost";
 import InfinityPosts from "@/components/boxs/posts/InfinityPosts";
+import BoxPostHighlight from "@/components/boxs/posts/BoxPostHighlight";
 
 export interface IAdorableSnapshotsProfilePageProps {
   id: string;
@@ -30,17 +30,13 @@ export default function AdorableSnapshotsProfilePage({
   const [openEdit, setOpenEdit] = useState(false);
 
   const [idPost, setIdPost] = useQueryState("post-id");
-  const [clientRendered, setClientRendered] = useState(false);
-  useEffect(() => {
-    setClientRendered(true);
-  }, []);
 
-  //   const rawData = useQuery({
-  //     queryKey: ["hightlightOfUserPost", id],
-  //     queryFn: () => {
-  //       return hightlightOfUserPost({ username: id });
-  //     },
-  //   });
+  const rawData = useQuery({
+    queryKey: ["hightlightOfUserPost", id],
+    queryFn: () => {
+      return hightlightOfUserPost({ username: id });
+    },
+  });
 
   const profileData = useQuery({
     queryKey: ["profile-data", id],
@@ -49,15 +45,15 @@ export default function AdorableSnapshotsProfilePage({
     },
   });
 
-  //   if (rawData.isError || rawData.data?.errors) {
-  //     notFound();
-  //   }
+  if (rawData.isError || rawData.data?.errors) {
+    notFound();
+  }
 
-  //   const data = useMemo(() => {
-  //     if (rawData.data?.errors || !rawData.data?.data) return [];
+  const data = useMemo(() => {
+    if (rawData.data?.errors || !rawData.data?.data) return [];
 
-  //     return rawData.data.data;
-  //   }, [rawData]);
+    return rawData.data.data;
+  }, [rawData]);
 
   const dataUser = useMemo(() => {
     if (!id) return;
@@ -113,7 +109,13 @@ export default function AdorableSnapshotsProfilePage({
       </div>
 
       {/* hightlight */}
-      {/* {data && data.length > 0 && <BoxPostHighlight data={data} options={{ captialize: false, tracking: 'tracking-wide' }} title="Highlight" />} */}
+      {data && data.length > 0 && (
+        <BoxPostHighlight
+          data={data}
+          options={{ captialize: false, tracking: "tracking-wide" }}
+          title="Highlight"
+        />
+      )}
 
       <div className="my-16 w-full flex flex-col gap-6">
         {dataTabs && (
