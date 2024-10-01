@@ -240,3 +240,13 @@ export const getPostsOfUser: ApiPostPage = async (
 
   return res?.data;
 };
+export const hightlightPost: ApiHightlightPostPage = async () => {
+  const res = await axios({
+    method: "GET",
+    url: "posts/highlight",
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
