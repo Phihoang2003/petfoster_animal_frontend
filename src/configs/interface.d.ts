@@ -196,3 +196,20 @@ export interface IImagePost {
   url: string;
   isVideo: boolean;
 }
+export interface IApiTakeAction {
+  newArrivals: IProduct[];
+}
+export interface IDetailProduct {
+  id: string;
+  brand: string;
+  discount: number;
+  image: string;
+  name: string;
+  rating: number;
+  images: string[];
+  desciption: string;
+  sizeAndPrice: SizeAndPrice[];
+  suggestions: IProduct[];
+  reviews: number;
+  reviewItems: IReviewHasReplay[];
+}
