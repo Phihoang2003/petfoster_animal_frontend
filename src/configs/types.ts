@@ -1,7 +1,9 @@
 import {
+  IApiTakeAction,
   IBaseResponse,
   IComment,
   ICommentRequest,
+  IDetailProduct,
   IImagePost,
   IParamsApiPostPage,
   IPet,
@@ -112,3 +114,8 @@ export type ApiUpdatePost = (
   data: IPostRequest,
   id: string
 ) => Promise<IBaseResponse<IPostDetail>>;
+
+export type ApiTakeActionType = () => Promise<IBaseResponse<IApiTakeAction>>;
+export type ApiDetailProductType = (
+  idProduct: string
+) => Promise<IBaseResponse<IDetailProduct>>;
