@@ -1,7 +1,16 @@
 import {
+  IApiTakeAction,
   IBaseResponse,
+  IComment,
+  ICommentRequest,
+  IDetailProduct,
+  IImagePost,
+  IParamsApiPostPage,
   IPet,
   IPetAttribute,
+  IPost,
+  IPostDetail,
+  IPostRequest,
   IProfile,
   IRequestFilterPet,
   ISearchItem,
@@ -63,3 +72,50 @@ export type ApiGetSearchHistories = () => Promise<IBaseResponse<ISearchItem[]>>;
 export type ApiActionSearchHistories = (
   data: ISearchItem
 ) => Promise<IBaseResponse<ISearchItem[]>>;
+export type ApiPostPage = (
+  params: IParamsApiPostPage
+) => Promise<IBaseResponse<PagiantionResponse<IPost>>>;
+
+export type ApiDetailPost = (id: string) => Promise<IBaseResponse<IPostDetail>>;
+
+export type ApiCommentsWithPost = (
+  id: string,
+  page?: number
+) => Promise<IBaseResponse<PagiantionResponse<IComment>>>;
+
+export type ApiPushCommentsWithPost = (
+  data: ICommentRequest
+) => Promise<IBaseResponse<IComment>>;
+export type ApiLikeCommentsWithPost = (
+  id: number
+) => Promise<IBaseResponse<IComment>>;
+export type ApiDeleteCommentsWithPost = (
+  id: number
+) => Promise<IBaseResponse<IComment>>;
+export type ApiLikePostsWithPost = (
+  id: string
+) => Promise<IBaseResponse<IComment>>;
+export type ImageType = {
+  link: string;
+  data: File | null;
+};
+export type ApiCreatePost = (
+  data: IPostRequest
+) => Promise<IBaseResponse<IPostDetail>>;
+
+export type ApiHightlightPostPage = (
+  params: IParamsApiPostPage
+) => Promise<IBaseResponse<IPost[]>>;
+export type ApiGetCurUserWithUsername = (
+  username: string
+) => Promise<IBaseResponse<IProfile>>;
+export type ApiDeleteImage = (id: number) => Promise<IBaseResponse<IImagePost>>;
+export type ApiUpdatePost = (
+  data: IPostRequest,
+  id: string
+) => Promise<IBaseResponse<IPostDetail>>;
+
+export type ApiTakeActionType = () => Promise<IBaseResponse<IApiTakeAction>>;
+export type ApiDetailProductType = (
+  idProduct: string
+) => Promise<IBaseResponse<IDetailProduct>>;

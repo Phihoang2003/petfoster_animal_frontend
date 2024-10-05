@@ -32,6 +32,7 @@ export default function Pet({ data }: IPetProps) {
               alt={data.image}
               width={300}
               height={300}
+              unoptimized={true}
             />
 
             <WrapperAnimation className="absolute top-5 right-5 cursor-pointer">

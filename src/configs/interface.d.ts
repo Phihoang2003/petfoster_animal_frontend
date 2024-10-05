@@ -130,3 +130,86 @@ export interface ISearchItem {
   id: number | string;
   title: string;
 }
+export interface IParamsApiPostPage {
+  page?: number;
+  search?: string;
+  username?: string;
+  type?: string;
+}
+
+export interface IPostDetail
+  extends Omit<IPost, "thumbnail" | "containVideo" | "thumbnail"> {
+  images: IImagePost[];
+  owner: boolean;
+  edit: boolean;
+  createdAt: string;
+}
+export interface IComment {
+  id: number;
+  user: IProfile;
+  comment: string;
+  createAt: string;
+  likes: number;
+  isLike: boolean;
+  children: IComment[];
+  owner: boolean;
+}
+export interface IImagePost {
+  id?: number;
+  index: number;
+  url: string;
+  isVideo: boolean;
+}
+export interface IComment {
+  id: number;
+  user: IProfile;
+  comment: string;
+  createAt: string;
+  likes: number;
+  isLike: boolean;
+  children: IComment[];
+  owner: boolean;
+}
+export interface ICommentRequest {
+  uuid: string;
+  comment: string;
+  replyId: null | number;
+}
+export interface IMediasPrev {
+  id?: number;
+  link: string;
+  data: File | null;
+  isVideo: boolean;
+}
+export interface IMediadetected extends IMediasPrev {
+  result: boolean;
+  index: number;
+}
+export interface IPostRequest {
+  title: string;
+  medias: IMediasPrev[];
+}
+
+export interface IImagePost {
+  id?: number;
+  index: number;
+  url: string;
+  isVideo: boolean;
+}
+export interface IApiTakeAction {
+  newArrivals: IProduct[];
+}
+export interface IDetailProduct {
+  id: string;
+  brand: string;
+  discount: number;
+  image: string;
+  name: string;
+  rating: number;
+  images: string[];
+  desciption: string;
+  sizeAndPrice: SizeAndPrice[];
+  suggestions: IProduct[];
+  reviews: number;
+  reviewItems: IReviewHasReplay[];
+}

@@ -9,7 +9,6 @@ export const filterPets: ApiFilterPets = async (params: IRequestFilterPet) => {
     params,
   });
   if (!res) return null;
-
   return res?.data;
 };
 export const getPetAttibutes: ApiPetAttributes = async () => {
