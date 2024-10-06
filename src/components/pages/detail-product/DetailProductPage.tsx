@@ -1,9 +1,13 @@
 "use client";
 import { detailProduct } from "@/apis/product";
+import MainButton from "@/components/buttons/MainButton";
 import ContainerContent from "@/components/common/common-components/ContainerContent";
+import LoadingPrimary from "@/components/common/loadings/LoadingPrimary";
+import DesAndReview from "@/components/pages/detail-product/DesAndReview";
 import Quantity from "@/components/pages/detail-product/Quantity";
 import Sizes from "@/components/pages/detail-product/Sizes";
 import PreviewImageProduct from "@/components/products-and-pets/components/PreviewImageProduct";
+import ProductSuggestion from "@/components/products-and-pets/ProductSuggestion";
 import { RootState } from "@/configs/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { toCurrency } from "@/utils/format";
@@ -48,6 +52,10 @@ export default function DetailProductPage({ params }: IDetailProductProps) {
     notFound();
   }
   const dataDetailProductPage = data?.data;
+
+  const handleAddToCart = () => {};
+  const handleBuyNow = () => {};
+  console.log("dataDetailProductPage", dataDetailProductPage);
 
   return (
     <>
@@ -118,10 +126,11 @@ export default function DetailProductPage({ params }: IDetailProductProps) {
               </span>
               <p
                 dangerouslySetInnerHTML={{
-                  __html: dataDetailProductPage?.desciption || "",
+                  __html: dataDetailProductPage?.description || "",
                 }}
                 className="line-clamp-6 mt-5 mb-7 text-1xl leading-8 text-[#374151] text-justify"
               ></p>
+
               <Sizes
                 onSize={(size, index?: number) =>
                   setIndexSizeAndPrice(index ?? 0)
@@ -142,10 +151,29 @@ export default function DetailProductPage({ params }: IDetailProductProps) {
                   dataDetailProductPage?.sizeAndPrice[indexSizeAndPrice].repo
                 }
               />
+              <div className="mt-[50px] flex items-center gap-5">
+                <MainButton title="add to cart" onClick={handleAddToCart} />
+                <MainButton
+                  onClick={handleBuyNow}
+                  background="bg-orange-primary"
+                  title="buy now"
+                />
+              </div>
             </div>
           </Grid2>
         </Grid2>
+        <DesAndReview
+          description={dataDetailProductPage?.description || ""}
+          reviews={dataDetailProductPage?.reviewItems || []}
+        />
       </ContainerContent>
+      <ProductSuggestion
+        title="Suggestions just for you"
+        fontSizeTitle="text-[24px]"
+        data={dataDetailProductPage?.suggestions || []}
+      />
+
+      {isLoading && <LoadingPrimary />}
     </>
   );
 }
