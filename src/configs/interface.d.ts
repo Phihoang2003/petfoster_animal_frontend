@@ -207,9 +207,32 @@ export interface IDetailProduct {
   name: string;
   rating: number;
   images: string[];
-  desciption: string;
+  description: string;
   sizeAndPrice: SizeAndPrice[];
   suggestions: IProduct[];
   reviews: number;
   reviewItems: IReviewHasReplay[];
+}
+export interface IReview {
+  id: number;
+  avatar: string;
+  name: string;
+  displayName?: string;
+  rating: number | null;
+  sizes: number[] | null;
+  comment: string;
+  createAt: string;
+}
+export interface IReviewHasReplay extends IReview {
+  replayItems: IReviewHasReplay[] | null;
+}
+export interface IReview {
+  id: number;
+  avatar: string;
+  name: string;
+  displayName?: string;
+  rating: number | null;
+  sizes: number[] | null;
+  comment: string;
+  createAt: string;
 }
