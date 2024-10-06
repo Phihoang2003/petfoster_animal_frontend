@@ -57,8 +57,6 @@ export default function OptionButton({
   const [openReasonReport, setOpenReasonReport] = useState(false);
 
   const handleClickDelete = () => {
-    console.log("hello", options.typeConfirm);
-
     if (options.typeConfirm === "confirm") {
       return setOpenModal(true);
     }
