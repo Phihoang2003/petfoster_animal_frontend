@@ -13,6 +13,7 @@ import {
   IPostRequest,
   IProfile,
   IRequestFilterPet,
+  IReview,
   ISearchItem,
   ISignDataResponse,
   PagiantionResponse,
@@ -119,3 +120,5 @@ export type ApiTakeActionType = () => Promise<IBaseResponse<IApiTakeAction>>;
 export type ApiDetailProductType = (
   idProduct: string
 ) => Promise<IBaseResponse<IDetailProduct>>;
+
+export type ApiReplayReview = (data: IReview) => Promise<IBaseResponse<any>>;
