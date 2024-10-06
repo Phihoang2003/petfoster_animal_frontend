@@ -47,7 +47,7 @@ const WrapperAnimation = forwardRef<Ref, IWrapperAnimationProps>(
   ) => {
     const tags = {
       scale: {
-        scale: 0.9,
+        scale: 0.95,
       },
       none: {},
     };
