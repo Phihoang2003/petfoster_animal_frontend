@@ -10,6 +10,7 @@ import PreviewImageProduct from "@/components/products-and-pets/components/Previ
 import ProductSuggestion from "@/components/products-and-pets/ProductSuggestion";
 import { RootState } from "@/configs/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import firebaseService from "@/services/firebaseService";
 import { toCurrency } from "@/utils/format";
 import { Grid2 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
@@ -55,7 +56,6 @@ export default function DetailProductPage({ params }: IDetailProductProps) {
 
   const handleAddToCart = () => {};
   const handleBuyNow = () => {};
-  console.log("dataDetailProductPage", dataDetailProductPage);
 
   return (
     <>
