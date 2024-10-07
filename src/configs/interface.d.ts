@@ -236,3 +236,29 @@ export interface IReview {
   comment: string;
   createAt: string;
 }
+export interface INotificationKey {
+  name: string;
+  color: string;
+}
+export interface INotification {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Timestamp | Date;
+  deleted: boolean;
+  photourl: string;
+  read: string[];
+  target: string[];
+  type: TypeNotification;
+  link: string | null;
+  public?: boolean;
+  adminCotent?: string;
+  options?: {
+    start?: number | null;
+    end?: number | null;
+  };
+  meta?: {
+    keys?: INotificationKey[];
+  };
+  linkAdmin?: string;
+}
