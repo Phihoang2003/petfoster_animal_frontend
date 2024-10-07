@@ -1,5 +1,7 @@
 import { url } from "inspector";
+import { Timestamp } from "firebase/firestore";
 import moment from "moment";
+import { INotification } from "@/configs/interface";
 export const stringToUrl = (string: string) => {
   if (!string || string.length <= 0) return "";
   return string.toLowerCase().replaceAll(" ", "-");
@@ -44,3 +46,24 @@ export const fileToUrl = (file: File, callback?: (url: string) => void) => {
   if (callback) callback(urlObject);
   return urlObject;
 };
+export const convertFirestoreTimestampToString = (timestamp: Timestamp) =>
+  new Date(timestamp?.toDate().getTime());
+
+export function paseDataNotification<T>(
+  noti: INotification,
+  data: T,
+  isAdmin = false
+) {
+  let result = isAdmin ? noti.adminCotent || noti.content : noti.content;
+  if (!noti || !noti.meta || !noti.meta.keys) return result;
+
+  noti.meta.keys.forEach((key, index) => {
+    if (result.includes(`@${key.name}`)) {
+      result = result.replaceAll(
+        `@${key.name}`,
+        `<span style="color: ${key.color};">${data[key.name as keyof T]}</span>`
+      );
+    }
+  });
+  return result;
+}
