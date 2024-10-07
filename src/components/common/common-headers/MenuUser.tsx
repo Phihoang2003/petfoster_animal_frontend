@@ -1,17 +1,21 @@
 "use client";
 import WrapperAnimation from "@/components/animations/WrapperAnimation";
+import CustomBadge from "@/components/badges/CustomBadge";
+import Notification from "@/components/common/common-components/notification/Notification";
 import { MenuHeaderType, RootState } from "@/configs/types";
 import { listProfile } from "@/data/header";
 import { links } from "@/data/links";
 import { useAppSelector } from "@/hooks/reduxHooks";
 import { contants } from "@/utils/constant";
 import { faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Avatar } from "@mui/material";
 import Tippy from "@tippyjs/react/headless";
+import classNames from "classnames";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 export interface IMenuUserProps {
   isChangeBg?: boolean;
 }
@@ -20,6 +24,7 @@ export default function MenuUser({ isChangeBg }: IMenuUserProps) {
 
   const [isClient, setisClient] = useState(false);
   const { user } = useAppSelector((state: RootState) => state.userReducer);
+  const cartUser = [];
 
   let listProfileBeforeCheck: MenuHeaderType[];
   if (user && contants.roles.manageRoles.includes(user?.role)) {
@@ -76,6 +81,40 @@ export default function MenuUser({ isChangeBg }: IMenuUserProps) {
           }}
         >
           <div className="flex items-center justify-between gap-4 cursor-pointer select-none">
+            <Notification
+              icon={
+                <span
+                  className={classNames("text-xl ", {
+                    ["text-white"]: !isChangeBg,
+                    ["text-black"]: isChangeBg,
+                  })}
+                >
+                  <FontAwesomeIcon icon={faBell} />
+                </span>
+              }
+            />
+            <CustomBadge
+              invisible={openMenu || cartUser.length <= 0}
+              badgeContent={cartUser.length}
+            >
+              <Link
+                href={links.users.cart}
+                className={classNames(
+                  "text-xl  flex items-center justify-center",
+                  {
+                    ["text-white"]: !isChangeBg,
+                    ["text-black"]: isChangeBg,
+                  }
+                )}
+              >
+                <WrapperAnimation
+                  hover={{ rotate: 10 }}
+                  className="flex items-center justify-center"
+                >
+                  <ShoppingCartOutlinedIcon />
+                </WrapperAnimation>
+              </Link>
+            </CustomBadge>
             <WrapperAnimation onClick={() => setOpenMenu(true)} hover={{}}>
               <Avatar
                 alt="avartar"
