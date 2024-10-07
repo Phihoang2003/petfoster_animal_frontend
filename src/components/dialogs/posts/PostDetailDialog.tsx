@@ -221,9 +221,14 @@ export default function PostDetailDialog({
       const response = await likeComment(dataComment.id);
       if (!response) return toast.warn(contants.messages.errors.handle);
       if (response.errors) return toast.warn(response.message);
-      //   if (!dataComment.owner && data && !dataComment.isLike) {
-      //     firebaseService.publistPostsNotification(data, dataComment.user, user, 'like-comment');
-      // }
+      if (!dataComment.owner && data && !dataComment.isLike) {
+        firebaseService.publistPostsNotification(
+          data,
+          dataComment.user,
+          user,
+          "like-comment"
+        );
+      }
       rawComments.refetch();
     } catch (error) {
       return toast.warn(contants.messages.errors.server);
@@ -279,13 +284,23 @@ export default function PostDetailDialog({
       rawComments.refetch();
       refInput.current.value = "";
       if (reply) setReply(null);
-      //   if (!data.owner && !replay) {
-      //     firebaseService.publistPostsNotification(data, data.user, user, 'comment');
-      // }
+      if (!data.owner && !reply) {
+        firebaseService.publistPostsNotification(
+          data,
+          data.user,
+          user,
+          "comment"
+        );
+      }
 
-      // if (replay) {
-      //     firebaseService.publistPostsNotification(data, replay.user, user, 'comment');
-      // }
+      if (reply) {
+        firebaseService.publistPostsNotification(
+          data,
+          reply.user,
+          user,
+          "comment"
+        );
+      }
     } catch (error) {
       return toast.warn(contants.messages.errors.server);
     } finally {
