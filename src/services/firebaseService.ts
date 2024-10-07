@@ -118,11 +118,11 @@ const publistPostsNotification = async (
       break;
     }
     case "comment": {
-      id = "7RO8xNmitb95RpiE7KmP";
+      id = "lSv0sm0QmJbNTE7R69MJ";
       break;
     }
     case "like-comment": {
-      id = "gKiQcsah5oZJ9xPWGGxq";
+      id = "oSVqe2HDdkxnrFjT0oEC";
       break;
     }
     default:
