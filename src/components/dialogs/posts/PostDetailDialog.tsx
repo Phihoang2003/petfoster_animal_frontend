@@ -60,6 +60,7 @@ import Validate from "@/utils/validate";
 import { toast } from "react-toastify";
 import { EmojiClickData } from "emoji-picker-react";
 import { links } from "@/data/links";
+import firebaseService from "@/services/firebaseService";
 
 export interface IPostDetailDialogProps {
   open: boolean;
@@ -245,9 +246,9 @@ export default function PostDetailDialog({
         return toast.warn(response.message);
       }
 
-      // if (!data.owner && !data.isLike) {
-      //     firebaseService.publistPostsNotification(data, data.user, user, 'like');
-      // }
+      if (!data.owner && !data.isLike) {
+        firebaseService.publistPostsNotification(data, data.user, user, "like");
+      }
 
       rawData.refetch();
       setLike((prev) => !prev);
