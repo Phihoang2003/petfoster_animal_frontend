@@ -1,5 +1,7 @@
 import {
   ApiActionSearchHistories,
+  ApiCreateCartUser,
+  ApiGetCartUser,
   ApiGetCurUser,
   ApiGetCurUserWithUsername,
   ApiGetSearchHistories,
@@ -10,7 +12,7 @@ import {
 } from "@/configs/types";
 import axios from "../configs/axios";
 import { setTokenToCookie } from "@/utils/cookies";
-import { ISearchItem } from "@/configs/interface";
+import { ICart, ISearchItem } from "@/configs/interface";
 export const register: ApiRegister = async (data) => {
   const res = await axios({
     method: "POST",
@@ -125,6 +127,32 @@ export const getUserWithUsername: ApiGetCurUserWithUsername = async (
   const res = await axios({
     method: "GET",
     url: "user/profile/" + username,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const createCartUser: ApiCreateCartUser = async (data: ICart) => {
+  const res = await axios({
+    method: "POST",
+    url: "user/carts",
+    data: {
+      productId: data.productId,
+      size: data.size,
+      quantity: data.quantity,
+    },
+  });
+  console.log("data", data);
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const getCartUser: ApiGetCartUser = async () => {
+  const res = await axios({
+    method: "GET",
+    url: "user/carts",
   });
 
   if (!res) return null;
