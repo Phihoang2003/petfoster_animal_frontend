@@ -1,6 +1,7 @@
 import {
   IApiTakeAction,
   IBaseResponse,
+  ICart,
   IComment,
   ICommentRequest,
   IDetailProduct,
@@ -128,3 +129,5 @@ export type ApiDetailProductType = (
 ) => Promise<IBaseResponse<IDetailProduct>>;
 
 export type ApiReplayReview = (data: IReview) => Promise<IBaseResponse<any>>;
+export type ApiCreateCartUser = (data: ICart) => Promise<IBaseResponse<ICart>>;
+export type ApiGetCartUser = () => Promise<IBaseResponse<ICart[]>>;
