@@ -262,3 +262,14 @@ export interface INotification {
   };
   linkAdmin?: string;
 }
+export interface ICart {
+  productId: string | number;
+  image: string;
+  name: string;
+  brand: string;
+  size: string | number;
+  price: number;
+  quantity: number;
+  repo: number;
+  checked?: boolean;
+}
