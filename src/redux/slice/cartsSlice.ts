@@ -1,0 +1,173 @@
+import { createCartUser, getCartUser } from "@/apis/user";
+import { ICart } from "@/configs/interface";
+import { RootState } from "@/configs/types";
+import { contants } from "@/utils/constant";
+import { capitalize } from "@/utils/format";
+import { addCartTolocal } from "@/utils/localStorage";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
+
+export const getCart = createAsyncThunk(
+  "cart/getCartUser",
+  async (_, thunkApi) => {
+    const { userReducer } = thunkApi.getState() as RootState;
+
+    const username = userReducer.user?.username;
+    if (!username || username === "")
+      return {
+        data: [],
+        username,
+      };
+
+    try {
+      const response = await getCartUser();
+
+      // if call failure
+      if (!response)
+        return {
+          data: [],
+          username,
+        };
+
+      // if call failure
+      if (response.status !== 200)
+        return {
+          data: [],
+          username,
+        };
+
+      const modifyResponse = response.data.map((item) => {
+        return {
+          ...item,
+          checked: false,
+        };
+      });
+
+      return {
+        data: modifyResponse as ICart[],
+        username,
+      };
+    } catch (error) {
+      return {
+        data: [],
+        username,
+      };
+    }
+  }
+);
+
+export const addCart = createAsyncThunk(
+  "cart/addCart",
+  async (data: ICart, thunkApi) => {
+    const { userReducer } = thunkApi.getState() as RootState;
+    const username = userReducer.user?.username;
+    if (!username || username === "") return undefined;
+    try {
+      const response = await createCartUser(data);
+      if (!response) {
+        toast.warn(contants.messages.errors.handle);
+
+        return thunkApi.rejectWithValue({
+          data,
+          username,
+        });
+      }
+
+      if (response.status != 200) {
+        toast.error(capitalize(response.message));
+
+        return thunkApi.rejectWithValue({
+          data,
+          username,
+        });
+      }
+
+      return {
+        data,
+        username,
+      };
+    } catch (error) {
+      return thunkApi.rejectWithValue({
+        data,
+        username,
+      });
+    }
+  }
+);
+const initState: {
+  cartUser: ICart[];
+  checkAll: boolean;
+  payment: ICart[];
+  success: boolean;
+  error: string | undefined;
+  isLoading: boolean;
+} = {
+  cartUser: [],
+  checkAll: false,
+  payment: [],
+  success: false,
+  error: undefined,
+  isLoading: false,
+};
+export const cart = createSlice({
+  name: "cart",
+  initialState: initState,
+  reducers: {
+    setCheckedAllCartItem: (state, action: PayloadAction<boolean>) => {
+      state.checkAll = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(addCart.pending, (state) => {
+      state.isLoading = true;
+      state.error = undefined;
+      state.success = false;
+    });
+    builder.addCase(addCart.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+      state.success = false;
+    });
+    builder.addCase(addCart.fulfilled, (state, action) => {
+      if (!action.payload) return;
+      const item = state.cartUser.find(
+        (item) =>
+          item.productId === action.payload?.data.productId &&
+          item.size === action.payload.data.size
+      );
+      if (item) {
+        //because item is object reference(find from userReducer), so we can change it directly
+        item.quantity = action.payload.data.quantity + item.quantity;
+        addCartTolocal(
+          { payment: state.payment, cart: state.cartUser },
+          action.payload.username
+        );
+        return;
+      }
+      addCartTolocal(
+        {
+          payment: state.payment,
+          cart: [...state.cartUser, action.payload.data],
+        },
+        action.payload.username
+      );
+      state.cartUser = [...state.cartUser, action.payload.data];
+    });
+    //getCart
+    builder.addCase(getCart.fulfilled, (state, action) => {
+      if (!action.payload.username) return;
+      addCartTolocal(
+        { payment: state.payment, cart: action.payload.data },
+        action.payload.username
+      );
+      return {
+        ...state,
+        cartUser: action.payload.data,
+      };
+    });
+  },
+
+  //getCart
+});
+export const { setCheckedAllCartItem } = cart.actions;
+export default cart.reducer;
