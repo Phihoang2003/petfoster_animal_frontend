@@ -9,16 +9,21 @@ import Sizes from "@/components/pages/detail-product/Sizes";
 import PreviewImageProduct from "@/components/products-and-pets/components/PreviewImageProduct";
 import ProductSuggestion from "@/components/products-and-pets/ProductSuggestion";
 import { RootState } from "@/configs/types";
+import { links } from "@/data/links";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { addCart } from "@/redux/slice/cartsSlice";
 import firebaseService from "@/services/firebaseService";
+import { contants } from "@/utils/constant";
 import { toCurrency } from "@/utils/format";
+import { addPreviousUrl } from "@/utils/session";
 import { Grid2 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
 import dynamic from "next/dynamic";
 import { Nunito_Sans, Roboto_Flex } from "next/font/google";
-import { notFound } from "next/navigation";
+import { notFound, usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const Rating = dynamic(() => import("@mui/material/Rating"), { ssr: false });
 
@@ -44,6 +49,8 @@ export default function DetailProductPage({ params }: IDetailProductProps) {
   const [indexSizeAndPrice, setIndexSizeAndPrice] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const dispatch = useAppDispatch();
+  const pathName = usePathname();
+  const router = useRouter();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["product-detail", params.id],
@@ -53,8 +60,36 @@ export default function DetailProductPage({ params }: IDetailProductProps) {
     notFound();
   }
   const dataDetailProductPage = data?.data;
+  const handleNonLogin = () => {
+    toast.warn(contants.notify.nonLogin);
+    addPreviousUrl(pathName);
+    router.push(links.auth.login);
+  };
+  const handleAddToCart = () => {
+    if (!user) {
+      handleNonLogin();
+      return;
+    }
 
-  const handleAddToCart = () => {};
+    // check if repo is empty
+    if (dataDetailProductPage?.sizeAndPrice[indexSizeAndPrice].repo <= 0) {
+      toast.warn(contants.messages.product.repIsEmpty);
+      return;
+    }
+    dispatch(
+      addCart({
+        productId: params.id,
+        brand: dataDetailProductPage?.brand || "",
+        image: dataDetailProductPage?.image || "",
+        name: dataDetailProductPage?.name || "",
+        price: dataDetailProductPage?.sizeAndPrice[indexSizeAndPrice].price,
+        quantity: quantity,
+        repo: dataDetailProductPage?.sizeAndPrice[indexSizeAndPrice].repo,
+        size: dataDetailProductPage?.sizeAndPrice[indexSizeAndPrice].size,
+        checked: true,
+      })
+    );
+  };
   const handleBuyNow = () => {};
 
   return (
