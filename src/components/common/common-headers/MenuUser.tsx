@@ -24,7 +24,7 @@ export default function MenuUser({ isChangeBg }: IMenuUserProps) {
 
   const [isClient, setisClient] = useState(false);
   const { user } = useAppSelector((state: RootState) => state.userReducer);
-  const cartUser = [];
+  const { cartUser } = useAppSelector((state: RootState) => state.cartReducer);
 
   let listProfileBeforeCheck: MenuHeaderType[];
   if (user && contants.roles.manageRoles.includes(user?.role)) {
