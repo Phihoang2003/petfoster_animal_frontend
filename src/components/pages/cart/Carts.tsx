@@ -1,10 +1,14 @@
 "use client";
 import Cart from "@/components/pages/cart/Cart";
-import { ICart } from "@/configs/interface";
 import { RootState } from "@/configs/types";
-import { useAppSelector } from "@/hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import {
+  checkedAll,
+  getCheckedAllCart,
+  setCheckedAllCartItem,
+} from "@/redux/slice/cartsSlice";
 import { Checkbox } from "@mui/material";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 
 export interface ICartsProps {
   onTotal?: (value: number) => void;
@@ -14,7 +18,38 @@ export default function Carts({ onTotal }: ICartsProps) {
     (state: RootState) => state.cartReducer
   );
   const [checked, setChecked] = useState(checkAll);
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {};
+  const dispatch = useAppDispatch();
+  const cartUserMemo = useMemo(() => {
+    return cartUser;
+  }, [cartUser]);
+
+  const total = useMemo(() => {
+    if (cartUserMemo.length <= 0) return 0;
+    const newCart = cartUserMemo.filter((cart) => cart.checked);
+    const result = newCart.reduce((result, item) => {
+      return (result += item.price * item.quantity);
+    }, 0);
+    return result;
+  }, [cartUserMemo]);
+  useEffect(() => {
+    setChecked(checkAll);
+  }, [checkAll]);
+
+  useEffect(() => {
+    if (!onTotal) return;
+
+    onTotal(total);
+  }, [total, onTotal]);
+  useEffect(() => {
+    dispatch(getCheckedAllCart());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+
+    dispatch(checkedAll(event.target.checked));
+    dispatch(setCheckedAllCartItem(event.target.checked));
+  };
   return (
     <>
       <div className="flex items-center py-4 text-sm md:text-1xl border-b border-gray-primary font-semibold text-black-main">
