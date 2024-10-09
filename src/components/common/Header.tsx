@@ -40,11 +40,13 @@ export default function Header({ dynamic = true }: IHeaderProps) {
       unwrapResult(await actionResult);
 
       const action = dispatch(getCart());
+
       unwrapResult(await action);
 
       // dispatch(getPayment());
     })();
-  }, [token, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
   return (
     <>
       <header
