@@ -254,8 +254,23 @@ const handleMarkAllAsRead = async (
     }
   });
 };
+const setLastseen = async (user: IProfile) => {
+  try {
+    await setDoc(
+      doc(db, "users", user.username),
+      {
+        lastSeen: serverTimestamp(),
+        online: false,
+      },
+      { merge: true } // just update what is change
+    );
+  } catch (error) {
+    console.log("setLastseen: Error setting setLastseen info in DB");
+  }
+};
 
 const firebaseService = {
+  setLastseen,
   publistPostsNotification,
   setRead,
   handleMarkAllAsRead,
