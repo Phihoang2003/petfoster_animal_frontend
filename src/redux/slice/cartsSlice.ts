@@ -3,7 +3,7 @@ import { ICart } from "@/configs/interface";
 import { RootState } from "@/configs/types";
 import { contants } from "@/utils/constant";
 import { capitalize } from "@/utils/format";
-import { addCartTolocal } from "@/utils/localStorage";
+import { addCartTolocal, getStoreFromLocal } from "@/utils/localStorage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 
@@ -120,6 +120,37 @@ export const removeCart = createAsyncThunk(
     };
   }
 );
+export const checkedAll = createAsyncThunk(
+  "cart/checkedAll",
+  (data: boolean, thunkApi) => {
+    const { userReducer } = thunkApi.getState() as RootState;
+    const username = userReducer.user?.username;
+    if (!username || username === "") return undefined;
+
+    return {
+      data,
+      username,
+    };
+  }
+);
+export const getCheckedAllCart = createAsyncThunk(
+  "cart/getCheckedAllCart",
+  async (_, thunkApi) => {
+    const { userReducer } = thunkApi.getState() as RootState;
+
+    const username = userReducer.user?.username;
+
+    if (!username || username === "") return false;
+
+    const store = getStoreFromLocal(username);
+
+    const arrCart = (store.cart as ICart[]) || [];
+    const checkAll = arrCart.every((item) => {
+      return item.checked;
+    });
+    return checkAll;
+  }
+);
 const initState: {
   cartUser: ICart[];
   checkAll: boolean;
@@ -222,6 +253,33 @@ export const cart = createSlice({
         { payment: state.payment, cart: state.cartUser },
         action.payload.username
       );
+    });
+    //checkedAll
+    builder.addCase(checkedAll.fulfilled, (state, action) => {
+      if (!action.payload) return;
+      const newCartUser = state.cartUser.map((item) => {
+        return {
+          ...item,
+          checked: item.repo > 0 ? action.payload?.data : item.checked,
+        };
+      });
+
+      addCartTolocal(
+        { payment: state.payment, cart: newCartUser },
+        action.payload.username
+      );
+
+      return {
+        ...state,
+        cartUser: [...newCartUser],
+      };
+    });
+    //getCheckedAllCart
+    builder.addCase(getCheckedAllCart.fulfilled, (state, action) => {
+      return {
+        ...state,
+        checkAll: action.payload,
+      };
     });
   },
 });
