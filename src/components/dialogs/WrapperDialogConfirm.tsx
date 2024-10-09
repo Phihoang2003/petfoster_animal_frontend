@@ -4,7 +4,7 @@ import { Dialog } from "@mui/material";
 
 export interface IWraperDialogComfirmProps {
   open: boolean;
-  setOpen: (value: { open: boolean; comfirm: "ok" | "cancel" }) => void;
+  setOpen: (value: { open: boolean; confirm: "ok" | "cancel" }) => void;
   handleClose: () => void;
   children: ReactNode;
 }
