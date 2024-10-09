@@ -134,3 +134,11 @@ export type ApiGetCartUser = () => Promise<IBaseResponse<ICart[]>>;
 export type ApiUpdateCartUser = (
   data: ICart[]
 ) => Promise<IBaseResponse<ICart[]>>;
+
+export type ProfileType = {
+  fullname: string;
+  email: string;
+  phone: string;
+  gender: string;
+  birthday: string;
+};
