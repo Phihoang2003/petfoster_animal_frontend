@@ -131,3 +131,6 @@ export type ApiDetailProductType = (
 export type ApiReplayReview = (data: IReview) => Promise<IBaseResponse<any>>;
 export type ApiCreateCartUser = (data: ICart) => Promise<IBaseResponse<ICart>>;
 export type ApiGetCartUser = () => Promise<IBaseResponse<ICart[]>>;
+export type ApiUpdateCartUser = (
+  data: ICart[]
+) => Promise<IBaseResponse<ICart[]>>;
