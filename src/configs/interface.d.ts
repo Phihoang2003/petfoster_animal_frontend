@@ -207,9 +207,69 @@ export interface IDetailProduct {
   name: string;
   rating: number;
   images: string[];
-  desciption: string;
+  description: string;
   sizeAndPrice: SizeAndPrice[];
   suggestions: IProduct[];
   reviews: number;
   reviewItems: IReviewHasReplay[];
+}
+export interface IReview {
+  id: number;
+  avatar: string;
+  name: string;
+  displayName?: string;
+  rating: number | null;
+  sizes: number[] | null;
+  comment: string;
+  createAt: string;
+}
+export interface IReviewHasReplay extends IReview {
+  replayItems: IReviewHasReplay[] | null;
+}
+export interface IReview {
+  id: number;
+  avatar: string;
+  name: string;
+  displayName?: string;
+  rating: number | null;
+  sizes: number[] | null;
+  comment: string;
+  createAt: string;
+}
+export interface INotificationKey {
+  name: string;
+  color: string;
+}
+export interface INotification {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Timestamp | Date;
+  deleted: boolean;
+  photourl: string;
+  read: string[];
+  target: string[];
+  type: TypeNotification;
+  link: string | null;
+  public?: boolean;
+  adminCotent?: string;
+  options?: {
+    start?: number | null;
+    end?: number | null;
+  };
+  meta?: {
+    keys?: INotificationKey[];
+  };
+  linkAdmin?: string;
+}
+export interface ICart {
+  productId: string | number;
+  image: string;
+  name: string;
+  brand: string;
+  size: string | number;
+  price: number;
+  quantity: number;
+  repo: number;
+  checked?: boolean;
 }

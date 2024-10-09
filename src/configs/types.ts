@@ -1,6 +1,7 @@
 import {
   IApiTakeAction,
   IBaseResponse,
+  ICart,
   IComment,
   ICommentRequest,
   IDetailProduct,
@@ -13,6 +14,7 @@ import {
   IPostRequest,
   IProfile,
   IRequestFilterPet,
+  IReview,
   ISearchItem,
   ISignDataResponse,
   PagiantionResponse,
@@ -22,6 +24,12 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 export type ValidTags = keyof JSX.IntrinsicElements;
 
 export type LocationTileType = "center" | "left" | "right";
+export type TypeNotification =
+  | "success"
+  | "error"
+  | "warning"
+  | "info"
+  | "none";
 export type SortType = string | null;
 
 export type StateType =
@@ -119,3 +127,10 @@ export type ApiTakeActionType = () => Promise<IBaseResponse<IApiTakeAction>>;
 export type ApiDetailProductType = (
   idProduct: string
 ) => Promise<IBaseResponse<IDetailProduct>>;
+
+export type ApiReplayReview = (data: IReview) => Promise<IBaseResponse<any>>;
+export type ApiCreateCartUser = (data: ICart) => Promise<IBaseResponse<ICart>>;
+export type ApiGetCartUser = () => Promise<IBaseResponse<ICart[]>>;
+export type ApiUpdateCartUser = (
+  data: ICart[]
+) => Promise<IBaseResponse<ICart[]>>;

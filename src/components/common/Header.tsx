@@ -3,6 +3,7 @@ import MenuUser from "@/components/common/common-headers/MenuUser";
 import Navbar from "@/components/common/common-headers/Navbar";
 import { RootState } from "@/configs/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { getCart } from "@/redux/slice/cartsSlice";
 import { fetchUserByToken } from "@/redux/slice/userSlice";
 import { addPreviousUrl } from "@/utils/session";
 import { unwrapResult } from "@reduxjs/toolkit";
@@ -37,8 +38,15 @@ export default function Header({ dynamic = true }: IHeaderProps) {
     (async () => {
       const actionResult = dispatch(fetchUserByToken());
       unwrapResult(await actionResult);
+
+      const action = dispatch(getCart());
+
+      unwrapResult(await action);
+
+      // dispatch(getPayment());
     })();
-  }, [token, dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
   return (
     <>
       <header

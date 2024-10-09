@@ -11,9 +11,7 @@ export interface IProductProps {
   data: IProduct;
 }
 export default function Product({ data }: IProductProps) {
-  const handleClickProduct = () => {
-    console.log("Product: ", data.name);
-  };
+  const handleClickProduct = () => {};
   return (
     <div className="flex flex-col items-center hover:shadow-primary pb-[21px] transition-all ease-linear max-h-[468px] rounded">
       <div className="w-full h-3/5 min-h-[305px] relative">

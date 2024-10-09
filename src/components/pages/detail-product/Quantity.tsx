@@ -100,7 +100,7 @@ export default function Quantity({
         <span className="text-xl">{title}</span>
         <ul
           className={classNames(
-            "flex items-center rounded-md py-[8px] bg-[#F2F2F2] text-lg"
+            "flex items-center rounded-md py-[8px] bg-[#F2F2F2] text-lg hover:cursor-pointer"
           )}
         >
           <motion.li
