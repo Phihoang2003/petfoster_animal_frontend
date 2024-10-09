@@ -10,15 +10,38 @@ import { toCurrency } from "@/utils/format";
 import { Breadcrumbs } from "@mui/material";
 import classNames from "classnames";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles/cart.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { updateCartUser } from "@/apis/user";
+import { toast } from "react-toastify";
 
 export default function CartPage() {
   const { cartUser } = useAppSelector((state: RootState) => state.cartReducer);
+  console.log("cartUser", cartUser);
+
   const [total, setTotal] = useState(0);
   const handleCheckout = () => {};
+
+  useEffect(() => {
+    return () => {
+      (async () => {
+        try {
+          const response = await updateCartUser(cartUser);
+
+          if (!response) {
+            toast.warn(contants.messages.errors.handle);
+            return;
+          }
+        } catch (error) {
+          toast.error(
+            contants.messages.errors.handle + `. Can't save your cart !`
+          );
+        }
+      })();
+    };
+  }, [cartUser]);
   return (
     <>
       <ContainerContent className="pt-12">
