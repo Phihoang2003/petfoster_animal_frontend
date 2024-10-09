@@ -94,6 +94,32 @@ export const addCart = createAsyncThunk(
     }
   }
 );
+export const modifyChecked = createAsyncThunk(
+  "cart/modifyChecked",
+  (data: { data: ICart; checked: boolean }, thunkApi) => {
+    const { userReducer } = thunkApi.getState() as RootState;
+    const username = userReducer.user?.username;
+    if (!username || username === "") return undefined;
+
+    return {
+      data,
+      username,
+    };
+  }
+);
+export const removeCart = createAsyncThunk(
+  "cart/removeCartUser",
+  (data: { data: ICart; index: number }, thunkApi) => {
+    const { userReducer } = thunkApi.getState() as RootState;
+    const username = userReducer.user?.username;
+    if (!username || username === "") return undefined;
+
+    return {
+      data,
+      username,
+    };
+  }
+);
 const initState: {
   cartUser: ICart[];
   checkAll: boolean;
@@ -165,9 +191,39 @@ export const cart = createSlice({
         cartUser: action.payload.data,
       };
     });
-  },
 
-  //getCart
+    //modifyChecked
+    builder.addCase(modifyChecked.fulfilled, (state, action) => {
+      if (!action.payload) return;
+      const item = state.cartUser.find(
+        (item) =>
+          item.productId === action.payload?.data.data.productId &&
+          item.size === action.payload?.data.data.size
+      );
+
+      if (item) {
+        item.checked = action.payload.data.checked;
+        addCartTolocal(
+          { payment: state.payment, cart: state.cartUser },
+          action.payload.username
+        );
+        const checkAll = state.cartUser.every((item) => item.checked);
+        state.checkAll = checkAll;
+        return;
+      }
+    });
+
+    //removeCart
+    builder.addCase(removeCart.fulfilled, (state, action) => {
+      if (!action.payload) return;
+
+      state.cartUser.splice(action.payload?.data.index, 1);
+      addCartTolocal(
+        { payment: state.payment, cart: state.cartUser },
+        action.payload.username
+      );
+    });
+  },
 });
 export const { setCheckedAllCartItem } = cart.actions;
 export default cart.reducer;
