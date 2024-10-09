@@ -8,6 +8,7 @@ import {
   ApiLogin,
   ApiRefreshVerifyCode,
   ApiRegister,
+  ApiUpdateCartUser,
   ApiVerifyCode,
 } from "@/configs/types";
 import axios from "../configs/axios";
@@ -143,7 +144,6 @@ export const createCartUser: ApiCreateCartUser = async (data: ICart) => {
       quantity: data.quantity,
     },
   });
-  console.log("data", data);
 
   if (!res) return null;
 
@@ -153,6 +153,23 @@ export const getCartUser: ApiGetCartUser = async () => {
   const res = await axios({
     method: "GET",
     url: "user/carts",
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+export const updateCartUser: ApiUpdateCartUser = async (data: ICart[]) => {
+  const res = await axios({
+    method: "PUT",
+    url: "user/carts",
+    data: data.map((item) => {
+      return {
+        productId: item.productId,
+        size: item.size,
+        quantity: item.quantity,
+      };
+    }),
   });
 
   if (!res) return null;
