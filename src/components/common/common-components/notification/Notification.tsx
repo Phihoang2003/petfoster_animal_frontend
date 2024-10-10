@@ -23,6 +23,8 @@ import WrapperAnimation from "@/components/animations/WrapperAnimation";
 import { contants } from "@/utils/constant";
 import { links } from "@/data/links";
 import CustomBadge from "@/components/badges/CustomBadge";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBellSlash } from "@fortawesome/free-solid-svg-icons";
 
 export interface INotifycationProps {
   icon: ReactNode;
@@ -90,6 +92,17 @@ export default function Notifycation({ icon }: INotifycationProps) {
                   Mark all as read
                 </p>
               </div>
+              {dataNotifications.length === 0 && (
+                <div className="flex flex-col items-center justify-center h-[17.25rem]">
+                  <span>
+                    <FontAwesomeIcon icon={faBellSlash} size="3x" />
+                  </span>
+                  <span className="font-semibold ">No notifications yet</span>
+                  <span className="text-slate-400">
+                    When you get notifications, they’ll show up here.
+                  </span>
+                </div>
+              )}
 
               <div className="flex flex-col items-start flex-1 scroll  overflow-y-auto">
                 {dataNotifications.map((item) => {
