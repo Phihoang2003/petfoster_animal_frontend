@@ -95,7 +95,7 @@ export interface ISignDataResponse {
 export interface IProfile {
   id: string;
   username: string;
-  fullname: string;
+  fullName: string;
   birthday: string; // Cứ trả về Date trong java bình thường
   gender: boolean;
   phone: string;
@@ -272,4 +272,16 @@ export interface ICart {
   quantity: number;
   repo: number;
   checked?: boolean;
+}
+
+export interface IInitAppStoreState {
+  numberCart: number;
+  user: IUser | null;
+  notifycation: INotifycationProps;
+}
+export interface IUser {
+  id?: number;
+  username: string;
+  password: string;
+  email?: string;
 }
