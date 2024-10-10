@@ -9,11 +9,15 @@ import {
   ApiRefreshVerifyCode,
   ApiRegister,
   ApiUpdateCartUser,
+  ApiUpdateCurUser,
   ApiVerifyCode,
+  DataRequestUpdateUser,
 } from "@/configs/types";
 import axios from "../configs/axios";
 import { setTokenToCookie } from "@/utils/cookies";
 import { ICart, ISearchItem } from "@/configs/interface";
+import { dataURLtoFile } from "@/utils/format";
+import moment from "moment";
 export const register: ApiRegister = async (data) => {
   const res = await axios({
     method: "POST",
@@ -170,6 +174,33 @@ export const updateCartUser: ApiUpdateCartUser = async (data: ICart[]) => {
         quantity: item.quantity,
       };
     }),
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const updateUser: ApiUpdateCurUser = async (
+  data: DataRequestUpdateUser
+) => {
+  console.log(data, {
+    ...data,
+    gender: data.gender === "Male",
+    avartar: data.avatar ? dataURLtoFile(data.avatar) : null,
+    birthday: moment(data.birthday).format("D/MM/yyyy"),
+  });
+  const res = await axios({
+    method: "POST",
+    url: "user/profile",
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+    data: {
+      ...data,
+      gender: data.gender === "Male",
+      avatar: data.avatar ? dataURLtoFile(data.avatar) : null,
+    },
   });
 
   if (!res) return null;
