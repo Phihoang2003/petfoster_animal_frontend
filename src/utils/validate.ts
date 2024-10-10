@@ -1,8 +1,7 @@
 import { ValidateType } from "@/configs/types";
 import { IDataReview } from "@/configs/interface";
-// import { contants } from "./contants";
+import { contants } from "./constant";
 
-const contants = {};
 const Validate = {
   isBlank(value: string): boolean {
     return value.trim().length <= 0;
@@ -232,7 +231,7 @@ const Validate = {
     return { message: "", error: false };
   },
 
-  fullname(value: string): ValidateType {
+  fullName(value: string): ValidateType {
     if (this.isBlank(value))
       return { message: "Fullname can't be blank ", error: true };
 
