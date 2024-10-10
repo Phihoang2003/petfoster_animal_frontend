@@ -285,3 +285,8 @@ export interface IUser {
   password: string;
   email?: string;
 }
+export interface IFormChangePassword {
+  password: string;
+  newPassword: string;
+  confirmPassword: string;
+}
