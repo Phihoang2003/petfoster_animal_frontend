@@ -5,6 +5,7 @@ import {
   IComment,
   ICommentRequest,
   IDetailProduct,
+  IFormChangePassword,
   IImagePost,
   IParamsApiPostPage,
   IPet,
@@ -127,7 +128,9 @@ export type ApiTakeActionType = () => Promise<IBaseResponse<IApiTakeAction>>;
 export type ApiDetailProductType = (
   idProduct: string
 ) => Promise<IBaseResponse<IDetailProduct>>;
-
+export type ApiChangePassword = (
+  data: IFormChangePassword
+) => Promise<IBaseResponse<any>>;
 export type ApiReplayReview = (data: IReview) => Promise<IBaseResponse<any>>;
 export type ApiCreateCartUser = (data: ICart) => Promise<IBaseResponse<ICart>>;
 export type ApiGetCartUser = () => Promise<IBaseResponse<ICart[]>>;
