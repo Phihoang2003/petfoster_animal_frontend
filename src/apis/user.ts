@@ -1,5 +1,6 @@
 import {
   ApiActionSearchHistories,
+  ApiChangePassword,
   ApiCreateCartUser,
   ApiGetCartUser,
   ApiGetCurUser,
@@ -15,7 +16,7 @@ import {
 } from "@/configs/types";
 import axios from "../configs/axios";
 import { setTokenToCookie } from "@/utils/cookies";
-import { ICart, ISearchItem } from "@/configs/interface";
+import { ICart, IFormChangePassword, ISearchItem } from "@/configs/interface";
 import { dataURLtoFile } from "@/utils/format";
 import moment from "moment";
 export const register: ApiRegister = async (data) => {
@@ -201,6 +202,20 @@ export const updateUser: ApiUpdateCurUser = async (
       gender: data.gender === "Male",
       avatar: data.avatar ? dataURLtoFile(data.avatar) : null,
     },
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const changePassword: ApiChangePassword = async (
+  data: IFormChangePassword
+) => {
+  const res = await axios({
+    method: "POST",
+    url: "user/profile/change-password",
+    data,
   });
 
   if (!res) return null;
