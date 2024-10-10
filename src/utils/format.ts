@@ -68,6 +68,7 @@ export function paseDataNotification<T>(
   return result;
 }
 
+let fileCounter = 0;
 export function dataURLtoFile(dataurl: string) {
   let arr = dataurl.split(",");
   let afterMine = arr[0].match(/:(.*?);/);
@@ -80,5 +81,9 @@ export function dataURLtoFile(dataurl: string) {
   while (n--) {
     u8arr[n] = bstr.charCodeAt(n);
   }
-  return new File([u8arr], "avartar.png", { type: mine });
+  let filename = fileCounter === 0 ? "avatar.png" : `avatar${fileCounter}.png`;
+
+  fileCounter++; // Tăng số đếm mỗi lần tạo file
+
+  return new File([u8arr], filename, { type: mine });
 }
