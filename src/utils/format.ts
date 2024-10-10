@@ -67,3 +67,18 @@ export function paseDataNotification<T>(
   });
   return result;
 }
+
+export function dataURLtoFile(dataurl: string) {
+  let arr = dataurl.split(",");
+  let afterMine = arr[0].match(/:(.*?);/);
+  if (!afterMine?.length) return;
+  let mine: string = afterMine[1];
+  // convert base64 to raw binary data held in a string
+  let bstr = atob(arr[1]);
+  let n = bstr.length;
+  let u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], "avartar.png", { type: mine });
+}
