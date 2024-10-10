@@ -136,9 +136,21 @@ export type ApiUpdateCartUser = (
 ) => Promise<IBaseResponse<ICart[]>>;
 
 export type ProfileType = {
-  fullname: string;
+  fullName: string;
   email: string;
   phone: string;
   gender: string;
   birthday: string;
 };
+export type DataRequestUpdateUser = {
+  fullName: string;
+  email: string;
+  phone: string;
+  gender: string;
+  birthday: string;
+  avatar?: string;
+};
+
+export type ApiUpdateCurUser = (
+  data: DataRequestUpdateUser
+) => Promise<IBaseResponse<IProfile>>;
