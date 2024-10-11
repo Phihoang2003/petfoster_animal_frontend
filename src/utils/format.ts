@@ -1,7 +1,8 @@
 import { url } from "inspector";
 import { Timestamp } from "firebase/firestore";
 import moment from "moment";
-import { INotification } from "@/configs/interface";
+import { IAddress, INotification } from "@/configs/interface";
+import Validate from "@/utils/validate";
 export const stringToUrl = (string: string) => {
   if (!string || string.length <= 0) return "";
   return string.toLowerCase().replaceAll(" ", "-");
@@ -87,3 +88,9 @@ export function dataURLtoFile(dataurl: string) {
 
   return new File([u8arr], filename, { type: mine });
 }
+export const addressToString = (value: IAddress) => {
+  if (Validate.isBlank(value.address)) {
+    return `${value.ward}, ${value.district}, ${value.province}`;
+  }
+  return `${value.address}, ${value.ward}, ${value.district}, ${value.province}`;
+};
