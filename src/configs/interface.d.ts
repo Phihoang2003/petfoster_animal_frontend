@@ -290,3 +290,17 @@ export interface IFormChangePassword {
   newPassword: string;
   confirmPassword: string;
 }
+export interface IAddress {
+  province: string;
+  district: string;
+  ward: string;
+  address: string;
+}
+
+export interface IInfoAddress {
+  id: number;
+  name: string;
+  phone: string;
+  address: IAddress;
+  isDefault?: boolean;
+}
