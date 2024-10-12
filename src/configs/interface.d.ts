@@ -304,3 +304,69 @@ export interface IInfoAddress {
   address: IAddress;
   isDefault?: boolean;
 }
+
+export interface IProvinceOutside {
+  ProvinceID: number;
+  ProvinceName: string;
+  CountryID: number;
+  Code: string;
+  NameExtension: string[];
+  IsEnable: number;
+  RegionID: number;
+  RegionCPN: number;
+  UpdatedBy: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  CanUpdateCOD: boolean;
+  Status: number;
+  UpdatedIP: string;
+  UpdatedEmployee: number;
+  UpdatedSource: string;
+  UpdatedDate: string;
+}
+export interface IDistrictOutside {
+  DistrictID: number;
+  ProvinceID: number;
+  DistrictName: string;
+  Code: string;
+  Type: number;
+  SupportType: number;
+  NameExtension: string[];
+  IsEnable: number;
+  UpdatedBy: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  CanUpdateCOD: boolean;
+  Status: number;
+  PickType: number;
+  DeliverType: number;
+  ReasonCode: string;
+  ReasonMessage: string;
+  OnDates: any;
+  UpdatedDate: string;
+}
+
+export interface IWardOutside {
+  WardCode: string;
+  DistrictID: number;
+  WardName: string;
+  NameExtension: string[];
+  IsEnable: number;
+  CanUpdateCOD: boolean;
+  UpdatedBy: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  SupportType: number;
+  PickType: number;
+  DeliverType: number;
+  Status: number;
+  ReasonCode: string;
+  ReasonMessage: string;
+  OnDates: any;
+}
+
+export interface ApiDivision<T> {
+  code: string;
+  message: string;
+  data: T;
+}
