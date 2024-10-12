@@ -1,12 +1,15 @@
 import {
+  ApiDivision,
   IApiTakeAction,
   IBaseResponse,
   ICart,
   IComment,
   ICommentRequest,
   IDetailProduct,
+  IDistrictOutside,
   IFormChangePassword,
   IImagePost,
+  IInfoAddress,
   IParamsApiPostPage,
   IPet,
   IPetAttribute,
@@ -14,10 +17,12 @@ import {
   IPostDetail,
   IPostRequest,
   IProfile,
+  IProvinceOutside,
   IRequestFilterPet,
   IReview,
   ISearchItem,
   ISignDataResponse,
+  IWardOutside,
   PagiantionResponse,
 } from "@/configs/interface";
 import { store } from "@/redux/store";
@@ -157,3 +162,17 @@ export type DataRequestUpdateUser = {
 export type ApiUpdateCurUser = (
   data: DataRequestUpdateUser
 ) => Promise<IBaseResponse<IProfile>>;
+
+export type ApiDevisionProvincesOutside = () => Promise<
+  ApiDivision<IProvinceOutside[]>
+>;
+
+export type ApiDevisionDistrictOutside = (
+  data: IProvinceOutside
+) => Promise<ApiDivision<IDistrictOutside[]>>;
+
+export type ApiDevisionWardOutside = (
+  data: IDistrictOutside
+) => Promise<ApiDivision<IWardOutside[]>>;
+
+export type ApiGetAddresses = () => Promise<IBaseResponse<IInfoAddress[]>>;
