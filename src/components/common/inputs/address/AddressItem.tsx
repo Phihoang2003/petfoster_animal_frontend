@@ -31,7 +31,7 @@ export default function AddressItem({
           <div className="text-sm flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <h4 className="font-bold">{data.name}</h4>
-              {data.isDefault && (
+              {data.default && (
                 <span className="py-1 px-5 rounded bg-[#C9C5C5] font-medium">
                   Default
                 </span>
