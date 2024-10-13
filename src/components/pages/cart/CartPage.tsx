@@ -19,7 +19,6 @@ import { toast } from "react-toastify";
 
 export default function CartPage() {
   const { cartUser } = useAppSelector((state: RootState) => state.cartReducer);
-  console.log("cartUser", cartUser);
 
   const [total, setTotal] = useState(0);
   const handleCheckout = () => {};

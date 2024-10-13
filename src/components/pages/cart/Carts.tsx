@@ -50,6 +50,8 @@ export default function Carts({ onTotal }: ICartsProps) {
     dispatch(checkedAll(event.target.checked));
     dispatch(setCheckedAllCartItem(event.target.checked));
   };
+  console.log("check all", checkAll);
+
   return (
     <>
       <div className="flex items-center py-4 text-sm md:text-1xl border-b border-gray-primary font-semibold text-black-main">
