@@ -1,22 +1,25 @@
 "use client";
-import { getAddresses } from "@/apis/user";
+import { deleteAddress, getAddresses } from "@/apis/user";
 import WrapperAnimation from "@/components/animations/WrapperAnimation";
 import AddressForm from "@/components/common/inputs/address/AddressForm";
 import AddressItem from "@/components/common/inputs/address/AddressItem";
 import BaseAddressDialog from "@/components/common/inputs/address/BaseAddressDialog";
+import Confirm from "@/components/common/inputs/Confirm";
 import LoadingSecondary from "@/components/common/loadings/LoadingSecondary";
 import BaseProfilePage from "@/components/pages/common/BaseProfilePage";
 import { IInfoAddress } from "@/configs/interface";
+import { contants } from "@/utils/constant";
+import { addressToString } from "@/utils/format";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery } from "@tanstack/react-query";
 import React, { createContext, MouseEvent, useState } from "react";
+import { toast } from "react-toastify";
 
 export const BaseProfilePageContext = createContext<{ refetch: () => any }>({
   refetch: () => {},
 });
 export default function AddressesPage() {
-  const [open, setOpen] = useState(false);
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["getAddresses"],
     queryFn: () => getAddresses(),
@@ -28,7 +31,46 @@ export default function AddressesPage() {
     data: null,
     updateMode: false,
   });
-  const handleOpenConfirm = () => {};
+  const [open, setOpen] = useState(false);
+  const [deleteData, setDeleteData] = useState<IInfoAddress | null>(null);
+  const [openConfirm, setOpenConfirm] = useState({
+    open: false,
+    confirm: "cancel",
+  });
+
+  const handleOpenConfirm = (
+    e?: MouseEvent<HTMLSpanElement>,
+    data?: IInfoAddress
+  ) => {
+    setOpenConfirm({ ...openConfirm, open: true });
+    setDeleteData(data || null);
+  };
+
+  const handleConfirm = async (v: {
+    open: boolean;
+    confirm: "cancel" | "ok";
+  }) => {
+    if (v.open || v.confirm === "cancel") return;
+
+    handleDelete();
+  };
+
+  const handleDelete = async () => {
+    try {
+      if (!deleteData) return;
+
+      const response = await deleteAddress(deleteData);
+
+      if (!response.data) {
+        toast.error(response.message);
+        return;
+      }
+      toast.success("Delete address successfully");
+      refetch();
+    } catch (error) {
+      toast.error(contants.messages.errors.server);
+    }
+  };
   const handleUpdate = (e?: MouseEvent<HTMLElement>, data?: IInfoAddress) => {
     if (!data) return;
     setUpdateData({ data, updateMode: true });
@@ -36,6 +78,12 @@ export default function AddressesPage() {
   };
   const handleClose = () => {
     setOpen(false);
+    if (updateData.updateMode) {
+      setUpdateData({
+        data: null,
+        updateMode: false,
+      });
+    }
   };
 
   return (
@@ -124,17 +172,22 @@ export default function AddressesPage() {
           />
         )}
 
-        {/* <Comfirm
-                    title={'Notification'}
-                    subtitle={
-                        <>
-                            {'Are want to delete '} {deleteData && !deleteData.isDefault ? <b>{addressToString(deleteData?.address)}</b> : <b>{'default address'}</b>}
-                        </>
-                    }
-                    open={openComfirm.open}
-                    setOpen={setOpenComfirm}
-                    onComfirm={handleComfirm}
-                /> */}
+        <Confirm
+          title={"Notification"}
+          subtitle={
+            <>
+              {"Are want to delete "}{" "}
+              {deleteData && !deleteData.isDefault ? (
+                <b>{addressToString(deleteData?.address)}</b>
+              ) : (
+                <b>{"default address"}</b>
+              )}
+            </>
+          }
+          open={openConfirm.open}
+          setOpen={setOpenConfirm}
+          onConfirm={handleConfirm}
+        />
       </BaseAddressDialog>
     </BaseProfilePageContext.Provider>
   );
