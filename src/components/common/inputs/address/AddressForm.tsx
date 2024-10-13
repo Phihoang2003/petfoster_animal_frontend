@@ -1,5 +1,5 @@
 "use client";
-import { addAddress } from "@/apis/user";
+import { addAddress, updateAddress } from "@/apis/user";
 import SocialButton from "@/components/buttons/SocialButton";
 import Address from "@/components/common/inputs/address/Address";
 import Confirm from "@/components/common/inputs/Confirm";
@@ -13,7 +13,7 @@ import Validate from "@/utils/validate";
 import { FormControlLabel, Radio, Stack } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { MouseEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 export interface IAddressFormProps {
   initData?: IInfoAddress;
@@ -71,7 +71,7 @@ export default function AddressForm({
     if (validate()) return;
 
     if (updateMode) {
-      // handleOpenConfirm();
+      handleOpenConfirm();
     } else {
       await handleAdd({
         ...form,
@@ -97,7 +97,51 @@ export default function AddressForm({
       [e.target.name]: message,
     });
   };
-  const handleConfirm = () => {};
+  const handleOpenConfirm = (
+    e?: MouseEvent<HTMLSpanElement>,
+    data?: IInfoAddress
+  ) => {
+    setOpenConfirm({
+      ...openConfirm,
+      open: true,
+    });
+  };
+  const handleConfirm = async (v: {
+    open: boolean;
+    confirm: "cancel" | "ok";
+  }) => {
+    if (v.open || v.confirm === "cancel") return;
+    await handleUpdate({
+      ...form,
+      address: addresses,
+    });
+  };
+
+  const handleUpdate = async (data: IInfoAddress) => {
+    try {
+      const response = await updateAddress({ ...data, isDefault: isCheck });
+      if (!response.data) {
+        toast.error(response.message);
+        return;
+      }
+      if (!onBeforeUpdate) {
+        requestIdleCallback(() => {
+          // if (parentContext.addressActive?.id === data.id && !data.isDefault) {
+          //     parentContext.setDefaultValue(response.data);
+          // }
+        });
+        // context.back();
+      } else {
+        onBeforeUpdate();
+      }
+
+      if (showNotiAdopt) {
+        handleShowGoToAdoptPet();
+      }
+    } catch (error) {
+      toast.error(contants.messages.errors.server);
+    }
+  };
 
   const validate = () => {
     const validErrors = { name: "", phone: "" };
