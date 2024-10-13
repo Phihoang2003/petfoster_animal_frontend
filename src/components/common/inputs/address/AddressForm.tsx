@@ -1,14 +1,20 @@
 "use client";
+import { addAddress } from "@/apis/user";
 import SocialButton from "@/components/buttons/SocialButton";
 import Address from "@/components/common/inputs/address/Address";
 import Confirm from "@/components/common/inputs/Confirm";
 import TextField from "@/components/common/inputs/TextField";
 import PaymentItem from "@/components/pages/payments/PaymentItem";
 import { IAddress, IInfoAddress } from "@/configs/interface";
+import { links } from "@/data/links";
+import useGetDefaultAddress from "@/hooks/useGetDefaultAddress";
 import { contants } from "@/utils/constant";
+import Validate from "@/utils/validate";
 import { FormControlLabel, Radio, Stack } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useState } from "react";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 export interface IAddressFormProps {
   initData?: IInfoAddress;
   updateMode?: boolean;
@@ -23,6 +29,9 @@ export default function AddressForm({
   onBeforeAdd,
   onBeforeUpdate,
 }: IAddressFormProps) {
+  const defaultAddress = useGetDefaultAddress();
+  const petAdopt = { name: "" };
+  const asked = "";
   const [form, setForm] = useState<IInfoAddress>({
     id: 0,
     name: "",
@@ -50,10 +59,109 @@ export default function AddressForm({
     open: false,
     confirm: "cancel",
   });
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {};
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {};
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {};
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setForm({
+      ...form,
+      address: {
+        ...addresses,
+      },
+    });
+    if (validate()) return;
+
+    if (updateMode) {
+      // handleOpenConfirm();
+    } else {
+      await handleAdd({
+        ...form,
+        address: addresses,
+      });
+    }
+
+    if (isCheck || updateMode) {
+      defaultAddress.refetch();
+    }
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { error, message } = Validate.address(e.target.value);
+
+    setErrors({
+      ...errors,
+      [e.target.name]: message,
+    });
+  };
   const handleConfirm = () => {};
+
+  const validate = () => {
+    const validErrors = { name: "", phone: "" };
+    const results: boolean[] = [];
+    const fullName = Validate.fullName(form.name);
+    validErrors.name = fullName.message;
+    results.push(fullName.error);
+    const phone = Validate.phone(form.phone);
+    validErrors.phone = phone.message;
+    results.push(phone.error);
+    results.push(adddresValid());
+    setErrors({ ...validErrors });
+    return results.some((item) => item);
+  };
+
+  const handleAdd = async (data: IInfoAddress) => {
+    try {
+      const response = await addAddress({ ...data, isDefault: isCheck });
+
+      if (!response.data) {
+        toast.error(response.message);
+        return;
+      }
+
+      if (!onBeforeAdd) {
+        // context.back();
+      } else {
+        onBeforeAdd();
+      }
+
+      // show noti
+      if (showNotiAdopt) {
+        handleShowGoToAdoptPet();
+      }
+    } catch (error) {
+      toast.error(contants.messages.errors.server);
+    }
+  };
+
+  const handleShowGoToAdoptPet = () => {
+    if (!petAdopt || !asked) return;
+
+    toast.success(
+      <div className="flex items-center gap-2 text-black-main">
+        <span>
+          <b>{petAdopt.name}</b> is waiting for you.
+          <Link
+            className="hover:underline text-blue-primary"
+            href={links.pets.ask}
+          >
+            Click to continue to register
+          </Link>
+        </span>
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    if (!initData || !updateMode) return;
+
+    setForm({ ...initData });
+    setIsCheck(!!initData.default);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initData]);
 
   return (
     <AnimatePresence initial={true} custom={1}>
