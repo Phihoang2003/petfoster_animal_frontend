@@ -176,3 +176,13 @@ export type ApiDevisionWardOutside = (
 ) => Promise<ApiDivision<IWardOutside[]>>;
 
 export type ApiGetAddresses = () => Promise<IBaseResponse<IInfoAddress[]>>;
+
+export type ApiGetDefaultAddress = () => Promise<IBaseResponse<IInfoAddress>>;
+
+export type ApiGetAddressesById = (
+  id: number
+) => Promise<IBaseResponse<IInfoAddress>>;
+
+export type ApiHandleAddresses = (
+  data: IInfoAddress
+) => Promise<IBaseResponse<IInfoAddress>>;
