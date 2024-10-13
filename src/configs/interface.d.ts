@@ -303,6 +303,7 @@ export interface IInfoAddress {
   phone: string;
   address: IAddress;
   isDefault?: boolean;
+  default?: boolean;
 }
 
 export interface IProvinceOutside {
