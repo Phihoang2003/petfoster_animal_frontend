@@ -83,58 +83,64 @@ function Address({ initData, onValidate, onAddress }: IAddressProps) {
   const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
     validate(e.target.value);
   };
-  const handleProvince = async (value: IProvinceOutside | undefined) => {
-    setAddress({
-      ...address,
-      province: value,
-      district: undefined,
-      ward: undefined,
-    });
-    if (!value) {
-      setDistrichs(null);
-      setWards(null);
-      return;
-    }
-    try {
-      const response = await getDevisionDistrictes(value);
-      setDistrichs(null);
-      setWards(null);
-      if (response) {
-        setDistrichs(response.data);
+  const handleProvince = useCallback(
+    async (value: IProvinceOutside | undefined) => {
+      setAddress({
+        ...address,
+        province: value,
+        district: undefined,
+        ward: undefined,
+      });
+      if (!value) {
+        setDistrichs(null);
+        setWards(null);
+        return;
+      }
+      try {
+        const response = await getDevisionDistrictes(value);
+        setDistrichs(null);
+        setWards(null);
+        if (response) {
+          setDistrichs(response.data);
+          return;
+        }
+
+        setDistrichs(null);
+        setWards(null);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [address]
+  );
+  const handleDistrict = useCallback(
+    async (value: IDistrictOutside | undefined) => {
+      setAddress({
+        ...address,
+        district: value as IDistrictOutside,
+        ward: undefined,
+      });
+
+      if (!value) {
+        setWards(null);
         return;
       }
 
-      setDistrichs(null);
-      setWards(null);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleDistrict = async (value: IDistrictOutside | undefined) => {
-    setAddress({
-      ...address,
-      district: value as IDistrictOutside,
-      ward: undefined,
-    });
+      try {
+        const response = await getDevisionWards(value);
 
-    if (!value) {
-      setWards(null);
-      return;
-    }
-
-    try {
-      const response = await getDevisionWards(value);
-
-      setWards(null);
-      if (response) {
-        setWards(response.data);
-        return;
+        setWards(null);
+        if (response) {
+          setWards(response.data);
+          return;
+        }
+        setWards(null);
+      } catch (error) {
+        console.log(error);
       }
-      setWards(null);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    },
+    [address]
+  );
 
   useEffect(() => {
     if (!initData) return;
