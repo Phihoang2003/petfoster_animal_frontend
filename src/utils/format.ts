@@ -94,3 +94,9 @@ export const addressToString = (value: IAddress) => {
   }
   return `${value.address}, ${value.ward}, ${value.district}, ${value.province}`;
 };
+
+export const replaceValidDistrich = (content: string) => {
+  const reg = /(Thuỷ)/g;
+
+  return content.replace(reg, `Thủy`);
+};
