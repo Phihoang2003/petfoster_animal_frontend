@@ -283,3 +283,33 @@ export const addAddress: ApiHandleAddresses = async (data: IInfoAddress) => {
 
   return res?.data;
 };
+
+export const updateAddress: ApiHandleAddresses = async (data: IInfoAddress) => {
+  const res = await axios({
+    method: "PUT",
+    url: "user/addresses/" + data.id,
+    data: {
+      ...data,
+      setDefault: data.isDefault,
+      address: {
+        ...data.address,
+        district: replaceValidDistrich(data.address.district),
+      },
+    },
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const deleteAddress: ApiHandleAddresses = async (data: IInfoAddress) => {
+  const res = await axios({
+    method: "DELETE",
+    url: "user/addresses/" + data.id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
