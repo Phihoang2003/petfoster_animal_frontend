@@ -1,4 +1,5 @@
 "use client";
+import { getAddresses } from "@/apis/user";
 import WrapperAnimation from "@/components/animations/WrapperAnimation";
 import AddressForm from "@/components/common/inputs/address/AddressForm";
 import AddressItem from "@/components/common/inputs/address/AddressItem";
@@ -9,15 +10,17 @@ import { IInfoAddress } from "@/configs/interface";
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useQuery } from "@tanstack/react-query";
-import React, { createContext, useState } from "react";
+import React, { createContext, MouseEvent, useState } from "react";
 
 export const BaseProfilePageContext = createContext<{ refetch: () => any }>({
   refetch: () => {},
 });
 export default function AddressesPage() {
   const [open, setOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const data: { data: IInfoAddress[] } = { data: [] };
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["getAddresses"],
+    queryFn: () => getAddresses(),
+  });
   const [updateData, setUpdateData] = useState<{
     data: IInfoAddress | null;
     updateMode: boolean;
@@ -26,19 +29,27 @@ export default function AddressesPage() {
     updateMode: false,
   });
   const handleOpenConfirm = () => {};
-  const handleUpdate = () => {};
+  const handleUpdate = (e?: MouseEvent<HTMLElement>, data?: IInfoAddress) => {
+    if (!data) return;
+    setUpdateData({ data, updateMode: true });
+    setOpen(true);
+  };
   const handleClose = () => {
     setOpen(false);
   };
+
   return (
-    <BaseProfilePageContext.Provider value={{ refetch: () => {} }}>
+    <BaseProfilePageContext.Provider value={{ refetch }}>
       <BaseProfilePage
         title="ADDRESS LIST"
         action={
           <WrapperAnimation hover={{}}>
             {data && data.data.length < 4 && (
               <button
-                onClick={() => setOpen(true)}
+                onClick={() => {
+                  setUpdateData({ data: null, updateMode: false });
+                  setOpen(true);
+                }}
                 className="flex items-center justify-center py-2 px-4 bg-green-65a30d text-white font-medium text-1xl gap-1 hover:rounded transition-all ease-linear hover:bg-[#4b8614]"
               >
                 <FontAwesomeIcon icon={faPlus} className="text-[18px]" />
@@ -100,13 +111,13 @@ export default function AddressesPage() {
             updateMode={updateData.updateMode}
             onBeforeAdd={() => {
               requestIdleCallback(() => {
-                // refetch();
+                refetch();
                 handleClose();
               });
             }}
             onBeforeUpdate={() => {
               requestIdleCallback(() => {
-                // refetch();
+                refetch();
                 handleClose();
               });
             }}
