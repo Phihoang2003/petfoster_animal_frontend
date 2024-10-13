@@ -1,4 +1,10 @@
-import { adorableReducer, cartReducer, userReducer } from "@/redux/slice";
+import {
+  adorableReducer,
+  appReducer,
+  cartReducer,
+  userReducer,
+} from "@/redux/slice";
+import { app } from "@/redux/slice/appSlice";
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query/react";
 export const store = configureStore({
@@ -6,6 +12,7 @@ export const store = configureStore({
     userReducer,
     adorableReducer,
     cartReducer,
+    appReducer,
   },
 });
 setupListeners(store.dispatch);

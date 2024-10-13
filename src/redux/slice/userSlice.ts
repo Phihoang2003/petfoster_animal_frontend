@@ -26,6 +26,11 @@ export const fetchUserByToken = createAsyncThunk(
     }
   }
 );
+
+export const logout = createAsyncThunk("user/logout", async () => {
+  clearToken();
+  return null;
+});
 interface IInitUserStoreState {
   user: null | IProfile;
   token: string;
@@ -56,6 +61,14 @@ export const user = createSlice({
       state.loading = false;
       state.user = null;
     });
+    // logout
+    builder.addCase(logout.pending, (state, action) => {
+      state.loading = true;
+    }),
+      builder.addCase(logout.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = null;
+      });
   },
 });
 export const { setToken } = user.actions;

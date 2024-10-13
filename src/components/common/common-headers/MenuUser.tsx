@@ -66,6 +66,7 @@ export default function MenuUser({ isChangeBg }: IMenuUserProps) {
                       <Link
                         className="w-full flex items-center gap-[10px]"
                         href={profile.href}
+                        onClick={() => setOpenMenu(false)}
                       >
                         <FontAwesomeIcon
                           className="w-4 h-4"

@@ -1,7 +1,8 @@
 import { url } from "inspector";
 import { Timestamp } from "firebase/firestore";
 import moment from "moment";
-import { INotification } from "@/configs/interface";
+import { IAddress, INotification } from "@/configs/interface";
+import Validate from "@/utils/validate";
 export const stringToUrl = (string: string) => {
   if (!string || string.length <= 0) return "";
   return string.toLowerCase().replaceAll(" ", "-");
@@ -67,3 +68,35 @@ export function paseDataNotification<T>(
   });
   return result;
 }
+
+let fileCounter = 0;
+export function dataURLtoFile(dataurl: string) {
+  let arr = dataurl.split(",");
+  let afterMine = arr[0].match(/:(.*?);/);
+  if (!afterMine?.length) return;
+  let mine: string = afterMine[1];
+  // convert base64 to raw binary data held in a string
+  let bstr = atob(arr[1]);
+  let n = bstr.length;
+  let u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  let filename = fileCounter === 0 ? "avatar.png" : `avatar${fileCounter}.png`;
+
+  fileCounter++; // Tăng số đếm mỗi lần tạo file
+
+  return new File([u8arr], filename, { type: mine });
+}
+export const addressToString = (value: IAddress) => {
+  if (Validate.isBlank(value.address)) {
+    return `${value.ward}, ${value.district}, ${value.province}`;
+  }
+  return `${value.address}, ${value.ward}, ${value.district}, ${value.province}`;
+};
+
+export const replaceValidDistrich = (content: string) => {
+  const reg = /(Thuỷ)/g;
+
+  return content.replace(reg, `Thủy`);
+};

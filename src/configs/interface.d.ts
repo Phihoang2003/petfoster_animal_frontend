@@ -95,7 +95,7 @@ export interface ISignDataResponse {
 export interface IProfile {
   id: string;
   username: string;
-  fullname: string;
+  fullName: string;
   birthday: string; // Cứ trả về Date trong java bình thường
   gender: boolean;
   phone: string;
@@ -272,4 +272,102 @@ export interface ICart {
   quantity: number;
   repo: number;
   checked?: boolean;
+}
+
+export interface IInitAppStoreState {
+  numberCart: number;
+  user: IUser | null;
+  notifycation: INotifycationProps;
+}
+export interface IUser {
+  id?: number;
+  username: string;
+  password: string;
+  email?: string;
+}
+export interface IFormChangePassword {
+  password: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+export interface IAddress {
+  province: string;
+  district: string;
+  ward: string;
+  address: string;
+}
+
+export interface IInfoAddress {
+  id: number;
+  name: string;
+  phone: string;
+  address: IAddress;
+  isDefault?: boolean;
+  default?: boolean;
+}
+
+export interface IProvinceOutside {
+  ProvinceID: number;
+  ProvinceName: string;
+  CountryID: number;
+  Code: string;
+  NameExtension: string[];
+  IsEnable: number;
+  RegionID: number;
+  RegionCPN: number;
+  UpdatedBy: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  CanUpdateCOD: boolean;
+  Status: number;
+  UpdatedIP: string;
+  UpdatedEmployee: number;
+  UpdatedSource: string;
+  UpdatedDate: string;
+}
+export interface IDistrictOutside {
+  DistrictID: number;
+  ProvinceID: number;
+  DistrictName: string;
+  Code: string;
+  Type: number;
+  SupportType: number;
+  NameExtension: string[];
+  IsEnable: number;
+  UpdatedBy: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  CanUpdateCOD: boolean;
+  Status: number;
+  PickType: number;
+  DeliverType: number;
+  ReasonCode: string;
+  ReasonMessage: string;
+  OnDates: any;
+  UpdatedDate: string;
+}
+
+export interface IWardOutside {
+  WardCode: string;
+  DistrictID: number;
+  WardName: string;
+  NameExtension: string[];
+  IsEnable: number;
+  CanUpdateCOD: boolean;
+  UpdatedBy: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  SupportType: number;
+  PickType: number;
+  DeliverType: number;
+  Status: number;
+  ReasonCode: string;
+  ReasonMessage: string;
+  OnDates: any;
+}
+
+export interface ApiDivision<T> {
+  code: string;
+  message: string;
+  data: T;
 }

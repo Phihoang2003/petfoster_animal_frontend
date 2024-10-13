@@ -1,11 +1,15 @@
 import {
+  ApiDivision,
   IApiTakeAction,
   IBaseResponse,
   ICart,
   IComment,
   ICommentRequest,
   IDetailProduct,
+  IDistrictOutside,
+  IFormChangePassword,
   IImagePost,
+  IInfoAddress,
   IParamsApiPostPage,
   IPet,
   IPetAttribute,
@@ -13,10 +17,12 @@ import {
   IPostDetail,
   IPostRequest,
   IProfile,
+  IProvinceOutside,
   IRequestFilterPet,
   IReview,
   ISearchItem,
   ISignDataResponse,
+  IWardOutside,
   PagiantionResponse,
 } from "@/configs/interface";
 import { store } from "@/redux/store";
@@ -127,10 +133,56 @@ export type ApiTakeActionType = () => Promise<IBaseResponse<IApiTakeAction>>;
 export type ApiDetailProductType = (
   idProduct: string
 ) => Promise<IBaseResponse<IDetailProduct>>;
-
+export type ApiChangePassword = (
+  data: IFormChangePassword
+) => Promise<IBaseResponse<any>>;
 export type ApiReplayReview = (data: IReview) => Promise<IBaseResponse<any>>;
 export type ApiCreateCartUser = (data: ICart) => Promise<IBaseResponse<ICart>>;
 export type ApiGetCartUser = () => Promise<IBaseResponse<ICart[]>>;
 export type ApiUpdateCartUser = (
   data: ICart[]
 ) => Promise<IBaseResponse<ICart[]>>;
+
+export type ProfileType = {
+  fullName: string;
+  email: string;
+  phone: string;
+  gender: string;
+  birthday: string;
+};
+export type DataRequestUpdateUser = {
+  fullName: string;
+  email: string;
+  phone: string;
+  gender: string;
+  birthday: string;
+  avatar?: string;
+};
+
+export type ApiUpdateCurUser = (
+  data: DataRequestUpdateUser
+) => Promise<IBaseResponse<IProfile>>;
+
+export type ApiDevisionProvincesOutside = () => Promise<
+  ApiDivision<IProvinceOutside[]>
+>;
+
+export type ApiDevisionDistrictOutside = (
+  data: IProvinceOutside
+) => Promise<ApiDivision<IDistrictOutside[]>>;
+
+export type ApiDevisionWardOutside = (
+  data: IDistrictOutside
+) => Promise<ApiDivision<IWardOutside[]>>;
+
+export type ApiGetAddresses = () => Promise<IBaseResponse<IInfoAddress[]>>;
+
+export type ApiGetDefaultAddress = () => Promise<IBaseResponse<IInfoAddress>>;
+
+export type ApiGetAddressesById = (
+  id: number
+) => Promise<IBaseResponse<IInfoAddress>>;
+
+export type ApiHandleAddresses = (
+  data: IInfoAddress
+) => Promise<IBaseResponse<IInfoAddress>>;

@@ -1,19 +1,33 @@
 import {
   ApiActionSearchHistories,
+  ApiChangePassword,
   ApiCreateCartUser,
+  ApiGetAddresses,
+  ApiGetAddressesById,
   ApiGetCartUser,
   ApiGetCurUser,
   ApiGetCurUserWithUsername,
+  ApiGetDefaultAddress,
   ApiGetSearchHistories,
+  ApiHandleAddresses,
   ApiLogin,
   ApiRefreshVerifyCode,
   ApiRegister,
   ApiUpdateCartUser,
+  ApiUpdateCurUser,
   ApiVerifyCode,
+  DataRequestUpdateUser,
 } from "@/configs/types";
 import axios from "../configs/axios";
 import { setTokenToCookie } from "@/utils/cookies";
-import { ICart, ISearchItem } from "@/configs/interface";
+import {
+  ICart,
+  IFormChangePassword,
+  IInfoAddress,
+  ISearchItem,
+} from "@/configs/interface";
+import { dataURLtoFile, replaceValidDistrich } from "@/utils/format";
+import moment from "moment";
 export const register: ApiRegister = async (data) => {
   const res = await axios({
     method: "POST",
@@ -170,6 +184,129 @@ export const updateCartUser: ApiUpdateCartUser = async (data: ICart[]) => {
         quantity: item.quantity,
       };
     }),
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const updateUser: ApiUpdateCurUser = async (
+  data: DataRequestUpdateUser
+) => {
+  console.log(data, {
+    ...data,
+    gender: data.gender === "Male",
+    avartar: data.avatar ? dataURLtoFile(data.avatar) : null,
+    birthday: moment(data.birthday).format("D/MM/yyyy"),
+  });
+  const res = await axios({
+    method: "POST",
+    url: "user/profile",
+    headers: {
+      "content-type": "multipart/form-data",
+    },
+    data: {
+      ...data,
+      gender: data.gender === "Male",
+      avatar: data.avatar ? dataURLtoFile(data.avatar) : null,
+    },
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const changePassword: ApiChangePassword = async (
+  data: IFormChangePassword
+) => {
+  const res = await axios({
+    method: "POST",
+    url: "user/profile/change-password",
+    data,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const getAddresses: ApiGetAddresses = async () => {
+  const res = await axios({
+    method: "GET",
+    url: "user/addresses",
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const getDefaultAddress: ApiGetDefaultAddress = async () => {
+  const res = await axios({
+    method: "GET",
+    url: "user/addresses/default",
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const getAddressesById: ApiGetAddressesById = async (id: number) => {
+  const res = await axios({
+    method: "GET",
+    url: "user/addresses/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const addAddress: ApiHandleAddresses = async (data: IInfoAddress) => {
+  const res = await axios({
+    method: "POST",
+    url: "user/addresses",
+    data: {
+      ...data,
+      setDefault: data.isDefault,
+      address: {
+        ...data.address,
+        district: replaceValidDistrich(data.address.district),
+      },
+    },
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const updateAddress: ApiHandleAddresses = async (data: IInfoAddress) => {
+  const res = await axios({
+    method: "PUT",
+    url: "user/addresses/" + data.id,
+    data: {
+      ...data,
+      setDefault: data.isDefault,
+      address: {
+        ...data.address,
+        district: replaceValidDistrich(data.address.district),
+      },
+    },
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const deleteAddress: ApiHandleAddresses = async (data: IInfoAddress) => {
+  const res = await axios({
+    method: "DELETE",
+    url: "user/addresses/" + data.id,
   });
 
   if (!res) return null;
