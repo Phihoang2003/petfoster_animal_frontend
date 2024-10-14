@@ -4,7 +4,7 @@ import MainButton from "@/components/buttons/MainButton";
 import ContainerContent from "@/components/common/common-components/ContainerContent";
 import Carts from "@/components/pages/cart/Carts";
 import { RootState } from "@/configs/types";
-import { useAppSelector } from "@/hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { contants } from "@/utils/constant";
 import { toCurrency } from "@/utils/format";
 import { Breadcrumbs } from "@mui/material";
@@ -16,12 +16,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { updateCartUser } from "@/apis/user";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { addPaymentToCart } from "@/redux/slice/cartsSlice";
+import { links } from "@/data/links";
 
 export default function CartPage() {
   const { cartUser } = useAppSelector((state: RootState) => state.cartReducer);
-
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const [total, setTotal] = useState(0);
-  const handleCheckout = () => {};
+  const handleCheckout = () => {
+    dispatch(addPaymentToCart());
+    router.push(links.users.payment);
+  };
 
   useEffect(() => {
     return () => {
