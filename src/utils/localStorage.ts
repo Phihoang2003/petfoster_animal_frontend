@@ -20,3 +20,13 @@ export const getStoreFromLocal = (username: string) => {
 
   return JSON.parse(store);
 };
+
+export const addPaymetnTolocal = (
+  data: { cart: ICart[]; payment: ICart[] },
+  username: string
+) => {
+  localStorage.setItem(
+    username,
+    JSON.stringify({ ...data, payment: data.payment })
+  );
+};
