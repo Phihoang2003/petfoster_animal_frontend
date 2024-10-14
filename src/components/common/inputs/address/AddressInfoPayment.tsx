@@ -1,4 +1,5 @@
 "use client";
+import AddressDialog from "@/components/common/inputs/address/AddressDialog";
 import PaymentItem from "@/components/pages/payments/PaymentItem";
 import { IInfoAddress } from "@/configs/interface";
 import useGetDefaultAddress from "@/hooks/useGetDefaultAddress";
@@ -81,6 +82,18 @@ export default function AddressInfoPayment({
               </p>
             </div>
           )}
+
+          <AddressDialog
+            handleSwitchToForm={(callback) => {
+              handleSwictToForm = callback;
+            }}
+            open={open}
+            setOpen={setOpen}
+            onData={(data) => {
+              if (!data) return;
+              setDefaultValue({ ...data });
+            }}
+          />
         </>
       </PaymentItem>
     </AddressInfoPaymentContext.Provider>
