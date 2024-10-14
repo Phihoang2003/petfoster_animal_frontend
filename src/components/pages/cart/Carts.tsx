@@ -50,7 +50,6 @@ export default function Carts({ onTotal }: ICartsProps) {
     dispatch(checkedAll(event.target.checked));
     dispatch(setCheckedAllCartItem(event.target.checked));
   };
-  console.log("check all", checkAll);
 
   return (
     <>
