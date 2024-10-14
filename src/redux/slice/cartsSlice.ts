@@ -3,8 +3,13 @@ import { ICart } from "@/configs/interface";
 import { RootState } from "@/configs/types";
 import { contants } from "@/utils/constant";
 import { capitalize } from "@/utils/format";
-import { addCartTolocal, getStoreFromLocal } from "@/utils/localStorage";
+import {
+  addCartTolocal,
+  addPaymetnTolocal,
+  getStoreFromLocal,
+} from "@/utils/localStorage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { actionAsyncStorage } from "next/dist/client/components/action-async-storage-instance";
 import { toast } from "react-toastify";
 
 export const getCart = createAsyncThunk(
@@ -151,6 +156,22 @@ export const getCheckedAllCart = createAsyncThunk(
     return checkAll;
   }
 );
+export const addPaymentToCart = createAsyncThunk(
+  "cart/addPaymentToCart",
+  (_, thunkApi) => {
+    const { userReducer, cartReducer } = thunkApi.getState() as RootState;
+    const username = userReducer.user?.username;
+    if (!username || username === "")
+      return { paymentItems: [], cartItems: [], username: "" };
+    const paymentItems = cartReducer.cartUser.filter((item) => item.checked);
+    const cartItems = cartReducer.cartUser.filter((item) => !item.checked);
+    return {
+      paymentItems,
+      cartItems,
+      username,
+    };
+  }
+);
 const initState: {
   cartUser: ICart[];
   checkAll: boolean;
@@ -279,6 +300,24 @@ export const cart = createSlice({
       return {
         ...state,
         checkAll: action.payload,
+      };
+    });
+    //addPaymentToCart
+    builder.addCase(addPaymentToCart.fulfilled, (state, action) => {
+      if (!action.payload.username || action.payload.paymentItems.length <= 0)
+        return;
+      const data = {
+        cart: action.payload.cartItems,
+        payment: action.payload.paymentItems,
+      };
+
+      // addCartTolocal(data.cart);
+      addPaymetnTolocal({ ...data }, action.payload.username);
+
+      return {
+        ...state,
+        cartUser: [...data.cart],
+        payment: [...data.payment],
       };
     });
   },
