@@ -107,7 +107,12 @@ export const contants = {
     nonLogin: "Please login to use !",
   },
   dataCard: [
-    { id: 1, title: "Express (in Can Tho)", business: "4 hours", price: 20000 },
+    {
+      id: 1,
+      title: "Express (in Ho Chi Minh)",
+      business: "4 hours",
+      price: 20000,
+    },
     { id: 2, title: "GHN", business: "2 - 6 business days", price: 45000 },
   ],
   stateCancel: [
@@ -119,12 +124,12 @@ export const contants = {
     height: "calc(100vh - 100px)",
   },
   instantProvince: [
-    "Cần Thơ",
-    "TP.Cần Thơ",
-    "TP. Cần Thơ",
-    "TP Cần Thơ",
-    "Thành phố Cần Thơ",
-    "cantho",
+    "Hồ Chí Minh",
+    "TP.Hồ Chí Minh",
+    "TP. Hồ Chí Minh",
+    "TP Hồ Chí Minh",
+    "Thành phố Hồ Chí Minh",
+    "hochiminh",
   ],
 
   statusAdtoption: [
