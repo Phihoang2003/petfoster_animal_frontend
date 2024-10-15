@@ -32,12 +32,18 @@ export default function AddressInfoPayment({
   const [defaultValue, setDefaultValue] = useState(data);
   let handleSwictToForm: () => void;
   const [open, setOpen] = useState(false);
+
   const backToDefaultValue = () => {
     setDefaultValue(data);
   };
   useLayoutEffect(() => {
     setDefaultValue(data);
   }, [data]);
+
+  useEffect(() => {
+    if (!onData) return;
+    onData(defaultValue || null);
+  }, [defaultValue, onData]);
   return (
     <AddressInfoPaymentContext.Provider
       value={{
