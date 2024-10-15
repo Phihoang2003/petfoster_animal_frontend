@@ -186,3 +186,23 @@ export type ApiGetAddressesById = (
 export type ApiHandleAddresses = (
   data: IInfoAddress
 ) => Promise<IBaseResponse<IInfoAddress>>;
+
+export type ApiProvincesOutside = (
+  id?: string | number
+) => Promise<IProvinceOutside>;
+
+export type ApiDistrictOutside = (
+  data: IProvinceOutside,
+  district: string
+) => Promise<IDistrictOutside>;
+
+export type ApiWardOutside = (
+  data: IDistrictOutside,
+  ward: string
+) => Promise<IWardOutside>;
+
+export type AddressCodeType = {
+  province: number | null;
+  district: number | null;
+  ward: string | null;
+};
