@@ -40,6 +40,7 @@ function Address({ initData, onValidate, onAddress }: IAddressProps) {
     queryKey: ["getProvinces"],
     queryFn: () => getDevisionProvinces(),
   });
+
   const validFucs = {
     province: () => false,
     districh: () => false,
