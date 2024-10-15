@@ -371,3 +371,16 @@ export interface ApiDivision<T> {
   message: string;
   data: T;
 }
+
+export interface IOrderItem {
+  productId: string;
+  quantity: number;
+  size: number;
+}
+export interface IOrder {
+  addressId: number;
+  deliveryId: number;
+  methodId: number;
+  ship: number;
+  orderItems: IOrderItem[];
+}
