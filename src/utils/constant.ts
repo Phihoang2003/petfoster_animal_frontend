@@ -4,7 +4,7 @@ const baseApiProvince = "https://provinces.open-api.vn/api/";
 const baseApiGHTK = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/";
 
 const TOKEN_GHN = "f970798b-5efb-11ef-8e53-0a00184fe694";
-const CLIENT_ID = "190422";
+const CLIENT_ID = "194360";
 
 const TOKEN_GHN_PRINT = "539096b5-8f95-11ee-a6e6-e60958111f48";
 const CLIENT_ID_PRINT = "190419";
