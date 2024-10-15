@@ -5,11 +5,19 @@ import LineProgress from "@/components/pages/payments/LineProgress";
 import { links } from "@/data/links";
 import { Breadcrumbs, Grid, Grid2, Stack } from "@mui/material";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { contants } from "@/utils/constant";
 import { IInfoAddress, IOrder } from "@/configs/interface";
 import PaymentItem from "@/components/pages/payments/PaymentItem";
 import PaymentCard from "@/components/pages/payments/PaymentCard";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { AddressCodeType, RootState } from "@/configs/types";
+import {
+  getShippingFee,
+  searchDistrichts,
+  searchProvinces,
+  searchWards,
+} from "@/apis/outside";
 
 const { dataCard } = contants;
 
@@ -23,6 +31,8 @@ const initData: IOrder = {
   orderItems: [],
 };
 export default function PaymentPage() {
+  const dispatch = useAppDispatch();
+  const { payment } = useAppSelector((state: RootState) => state.cartReducer);
   const [line, setLine] = useState(2);
   const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -44,6 +54,82 @@ export default function PaymentPage() {
       deliveryId: item.id,
     });
   };
+
+  const handleShowShipping = async () => {
+    if (!addresses || payment.length <= 0) {
+      console.log("Chua co don hang");
+      return;
+    }
+    const addressCodes: AddressCodeType = {
+      province: null,
+      district: null,
+      ward: null,
+    };
+    try {
+      setloadingShippingItem(true);
+      const province = await searchProvinces(addresses.address.province);
+      if (!province) return;
+      addressCodes.province = province.ProvinceID;
+      const district = await searchDistrichts(
+        province,
+        addresses.address.district
+      );
+
+      if (!district) return;
+
+      // set district code
+      addressCodes.district = district.DistrictID;
+
+      const ward = await searchWards(district, addresses.address.ward);
+
+      if (!ward) return;
+
+      // set district code
+      addressCodes.ward = ward.WardCode;
+
+      if (payment.length < 0 || totalAndWeight.weight < 0) return;
+
+      const shippingFee: number = await getShippingFee(
+        addressCodes,
+        totalAndWeight
+      );
+
+      setShippingItem({
+        ...shippingItem,
+        price: shippingFee,
+      });
+      setloadingShippingItem(false);
+      if (checked <= 0) return;
+      setForm({
+        ...form,
+        ship: shippingFee,
+        addressId: addresses.id,
+        deliveryId: contants.instantProvince.includes(
+          addresses.address.province
+        )
+          ? dataCard[0].id
+          : shippingItem.id,
+      });
+    } catch (error) {
+      setloadingShippingItem(false);
+      console.log("error in handleShowShipping", error);
+    }
+  };
+
+  const totalAndWeight = useMemo(() => {
+    if (payment.length <= 0) return { value: 0, weight: 0, quantity: 0 };
+
+    const value = payment.reduce((total, item) => {
+      return (total += item.price * item.quantity);
+    }, 0);
+    const weight = payment.reduce((total, item) => {
+      return (total += (item.size as number) * item.quantity);
+    }, 0);
+    const quantity = payment.reduce((result, item) => {
+      return (result += item.quantity);
+    }, 0);
+    return { value, weight, quantity };
+  }, [payment]);
 
   useEffect(() => {
     setIsClient(true);
@@ -76,7 +162,7 @@ export default function PaymentPage() {
         });
       }
 
-      // await handleShowShipping();
+      await handleShowShipping();
     })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
