@@ -3,21 +3,33 @@ import ContainerContent from "@/components/common/common-components/ContainerCon
 import AddressInfoPayment from "@/components/common/inputs/address/AddressInfoPayment";
 import LineProgress from "@/components/pages/payments/LineProgress";
 import { links } from "@/data/links";
-import { Breadcrumbs, Grid, Grid2, Stack } from "@mui/material";
+import {
+  Breadcrumbs,
+  FormControlLabel,
+  Grid,
+  Grid2,
+  Radio,
+  RadioGroup,
+  Stack,
+} from "@mui/material";
 import Link from "next/link";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { contants } from "@/utils/constant";
 import { IInfoAddress, IOrder } from "@/configs/interface";
 import PaymentItem from "@/components/pages/payments/PaymentItem";
 import PaymentCard from "@/components/pages/payments/PaymentCard";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
-import { AddressCodeType, RootState } from "@/configs/types";
+import { AddressCodeType, PaymentMethod, RootState } from "@/configs/types";
 import {
   getShippingFee,
   searchDistrichts,
   searchProvinces,
   searchWards,
 } from "@/apis/outside";
+import SocialButton from "@/components/buttons/SocialButton";
+import OrderSummary from "@/components/pages/payments/OrderSummary";
+import LoadingSecondary from "@/components/common/loadings/LoadingSecondary";
+import LoadingPrimary from "@/components/common/loadings/LoadingPrimary";
 
 const { dataCard } = contants;
 
@@ -115,6 +127,26 @@ export default function PaymentPage() {
       console.log("error in handleShowShipping", error);
     }
   };
+
+  const handleChangePaymentMethod = (e: ChangeEvent<HTMLInputElement>) => {
+    const method = e.target.value.toLowerCase() as PaymentMethod;
+
+    // set payment method
+    setForm({
+      ...form,
+      methodId: method === "cash" ? 1 : 2,
+    });
+  };
+
+  const conditonShowBtn = useMemo(() => {
+    if (!payment) return true;
+
+    if (payment.length <= 0 || addresses == null) {
+      return true;
+    }
+
+    return false;
+  }, [addresses, payment]);
 
   const totalAndWeight = useMemo(() => {
     if (payment.length <= 0) return { value: 0, weight: 0, quantity: 0 };
@@ -244,13 +276,64 @@ export default function PaymentPage() {
                   />
                 </div>
               </PaymentItem>
+              {/* payment method */}
+              <PaymentItem title="Payment">
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  defaultValue={dataPayments[0]}
+                  name="row-radio-buttons-group"
+                >
+                  {dataPayments.map((item) => {
+                    return (
+                      <FormControlLabel
+                        key={item}
+                        value={item}
+                        control={
+                          <Radio
+                            onChange={handleChangePaymentMethod}
+                            sx={{
+                              color: "#505DE8",
+                              accentColor: "#505DE8",
+                            }}
+                          />
+                        }
+                        label={item}
+                      />
+                    );
+                  })}
+                </RadioGroup>
+              </PaymentItem>
+              <div className="w-full ">
+                <SocialButton
+                  disabled={conditonShowBtn}
+                  type="submit"
+                  maxWidth="max-w-full"
+                  background="#505DE8"
+                  title="Confirm order"
+                />
+              </div>
             </Stack>
           )}
         </Grid2>
 
         <Grid2 size={{ sm: 12, md: 12, lg: 6 }}>
-          <div>Right side</div>
+          <OrderSummary
+            dataDelivery={checked <= 0 ? dataCard[checked] : shippingItem}
+          />
         </Grid2>
+        {!isClient && (
+          <Grid2 size={{ sm: 12, md: 12, lg: 12 }}>
+            <Stack
+              alignItems={"center"}
+              justifyContent={"center"}
+              height={"100%"}
+            >
+              <LoadingSecondary />
+            </Stack>
+          </Grid2>
+        )}
+        {loading && <LoadingPrimary />}
       </Grid2>
     </ContainerContent>
   );
