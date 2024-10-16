@@ -206,3 +206,5 @@ export type AddressCodeType = {
   district: number | null;
   ward: string | null;
 };
+
+export type PaymentMethod = "cash" | "pre-payment";
