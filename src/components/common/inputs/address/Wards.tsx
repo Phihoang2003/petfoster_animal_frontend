@@ -184,8 +184,6 @@ export default function Wards({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, data]);
 
-  console.log("value", value);
-
   return (
     <div className="w-full">
       <Tippy
