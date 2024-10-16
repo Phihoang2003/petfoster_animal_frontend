@@ -172,6 +172,20 @@ export const addPaymentToCart = createAsyncThunk(
     };
   }
 );
+
+export const deletePayment = createAsyncThunk(
+  "cart/deletePayment",
+  (index: number, thunkApi) => {
+    const { userReducer } = thunkApi.getState() as RootState;
+    const username = userReducer.user?.username;
+    if (!username || username === "") return undefined;
+
+    return {
+      username,
+      index,
+    };
+  }
+);
 const initState: {
   cartUser: ICart[];
   checkAll: boolean;
@@ -319,6 +333,17 @@ export const cart = createSlice({
         cartUser: [...data.cart],
         payment: [...data.payment],
       };
+    });
+    //deletePayment
+    builder.addCase(deletePayment.fulfilled, (state, action) => {
+      if (!action.payload?.username) {
+        return;
+      }
+      state.payment.splice(action.payload.index, 1);
+      addPaymetnTolocal(
+        { cart: state.cartUser, payment: state.payment },
+        action.payload.username
+      );
     });
   },
 });
