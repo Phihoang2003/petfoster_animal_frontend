@@ -118,7 +118,7 @@ export default function Wards({
 
   useEffect(() => {
     if (data === null || !data) {
-      setValue("");
+      // setValue("");
       return;
     }
     if (!onValue) return;
@@ -183,6 +183,7 @@ export default function Wards({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, data]);
+
   return (
     <div className="w-full">
       <Tippy

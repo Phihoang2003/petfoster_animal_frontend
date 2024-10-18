@@ -269,11 +269,68 @@ const setLastseen = async (user: IProfile) => {
   }
 };
 
+const addSuccessfulPurchaseNotification = async ({
+  orderId,
+  photourl,
+  username,
+  displayName,
+}: {
+  orderId?: number | string;
+  photourl: string;
+  username: string;
+  displayName: string;
+}) => {
+  try {
+    const notificationRef = doc(
+      db,
+      "config-constant-notifications",
+      "zgNhCzDcpqSBeqs6UUnR"
+    );
+    const notificationRefShapshot = await getDoc(notificationRef);
+
+    const constNotification = {
+      id: notificationRefShapshot.id,
+      ...notificationRefShapshot.data(),
+    } as INotification;
+
+    return await addDoc(collection(db, "notifications"), {
+      content: paseDataNotification<{
+        username: string;
+        orderId?: number | string;
+        displayName: string;
+      }>(constNotification, { username, orderId, displayName }),
+      createdAt: serverTimestamp(),
+      deleted: false,
+      link: orderId
+        ? links.history.orderHistory + `/${orderId}`
+        : links.history.orderHistory,
+      linkAdmin: links.adminFuntionsLink.orders.index + `?orderId=${orderId}`,
+      photourl: photourl,
+      read: [],
+      target: [username],
+      title: constNotification.title,
+      type: constNotification.type,
+      options: constNotification.options,
+      public: false,
+      adminCotent: paseDataNotification<{
+        username: string;
+        orderId?: number | string;
+        displayName: string;
+      }>(constNotification, { username, orderId, displayName }, true),
+    });
+  } catch (error) {
+    console.log(
+      "addSuccessfulPurchaseNotification: Error setting addSuccessfulPurchaseNotification info in DB"
+    );
+  }
+};
+
 const firebaseService = {
   setLastseen,
   publistPostsNotification,
   setRead,
   handleMarkAllAsRead,
+  addSuccessfulPurchaseNotification,
   queries: {
     getAllNotifications,
     getNotificationDetails,

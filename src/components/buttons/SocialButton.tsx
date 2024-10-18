@@ -1,19 +1,21 @@
 import React, { MouseEventHandler } from "react";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
-import WrapperAnimation from "@/components/animations/WrapperAnimation";
-import classNames from "classnames";
 import { Button, Typography } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import classNames from "classnames";
+import WrapperAnimation from "@/components/animations/WrapperAnimation";
+
 export interface ISocialButtonProps {
   title: string;
   icon?: IconProp;
   background?: string;
   mt?: string;
   maxWidth?: string;
-  type?: "button" | "submit" | "reset";
+  type?: "button" | "reset" | "submit";
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }
+
 export default function SocialButton({
   title,
   icon,

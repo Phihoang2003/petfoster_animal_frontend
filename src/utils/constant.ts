@@ -4,7 +4,7 @@ const baseApiProvince = "https://provinces.open-api.vn/api/";
 const baseApiGHTK = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/";
 
 const TOKEN_GHN = "f970798b-5efb-11ef-8e53-0a00184fe694";
-const CLIENT_ID = "190422";
+const CLIENT_ID = "194360";
 
 const TOKEN_GHN_PRINT = "539096b5-8f95-11ee-a6e6-e60958111f48";
 const CLIENT_ID_PRINT = "190419";
@@ -107,7 +107,12 @@ export const contants = {
     nonLogin: "Please login to use !",
   },
   dataCard: [
-    { id: 1, title: "Express (in Can Tho)", business: "4 hours", price: 20000 },
+    {
+      id: 1,
+      title: "Express (in Ho Chi Minh)",
+      business: "4 hours",
+      price: 20000,
+    },
     { id: 2, title: "GHN", business: "2 - 6 business days", price: 45000 },
   ],
   stateCancel: [
@@ -119,12 +124,12 @@ export const contants = {
     height: "calc(100vh - 100px)",
   },
   instantProvince: [
-    "Cần Thơ",
-    "TP.Cần Thơ",
-    "TP. Cần Thơ",
-    "TP Cần Thơ",
-    "Thành phố Cần Thơ",
-    "cantho",
+    "Hồ Chí Minh",
+    "TP.Hồ Chí Minh",
+    "TP. Hồ Chí Minh",
+    "TP Hồ Chí Minh",
+    "Thành phố Hồ Chí Minh",
+    "hochiminh",
   ],
 
   statusAdtoption: [

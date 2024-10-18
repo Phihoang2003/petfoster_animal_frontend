@@ -6,13 +6,13 @@ import { useAppDispatch } from "@/hooks/reduxHooks";
 import { modifyChecked, removeCart } from "@/redux/slice/cartsSlice";
 import { toCurrency, toGam } from "@/utils/format";
 import { Checkbox } from "@mui/material";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, memo, useEffect, useState } from "react";
 
 export interface ICartProps {
   data: ICart;
   index: number;
 }
-export default function Cart({ data, index }: ICartProps) {
+function Cart({ data, index }: ICartProps) {
   const [quantity, setQuantity] = useState(data.quantity);
   const [checked, setChecked] = useState(data.checked);
   const dispatch = useAppDispatch();
@@ -108,3 +108,5 @@ export default function Cart({ data, index }: ICartProps) {
     </div>
   );
 }
+
+export default memo(Cart);

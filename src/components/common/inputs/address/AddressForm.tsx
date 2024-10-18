@@ -13,7 +13,7 @@ import Validate from "@/utils/validate";
 import { FormControlLabel, Radio, Stack } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import React, { MouseEvent, useEffect, useState } from "react";
+import React, { memo, MouseEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 export interface IAddressFormProps {
   initData?: IInfoAddress;
@@ -22,7 +22,7 @@ export interface IAddressFormProps {
   onBeforeUpdate?: () => void;
   showNotiAdopt?: boolean;
 }
-export default function AddressForm({
+function AddressForm({
   initData,
   updateMode = false,
   showNotiAdopt = false,
@@ -282,3 +282,4 @@ export default function AddressForm({
     </AnimatePresence>
   );
 }
+export default memo(AddressForm);

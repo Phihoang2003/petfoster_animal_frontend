@@ -10,7 +10,9 @@ import {
   IFormChangePassword,
   IImagePost,
   IInfoAddress,
+  IOrder,
   IParamsApiPostPage,
+  IPayment,
   IPet,
   IPetAttribute,
   IPost,
@@ -186,3 +188,39 @@ export type ApiGetAddressesById = (
 export type ApiHandleAddresses = (
   data: IInfoAddress
 ) => Promise<IBaseResponse<IInfoAddress>>;
+
+export type ApiProvincesOutside = (
+  id?: string | number
+) => Promise<IProvinceOutside>;
+
+export type ApiDistrictOutside = (
+  data: IProvinceOutside,
+  district: string
+) => Promise<IDistrictOutside>;
+
+export type ApiWardOutside = (
+  data: IDistrictOutside,
+  ward: string
+) => Promise<IWardOutside>;
+
+export type AddressCodeType = {
+  province: number | null;
+  district: number | null;
+  ward: string | null;
+};
+
+export type PaymentMethod = "cash" | "pre-payment";
+
+export type ApiCreateOrder = (data: IOrder) => Promise<IBaseResponse<string>>;
+
+export type UpdateStatusOrderType = {
+  id: number;
+  status: StateType;
+  reason?: string;
+};
+
+export type ApiUpdateStatusOrder = (
+  data: UpdateStatusOrderType
+) => Promise<IBaseResponse<any>>;
+
+export type ApiPayment = (data: IPayment) => Promise<IBaseResponse<any>>;

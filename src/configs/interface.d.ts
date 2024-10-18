@@ -371,3 +371,28 @@ export interface ApiDivision<T> {
   message: string;
   data: T;
 }
+
+export interface IOrderItem {
+  productId: string;
+  quantity: number;
+  size: number;
+}
+export interface IOrder {
+  addressId: number;
+  deliveryId: number;
+  methodId: number;
+  ship: number;
+  orderItems: IOrderItem[];
+}
+
+export interface IPayment {
+  orderId: number;
+  amount: number; //2000000
+  isPaid: boolean;
+  payAt: string; // 20231115224608 <=> yyyyMMddHHmmss,
+  transactionNumber: number; // 14182407
+  paymentMethod: {
+    id: number; // 1 là cash 2 là banking tương ứng trong bảng [payment_method],
+    method: string; // ATM cách thức chuyển khoản
+  };
+}
