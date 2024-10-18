@@ -186,6 +186,18 @@ export const deletePayment = createAsyncThunk(
     };
   }
 );
+
+export const clearAllPayment = createAsyncThunk(
+  "cart/clearAllPayment",
+  (_, thunkApi) => {
+    const { userReducer, cartReducer } = thunkApi.getState() as RootState;
+    const username = userReducer.user?.username;
+    if (!username || username === "")
+      return { paymentItems: [], cartItems: [], username: "" };
+
+    addPaymetnTolocal({ cart: cartReducer.cartUser, payment: [] }, username);
+  }
+);
 const initState: {
   cartUser: ICart[];
   checkAll: boolean;
@@ -344,6 +356,13 @@ export const cart = createSlice({
         { cart: state.cartUser, payment: state.payment },
         action.payload.username
       );
+    });
+    //clearAllPayment
+    builder.addCase(clearAllPayment.fulfilled, (state, action) => {
+      return {
+        ...state,
+        payment: [],
+      };
     });
   },
 });
