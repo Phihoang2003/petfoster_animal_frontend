@@ -2,6 +2,7 @@ import {
   ApiActionSearchHistories,
   ApiChangePassword,
   ApiCreateCartUser,
+  ApiCreateOrder,
   ApiGetAddresses,
   ApiGetAddressesById,
   ApiGetCartUser,
@@ -11,12 +12,15 @@ import {
   ApiGetSearchHistories,
   ApiHandleAddresses,
   ApiLogin,
+  ApiPayment,
   ApiRefreshVerifyCode,
   ApiRegister,
   ApiUpdateCartUser,
   ApiUpdateCurUser,
+  ApiUpdateStatusOrder,
   ApiVerifyCode,
   DataRequestUpdateUser,
+  UpdateStatusOrderType,
 } from "@/configs/types";
 import axios from "../configs/axios";
 import { setTokenToCookie } from "@/utils/cookies";
@@ -24,6 +28,8 @@ import {
   ICart,
   IFormChangePassword,
   IInfoAddress,
+  IOrder,
+  IPayment,
   ISearchItem,
 } from "@/configs/interface";
 import { dataURLtoFile, replaceValidDistrich } from "@/utils/format";
@@ -307,6 +313,47 @@ export const deleteAddress: ApiHandleAddresses = async (data: IInfoAddress) => {
   const res = await axios({
     method: "DELETE",
     url: "user/addresses/" + data.id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const createOrder: ApiCreateOrder = async (data: IOrder) => {
+  const res = await axios({
+    method: "POST",
+    url: "user/order",
+    data,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const updateUserStatusOrder: ApiUpdateStatusOrder = async (
+  data: UpdateStatusOrderType
+) => {
+  const res = await axios({
+    method: "POST",
+    url: "user/order/cancel/" + data.id,
+    data: {
+      status: data.status.toLocaleUpperCase(),
+      reason: data.reason,
+    },
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const createPayment: ApiPayment = async (data: IPayment) => {
+  const res = await axios({
+    method: "POST",
+    url: "user/payment",
+    data,
   });
 
   if (!res) return null;
