@@ -396,3 +396,18 @@ export interface IPayment {
     method: string; // ATM cách thức chuyển khoản
   };
 }
+
+export interface IOtherHistory {
+  id: string | number;
+  datePlace: string | number;
+  total: number;
+  state: "buy" | "cancel" | "Delivered"; // vd buy | cancel
+  stateMessage: string; //vd: Delivery on October 1, 2023
+  isTotalRate: boolean;
+  products: ICart[];
+}
+
+export interface IOtherHistories {
+  data: IOtherHistory[];
+  pages: number; // số lượng trang ( vd: phân được 10 trang )
+}
