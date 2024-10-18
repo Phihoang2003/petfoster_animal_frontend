@@ -13,9 +13,20 @@ import {
   Stack,
 } from "@mui/material";
 import Link from "next/link";
-import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { contants } from "@/utils/constant";
-import { IInfoAddress, IOrder } from "@/configs/interface";
+import {
+  IInfoAddress,
+  IOrder,
+  IOrderItem,
+  IPayment,
+} from "@/configs/interface";
 import PaymentItem from "@/components/pages/payments/PaymentItem";
 import PaymentCard from "@/components/pages/payments/PaymentCard";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
@@ -30,6 +41,13 @@ import SocialButton from "@/components/buttons/SocialButton";
 import OrderSummary from "@/components/pages/payments/OrderSummary";
 import LoadingSecondary from "@/components/common/loadings/LoadingSecondary";
 import LoadingPrimary from "@/components/common/loadings/LoadingPrimary";
+import firebaseService from "@/services/firebaseService";
+import ConfirmPaymentDialog from "@/components/dialogs/ConfirmPaymentDialog";
+import { useRouter, useSearchParams } from "next/navigation";
+import { createPayment, updateUserStatusOrder } from "@/apis/user";
+import { toast } from "react-toastify";
+import { capitalize } from "@/utils/format";
+import { clearAllPayment } from "@/redux/slice/cartsSlice";
 
 const { dataCard } = contants;
 
@@ -44,7 +62,10 @@ const initData: IOrder = {
 };
 export default function PaymentPage() {
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state: RootState) => state.userReducer);
   const { payment } = useAppSelector((state: RootState) => state.cartReducer);
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const [line, setLine] = useState(2);
   const [loading, setLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
@@ -53,7 +74,11 @@ export default function PaymentPage() {
   const [shippingItem, setShippingItem] = useState(dataCard[1]);
   const [loadingShippingItem, setloadingShippingItem] = useState(false);
   const [form, setForm] = useState<IOrder>(initData);
-  const handleOpenConfirm = () => {};
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const handleOpenConfirm = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setOpenConfirm(true);
+  };
 
   const handleDelivery = (
     item: { id: number; title: string; business: string; price: number },
@@ -200,6 +225,134 @@ export default function PaymentPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addresses]);
 
+  useEffect(() => {
+    if (!addresses) return;
+    setForm({
+      ...form,
+      addressId: addresses.id,
+      deliveryId: checked <= 0 ? dataCard[0].id : shippingItem.id,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!payment) return;
+    const orderItems = payment.map((item) => {
+      return {
+        productId: item.productId,
+        quantity: item.quantity,
+        size: item.size,
+      } as IOrderItem;
+    });
+
+    setForm({
+      ...form,
+      orderItems,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [payment]);
+
+  const handleClearWhenSuccess = async (photourl: string, orderId?: number) => {
+    dispatch(clearAllPayment());
+    toast.success(contants.messages.success.payment);
+    router.push(links.products);
+
+    if (!user) return;
+
+    await firebaseService.addSuccessfulPurchaseNotification({
+      photourl,
+      username: user.username,
+      displayName: user.displayName,
+      orderId,
+    });
+  };
+
+  useEffect(() => {
+    (async () => {
+      const status = searchParams.get("vnp_TransactionStatus");
+      const responseCode = searchParams.get("vnp_ResponseCode");
+
+      const validateArr = [
+        parseInt(searchParams.get("order_Id") || "0"),
+        parseInt(searchParams.get("vnp_Amount") || "0"),
+        parseInt(searchParams.get("vnp_TransactionNo") || "0"),
+      ];
+
+      const valid = validateArr.some((item) => item <= 0);
+
+      setLoading(true);
+
+      if (responseCode === "24") {
+        try {
+          const response = await updateUserStatusOrder({
+            id: parseInt(searchParams.get("order_Id") || "0"),
+            status: "cancelled_by_customer",
+            reason: "Payment failed",
+          });
+
+          if (!response) {
+            toast.warn(contants.messages.errors.handle);
+            return;
+          }
+
+          if (response.errors) {
+            toast.warn(capitalize(response.message));
+            return;
+          }
+
+          toast.warn(`Payment failed`);
+          router.push(links.home);
+        } catch (error) {
+          toast.error(contants.messages.errors.server);
+        } finally {
+          setLoading(false);
+        }
+
+        return;
+      }
+
+      if (valid) {
+        setLoading(false);
+        return;
+      }
+
+      const form: IPayment = {
+        orderId: parseInt(searchParams.get("order_Id") || "0"),
+        amount: parseInt(searchParams.get("vnp_Amount") || "0"),
+        isPaid: status === "00" || false,
+        payAt: searchParams.get("vnp_PayDate") || "",
+        transactionNumber: parseInt(
+          searchParams.get("vnp_TransactionNo") || "0"
+        ),
+        paymentMethod: {
+          id: 2,
+          method: searchParams.get("vnp_CardType") || "ATM",
+        },
+      };
+
+      const response = await createPayment(form);
+
+      try {
+        if (!response) {
+          toast.error(contants.messages.errors.handle);
+          return;
+        }
+
+        // if (response.status !== 200) {
+        //   toast.error(response.message);
+        //   return;
+        // }
+
+        handleClearWhenSuccess(response.data.photourl, form.orderId);
+      } catch (error) {
+        toast.error(contants.messages.errors.server);
+      } finally {
+        setLoading(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   return (
     <ContainerContent className="pt-12 select-none">
       <div role="presentation">
@@ -334,6 +487,20 @@ export default function PaymentPage() {
           </Grid2>
         )}
         {loading && <LoadingPrimary />}
+
+        {/* confirm dialog */}
+        <ConfirmPaymentDialog
+          setLoading={setLoading}
+          addresses={addresses}
+          totalAndWeight={totalAndWeight}
+          paymentData={payment}
+          form={{
+            ...form,
+            ship: checked <= 0 ? dataCard[checked].price : shippingItem.price,
+          }}
+          setOpen={setOpenConfirm}
+          open={openConfirm}
+        />
       </Grid2>
     </ContainerContent>
   );
