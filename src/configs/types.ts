@@ -10,7 +10,9 @@ import {
   IFormChangePassword,
   IImagePost,
   IInfoAddress,
+  IOrder,
   IParamsApiPostPage,
+  IPayment,
   IPet,
   IPetAttribute,
   IPost,
@@ -208,3 +210,17 @@ export type AddressCodeType = {
 };
 
 export type PaymentMethod = "cash" | "pre-payment";
+
+export type ApiCreateOrder = (data: IOrder) => Promise<IBaseResponse<string>>;
+
+export type UpdateStatusOrderType = {
+  id: number;
+  status: StateType;
+  reason?: string;
+};
+
+export type ApiUpdateStatusOrder = (
+  data: UpdateStatusOrderType
+) => Promise<IBaseResponse<any>>;
+
+export type ApiPayment = (data: IPayment) => Promise<IBaseResponse<any>>;
