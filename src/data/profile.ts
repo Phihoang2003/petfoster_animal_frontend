@@ -45,7 +45,7 @@ export const profileUiData = {
     {
       title: "ORDER HISTORY",
       icon: faClockRotateLeft,
-      link: "/other-history",
+      link: "/order-history",
     },
     {
       title: "LOG OUT",
