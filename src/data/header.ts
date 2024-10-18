@@ -1,5 +1,10 @@
-import { MenuHeaderType } from "@/configs/types";
+import { HeadTabType, MenuHeaderType } from "@/configs/types";
 import {
+  faBox,
+  faBoxesStacked,
+  faCarSide,
+  faCircleCheck,
+  faCircleXmark,
   faHeart,
   faRightFromBracket,
   faUser,
@@ -39,3 +44,26 @@ export const listTabsPostProfile = [
     title: "Likes",
   },
 ];
+
+export const dataHeadHistory = [
+  {
+    title: "All order",
+    icon: faBoxesStacked,
+  },
+  {
+    title: "Placed",
+    icon: faBox,
+  },
+  {
+    title: "Shipping",
+    icon: faCarSide,
+  },
+  {
+    title: "Delivered",
+    icon: faCircleCheck,
+  },
+  {
+    title: "Cancelled",
+    icon: faCircleXmark,
+  },
+] as HeadTabType[];
