@@ -11,6 +11,7 @@ import {
   IImagePost,
   IInfoAddress,
   IOrder,
+  IOtherHistories,
   IParamsApiPostPage,
   IPayment,
   IPet,
@@ -224,3 +225,16 @@ export type ApiUpdateStatusOrder = (
 ) => Promise<IBaseResponse<any>>;
 
 export type ApiPayment = (data: IPayment) => Promise<IBaseResponse<any>>;
+
+export type ApiHistory = (
+  page?: number | undefined,
+  status?: StateType | string
+) => Promise<IBaseResponse<IOtherHistories>>;
+
+export type HeadTabType = {
+  title: string;
+  icon: IconProp;
+  styles?: {
+    iconPosition: "bottom" | "top" | "end" | "start" | undefined;
+  };
+};
