@@ -3,6 +3,13 @@ import { Timestamp } from "firebase/firestore";
 import moment from "moment";
 import { IAddress, INotification } from "@/configs/interface";
 import Validate from "@/utils/validate";
+import {
+  faBox,
+  faCarSide,
+  faCheckCircle,
+  faCircleXmark,
+} from "@fortawesome/free-solid-svg-icons";
+import { StateType } from "@/configs/types";
 export const stringToUrl = (string: string) => {
   if (!string || string.length <= 0) return "";
   return string.toLowerCase().replaceAll(" ", "-");
@@ -98,4 +105,39 @@ export const replaceValidDistrich = (content: string) => {
   const reg = /(Thuỷ)/g;
 
   return content.replace(reg, `Thủy`);
+};
+
+export const getIconWithStatus = (status: StateType) => {
+  switch (status) {
+    case "placed": {
+      return {
+        color: "#505DE8",
+        icon: faBox,
+      };
+    }
+    case "delivered": {
+      return {
+        color: "#65A30D",
+        icon: faCheckCircle,
+      };
+    }
+    case "shipping": {
+      return {
+        color: "#EF4444",
+        icon: faCarSide,
+      };
+    }
+    case "cancelled": {
+      return {
+        color: "#EF4444",
+        icon: faCircleXmark,
+      };
+    }
+    default: {
+      return {
+        color: "#EF4444",
+        icon: faCircleXmark,
+      };
+    }
+  }
 };

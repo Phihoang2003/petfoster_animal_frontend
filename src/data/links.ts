@@ -59,7 +59,7 @@ export const links = {
     },
   },
   history: {
-    orderHistory: "/other-history",
+    orderHistory: "/order-history",
   },
   reviews: {
     management: commonAdmin + "/reviews",

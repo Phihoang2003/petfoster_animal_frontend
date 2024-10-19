@@ -396,3 +396,57 @@ export interface IPayment {
     method: string; // ATM cách thức chuyển khoản
   };
 }
+
+export interface IOtherHistory {
+  id: string | number;
+  datePlace: string | number;
+  total: number;
+  state: "buy" | "cancel" | "Delivered"; // vd buy | cancel
+  stateMessage: string; //vd: Delivery on October 1, 2023
+  isTotalRate: boolean;
+  products: ICart[];
+}
+
+export interface IOtherHistories {
+  data: IOtherHistory[];
+  pages: number; // số lượng trang ( vd: phân được 10 trang )
+}
+
+export interface IProductDetailOrders {
+  productId: string | number;
+  image: string;
+  name: string;
+  brand: string;
+  size: string | number;
+  price: number;
+  quantity: number;
+  repo: number;
+  isRate?: boolean;
+}
+
+export interface IDetailOrder {
+  id: number;
+  placedDate: string;
+  state: string;
+  name: string;
+  phone: string;
+  address: string;
+  description: string;
+  paymentMethod: string;
+  deliveryMethod: string;
+  products: IProductDetailOrders[];
+  subTotal: number;
+  shippingFee: number;
+  total: number;
+  expectedTime: string | null;
+  username?: string;
+  displayName?: string;
+  print?: number;
+  read?: boolean;
+  token?: string;
+}
+
+export interface IRequestReview extends IDataReview {
+  orderId: number;
+  productId: string;
+}

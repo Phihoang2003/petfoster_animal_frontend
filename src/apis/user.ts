@@ -3,6 +3,8 @@ import {
   ApiChangePassword,
   ApiCreateCartUser,
   ApiCreateOrder,
+  ApiCreateReivew,
+  ApiDetailHistory,
   ApiGetAddresses,
   ApiGetAddressesById,
   ApiGetCartUser,
@@ -11,6 +13,7 @@ import {
   ApiGetDefaultAddress,
   ApiGetSearchHistories,
   ApiHandleAddresses,
+  ApiHistory,
   ApiLogin,
   ApiPayment,
   ApiRefreshVerifyCode,
@@ -20,6 +23,7 @@ import {
   ApiUpdateStatusOrder,
   ApiVerifyCode,
   DataRequestUpdateUser,
+  StateType,
   UpdateStatusOrderType,
 } from "@/configs/types";
 import axios from "../configs/axios";
@@ -30,6 +34,7 @@ import {
   IInfoAddress,
   IOrder,
   IPayment,
+  IRequestReview,
   ISearchItem,
 } from "@/configs/interface";
 import { dataURLtoFile, replaceValidDistrich } from "@/utils/format";
@@ -354,6 +359,56 @@ export const createPayment: ApiPayment = async (data: IPayment) => {
     method: "POST",
     url: "user/payment",
     data,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const orderHistory: ApiHistory = async (
+  page?: number | undefined,
+  status?: StateType | string
+) => {
+  const res = await axios({
+    method: "GET",
+    url: "user/order/history",
+    params: {
+      page: page || 0,
+      status,
+    },
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const detailOtherHistory: ApiDetailHistory = async (
+  id: string | number
+) => {
+  const res = await axios({
+    method: "GET",
+    url: "user/order/history/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const createReview: ApiCreateReivew = async (data: IRequestReview) => {
+  console.log("data", data);
+
+  const res = await axios({
+    method: "POST",
+    url: "user/reviews",
+    data: {
+      orderId: data.orderId,
+      productId: data.productId,
+      comment: data.content,
+      rate: data.star,
+    },
   });
 
   if (!res) return null;

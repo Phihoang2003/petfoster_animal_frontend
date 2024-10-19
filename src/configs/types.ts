@@ -5,12 +5,14 @@ import {
   ICart,
   IComment,
   ICommentRequest,
+  IDetailOrder,
   IDetailProduct,
   IDistrictOutside,
   IFormChangePassword,
   IImagePost,
   IInfoAddress,
   IOrder,
+  IOtherHistories,
   IParamsApiPostPage,
   IPayment,
   IPet,
@@ -21,6 +23,7 @@ import {
   IProfile,
   IProvinceOutside,
   IRequestFilterPet,
+  IRequestReview,
   IReview,
   ISearchItem,
   ISignDataResponse,
@@ -224,3 +227,24 @@ export type ApiUpdateStatusOrder = (
 ) => Promise<IBaseResponse<any>>;
 
 export type ApiPayment = (data: IPayment) => Promise<IBaseResponse<any>>;
+
+export type ApiHistory = (
+  page?: number | undefined,
+  status?: StateType | string
+) => Promise<IBaseResponse<IOtherHistories>>;
+
+export type HeadTabType = {
+  title: string;
+  icon: IconProp;
+  styles?: {
+    iconPosition: "bottom" | "top" | "end" | "start" | undefined;
+  };
+};
+
+export type ApiDetailHistory = (
+  id: string | number
+) => Promise<IBaseResponse<IDetailOrder>>;
+
+export type ApiCreateReivew = (
+  data: IRequestReview
+) => Promise<IBaseResponse<IRequestReview>>;
