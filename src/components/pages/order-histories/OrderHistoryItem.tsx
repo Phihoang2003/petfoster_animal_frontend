@@ -49,8 +49,6 @@ const _Li = ({
 };
 
 export default function OrderHistoryItem({ data }: IOtherHistoryItemProps) {
-  console.log("new data", data);
-
   const status = data.state.toLowerCase() as StateType;
 
   return (
