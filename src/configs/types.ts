@@ -5,6 +5,7 @@ import {
   ICart,
   IComment,
   ICommentRequest,
+  IDetailOrder,
   IDetailProduct,
   IDistrictOutside,
   IFormChangePassword,
@@ -22,6 +23,7 @@ import {
   IProfile,
   IProvinceOutside,
   IRequestFilterPet,
+  IRequestReview,
   IReview,
   ISearchItem,
   ISignDataResponse,
@@ -238,3 +240,11 @@ export type HeadTabType = {
     iconPosition: "bottom" | "top" | "end" | "start" | undefined;
   };
 };
+
+export type ApiDetailHistory = (
+  id: string | number
+) => Promise<IBaseResponse<IDetailOrder>>;
+
+export type ApiCreateReivew = (
+  data: IRequestReview
+) => Promise<IBaseResponse<IRequestReview>>;
