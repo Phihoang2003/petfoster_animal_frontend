@@ -3,6 +3,8 @@ import {
   ApiChangePassword,
   ApiCreateCartUser,
   ApiCreateOrder,
+  ApiCreateReivew,
+  ApiDetailHistory,
   ApiGetAddresses,
   ApiGetAddressesById,
   ApiGetCartUser,
@@ -32,6 +34,7 @@ import {
   IInfoAddress,
   IOrder,
   IPayment,
+  IRequestReview,
   ISearchItem,
 } from "@/configs/interface";
 import { dataURLtoFile, replaceValidDistrich } from "@/utils/format";
@@ -373,6 +376,38 @@ export const orderHistory: ApiHistory = async (
     params: {
       page: page || 0,
       status,
+    },
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const detailOtherHistory: ApiDetailHistory = async (
+  id: string | number
+) => {
+  const res = await axios({
+    method: "GET",
+    url: "user/order/history/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const createReview: ApiCreateReivew = async (data: IRequestReview) => {
+  console.log("data", data);
+
+  const res = await axios({
+    method: "POST",
+    url: "user/reviews",
+    data: {
+      orderId: data.orderId,
+      productId: data.productId,
+      comment: data.content,
+      rate: data.star,
     },
   });
 
