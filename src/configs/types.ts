@@ -17,6 +17,7 @@ import {
   IPayment,
   IPet,
   IPetAttribute,
+  IPetDetailPageResponse,
   IPost,
   IPostDetail,
   IPostRequest,
@@ -248,3 +249,7 @@ export type ApiDetailHistory = (
 export type ApiCreateReivew = (
   data: IRequestReview
 ) => Promise<IBaseResponse<IRequestReview>>;
+
+export type ApiPetDetailPage = (
+  id: string
+) => Promise<IBaseResponse<IPetDetailPageResponse>>;
