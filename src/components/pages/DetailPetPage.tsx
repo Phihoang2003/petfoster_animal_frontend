@@ -14,7 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { capitalize } from "@/utils/format";
 import ContainerContent from "@/components/common/common-components/ContainerContent";
 import { useQuery } from "@tanstack/react-query";
-import { petDetail } from "@/apis/pets";
+import { favorite, petDetail } from "@/apis/pets";
 import MainButton from "@/components/buttons/MainButton";
 import PreviewImage from "@/components/products-and-pets/components/PreviewImage";
 import Pets from "@/components/products-and-pets/Pets";
@@ -22,6 +22,11 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { RootState } from "@/configs/types";
 import { toast } from "react-toastify";
+import firebaseService from "@/services/firebaseService";
+import { delay } from "@/utils/functionals";
+import { contants } from "@/utils/constant";
+import WrapperDialog from "@/components/dialogs/WrapperDialog";
+import WrapperAnimation from "@/components/animations/WrapperAnimation";
 export interface IDetailPetProps {
   params: [string, string];
 }
@@ -46,7 +51,7 @@ const Li = ({
   );
 };
 export default function DetailPetPage({ params }: IDetailPetProps) {
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["petDetail", params[0]],
     queryFn: () => petDetail(params[0]),
   });
@@ -61,9 +66,13 @@ export default function DetailPetPage({ params }: IDetailPetProps) {
   const detailData = data && data.data;
 
   const handleLike = async (e: MouseEvent<HTMLDivElement>) => {
-    if (!data?.data.pet) return;
+    if (!data?.data.pet) {
+      console.log("pet not found");
+      return;
+    }
     e.stopPropagation();
     e.preventDefault();
+
     if (!user) {
       toast.info("Please login to use");
       return;
@@ -74,13 +83,40 @@ export default function DetailPetPage({ params }: IDetailPetProps) {
       await handleFavorite();
     }
   };
-  const handleFavorite = async () => {
+  const handleFavorite = async (like = true) => {
     if (!data?.data.pet) return;
     try {
-    } catch (error) {}
+      const response = await favorite(data.data.pet.id as string);
+
+      if (!response || response.errors) {
+        toast.warn(contants.messages.errors.handle);
+        return;
+      }
+
+      if (like) {
+        await refetch();
+        await handlePublishNotification();
+      } else {
+        refetch();
+      }
+    } catch (error) {
+      toast.error(contants.messages.errors.server);
+    }
+  };
+  const handlePublishNotification = async () => {
+    if (!user || !data?.data.pet) return;
+
+    await delay(1000);
+    await firebaseService.publistFavoriteNotification(data.data.pet, user);
+  };
+
+  const handleUnfavorite = async () => {
+    if (!data?.data.pet) return;
+    await handleFavorite(false);
+    toast.success(`Unfavorited ${data.data.pet.name}`);
+    setOpenModal(false);
   };
   const handleAdopt = () => {};
-
   return (
     <>
       <ContainerContent className="pt-24 pb-8">
@@ -174,6 +210,32 @@ export default function DetailPetPage({ params }: IDetailPetProps) {
         background="bg-white"
         data={detailData?.others || []}
       />
+
+      {/* confirm unfavourite dialog */}
+      {openModal && data?.data.pet && (
+        <WrapperDialog open={openModal} setOpen={setOpenModal}>
+          <div className="p-6 flex flex-col gap-4 items-center text-black-main">
+            Do you want to unfavorite{" "}
+            <b className="capitalize">{data.data.pet.name}</b>
+            <div className="flex items-center justify-between text-lg">
+              <WrapperAnimation
+                onClick={() => setOpenModal(false)}
+                hover={{}}
+                className="py-2 px-6 rounded-full hover:bg-green-500 transition-all ease-linear cursor-pointer hover:text-white"
+              >
+                Cancel
+              </WrapperAnimation>
+              <WrapperAnimation
+                onClick={handleUnfavorite}
+                hover={{}}
+                className="py-2 px-6 rounded-full hover:bg-[rgba(0,0,0,.2)] transition-all ease-linear cursor-pointer hover:text-white text-red-primary font-semibold"
+              >
+                UnFavorite
+              </WrapperAnimation>
+            </div>
+          </div>
+        </WrapperDialog>
+      )}
     </>
   );
 }

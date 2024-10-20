@@ -2,9 +2,11 @@ import { db } from "@/configs/firebase";
 import {
   IDetailOrder,
   INotification,
+  IPet,
   IPostDetail,
   IProductDetailOrders,
   IProfile,
+  IPublistNotification,
 } from "@/configs/interface";
 import { links } from "@/data/links";
 import { contants } from "@/utils/constant";
@@ -420,6 +422,52 @@ const publistRatingProductNotification = async (
   }
 };
 
+const publistFavoriteNotification = async (pet: IPet, user: IProfile) => {
+  try {
+    const notificationRef = doc(
+      db,
+      "config-constant-notifications",
+      "FNIw00ZoejGPgJUJfcTH"
+    );
+    const notificationRefShapshot = await getDoc(notificationRef);
+
+    const constNotification = {
+      id: notificationRefShapshot.id,
+      ...notificationRefShapshot.data(),
+    } as INotification;
+
+    return await addDoc(collection(db, "notifications"), {
+      content: paseDataNotification<
+        IPublistNotification<IPet & { displayName: string }>
+      >(
+        constNotification,
+        { ...pet, username: user.username, displayName: user.displayName },
+        false
+      ),
+      createdAt: serverTimestamp(),
+      deleted: false,
+      link: links.pet + `${pet.id}/${stringToUrl(pet.name)}`,
+      linkAdmin: links.adminFuntionsLink.pets.index + `/${pet.id}`,
+      photourl: pet.image,
+      read: [],
+      target: [user.username],
+      title: constNotification.title,
+      type: constNotification.type,
+      options: constNotification.options,
+      public: false,
+      adminCotent: paseDataNotification<IPublistNotification<IPet>>(
+        constNotification,
+        { ...pet, username: user.username, displayName: user.displayName },
+        true
+      ),
+    });
+  } catch (error) {
+    console.log(
+      "addSuccessfulPurchaseNotification: Error setting addSuccessfulPurchaseNotification info in DB"
+    );
+  }
+};
+
 const firebaseService = {
   setLastseen,
   publistPostsNotification,
@@ -428,6 +476,7 @@ const firebaseService = {
   addSuccessfulPurchaseNotification,
   publistStateCancelByCustomerOrderNotification,
   publistRatingProductNotification,
+  publistFavoriteNotification,
 
   queries: {
     getAllNotifications,
