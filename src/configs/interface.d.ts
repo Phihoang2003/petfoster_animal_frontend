@@ -450,3 +450,8 @@ export interface IRequestReview extends IDataReview {
   orderId: number;
   productId: string;
 }
+
+export interface IPetDetailPageResponse {
+  pet: IPetDetail;
+  others: IPet[];
+}
