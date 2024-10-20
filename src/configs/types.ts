@@ -253,3 +253,5 @@ export type ApiCreateReivew = (
 export type ApiPetDetailPage = (
   id: string
 ) => Promise<IBaseResponse<IPetDetailPageResponse>>;
+
+export type ApiPetFavorite = (id: string) => Promise<IBaseResponse<any>>;

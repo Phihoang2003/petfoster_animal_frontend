@@ -455,3 +455,8 @@ export interface IPetDetailPageResponse {
   pet: IPetDetail;
   others: IPet[];
 }
+
+export interface IPublistNotification<T> extends T {
+  username: string;
+  displayName: string;
+}
