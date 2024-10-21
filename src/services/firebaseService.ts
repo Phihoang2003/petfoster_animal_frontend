@@ -1,5 +1,6 @@
 import { db } from "@/configs/firebase";
 import {
+  IAdoptPetNotification,
   IDetailOrder,
   INotification,
   IPet,
@@ -468,6 +469,56 @@ const publistFavoriteNotification = async (pet: IPet, user: IProfile) => {
   }
 };
 
+const publistAdoptPetNotification = async (
+  pet: IPet,
+  username: string,
+  phone: string,
+  displayName: string
+) => {
+  try {
+    const notificationRefShapshot = await getConstantNotification(
+      "TcmP1Nii3D10czU7MZE4"
+    );
+
+    if (!notificationRefShapshot) return null;
+
+    const constNotification = {
+      id: notificationRefShapshot.id,
+      ...notificationRefShapshot.data(),
+    } as INotification;
+
+    return await addDoc(collection(db, "notifications"), {
+      // content: constNotification.content.replaceAll('&&', pet.name),
+      content: paseDataNotification<IAdoptPetNotification>(
+        constNotification,
+        { ...pet, phone, username, displayName },
+        false
+      ),
+      createdAt: serverTimestamp(),
+      deleted: false,
+      link: links.users.profiles.adoption,
+      linkAdmin:
+        links.adminFuntionsLink.adoption.index + `?q=${stringToUrl(pet.name)}`,
+      photourl: pet.image,
+      read: [],
+      target: [username],
+      title: constNotification.title,
+      type: constNotification.type,
+      options: constNotification.options,
+      public: false,
+      adminCotent: paseDataNotification<IAdoptPetNotification>(
+        constNotification,
+        { ...pet, phone, username, displayName },
+        true
+      ),
+    });
+  } catch (error) {
+    console.log(
+      "publistAdoptPetNotification: Error setting publistAdoptPetNotification info in DB"
+    );
+  }
+};
+
 const firebaseService = {
   setLastseen,
   publistPostsNotification,
@@ -477,6 +528,7 @@ const firebaseService = {
   publistStateCancelByCustomerOrderNotification,
   publistRatingProductNotification,
   publistFavoriteNotification,
+  publistAdoptPetNotification,
 
   queries: {
     getAllNotifications,
