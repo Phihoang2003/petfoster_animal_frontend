@@ -1,4 +1,5 @@
 import {
+  adoptReducer,
   adorableReducer,
   appReducer,
   cartReducer,
@@ -13,6 +14,7 @@ export const store = configureStore({
     adorableReducer,
     cartReducer,
     appReducer,
+    adoptReducer,
   },
 });
 setupListeners(store.dispatch);
