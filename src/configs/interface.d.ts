@@ -460,3 +460,29 @@ export interface IPublistNotification<T> extends T {
   username: string;
   displayName: string;
 }
+export interface IPetDetail extends IPet {
+  sterilization: string;
+  color: string;
+  images: string[];
+  canAdopt: boolean;
+  status: string;
+}
+
+export interface IAdoption {
+  id: number;
+  state: string;
+  user: IProfile;
+  pet: IPet;
+  registerAt: string;
+  adoptAt: string;
+  cancelReason?: string | null;
+  address: string;
+  phone: string;
+  pickUpDate: string;
+}
+
+export interface IAdoptPetNotification extends IPet {
+  phone: string;
+  username: string;
+  displayName: string;
+}
