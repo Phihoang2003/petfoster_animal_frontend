@@ -1,5 +1,6 @@
 import {
   ApiDivision,
+  IAdoption,
   IApiTakeAction,
   IBaseResponse,
   ICart,
@@ -255,3 +256,9 @@ export type ApiPetDetailPage = (
 ) => Promise<IBaseResponse<IPetDetailPageResponse>>;
 
 export type ApiPetFavorite = (id: string) => Promise<IBaseResponse<any>>;
+
+export type ApiAdoption = (data: {
+  userId: string;
+  petId: string;
+  addressId: number;
+}) => Promise<IBaseResponse<IAdoption>>;
