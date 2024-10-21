@@ -1,6 +1,7 @@
 import axios from "../configs/axios";
 import { IRequestFilterPet } from "@/configs/interface";
 import {
+  ApiAdoption,
   ApiFilterPets,
   ApiPetAttributes,
   ApiPetDetailPage,
@@ -41,6 +42,22 @@ export const favorite: ApiPetFavorite = async (id: string) => {
   const res = await axios({
     method: "PUT",
     url: "/user/pets/favourite/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const adoptionPet: ApiAdoption = async (data: {
+  userId: string;
+  petId: string;
+  addressId: number;
+}) => {
+  const res = await axios({
+    method: "POST",
+    url: "/user/adopts",
+    data,
   });
 
   if (!res) return null;
