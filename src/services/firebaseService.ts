@@ -1,5 +1,6 @@
 import { db } from "@/configs/firebase";
 import {
+  IAdoption,
   IAdoptPetNotification,
   IDetailOrder,
   INotification,
@@ -519,6 +520,81 @@ const publistAdoptPetNotification = async (
   }
 };
 
+const publistCancelAdoptPetNotification = async (
+  adoption: IAdoption,
+  reason: string,
+  isAdmin = false
+) => {
+  const id = isAdmin ? "0KIFLeKQr3D86qRLRyBF" : "EfaHRBBbsqG5TLVzIJ4y";
+  try {
+    const notificationRefShapshot = await getConstantNotification(id);
+
+    if (!notificationRefShapshot) return null;
+
+    const constNotification = {
+      id: notificationRefShapshot.id,
+      ...notificationRefShapshot.data(),
+    } as INotification;
+
+    return await addDoc(collection(db, "notifications"), {
+      // content: constNotification.content.replaceAll('&&', pet.name),
+      content: paseDataNotification<
+        IPublistNotification<IAdoption> & {
+          shopAddress: string;
+          name: string;
+          reason: string;
+        }
+      >(
+        constNotification,
+        {
+          ...adoption,
+          shopAddress: process.env.NEXT_PUBLIC_DETAIL_ADDRESS || "",
+          username: adoption.user.username,
+          displayName: adoption.user.displayName,
+          name: adoption.pet.name,
+          reason,
+        },
+        false
+      ),
+      createdAt: serverTimestamp(),
+      deleted: false,
+      link: links.users.profiles.adoption,
+      linkAdmin:
+        links.adminFuntionsLink.adoption.index +
+        `?q=${stringToUrl(adoption.pet.name)}`,
+      photourl: adoption.pet.image,
+      read: [],
+      target: [adoption.user.username],
+      title: constNotification.title,
+      type: constNotification.type,
+      options: constNotification.options,
+      public: false,
+      adminCotent: paseDataNotification<
+        IPublistNotification<IAdoption> & {
+          shopAddress: string;
+          name: string;
+          reason: string;
+        }
+      >(
+        constNotification,
+        {
+          ...adoption,
+          shopAddress: process.env.NEXT_PUBLIC_DETAIL_ADDRESS || "",
+          username: adoption.user.username,
+          displayName: adoption.user.displayName,
+          name: adoption.pet.name,
+          reason,
+        },
+        true
+      ),
+    });
+  } catch (error) {
+    console.log(
+      "publistAdoptPetNotification: Error setting publistAdoptPetNotification info in DB"
+    );
+  }
+};
+
 const firebaseService = {
   setLastseen,
   publistPostsNotification,
@@ -529,6 +605,7 @@ const firebaseService = {
   publistRatingProductNotification,
   publistFavoriteNotification,
   publistAdoptPetNotification,
+  publistCancelAdoptPetNotification,
 
   queries: {
     getAllNotifications,
