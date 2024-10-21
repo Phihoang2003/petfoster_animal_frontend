@@ -18,7 +18,7 @@ import { favorite, petDetail } from "@/apis/pets";
 import MainButton from "@/components/buttons/MainButton";
 import PreviewImage from "@/components/products-and-pets/components/PreviewImage";
 import Pets from "@/components/products-and-pets/Pets";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
 import { RootState } from "@/configs/types";
 import { toast } from "react-toastify";
@@ -27,6 +27,9 @@ import { delay } from "@/utils/functionals";
 import { contants } from "@/utils/constant";
 import WrapperDialog from "@/components/dialogs/WrapperDialog";
 import WrapperAnimation from "@/components/animations/WrapperAnimation";
+import { setPetAdopt } from "@/redux/slice/adoptSlice";
+import { links } from "@/data/links";
+import { appService } from "@/services/appService";
 export interface IDetailPetProps {
   params: [string, string];
 }
@@ -56,12 +59,13 @@ export default function DetailPetPage({ params }: IDetailPetProps) {
     queryFn: () => petDetail(params[0]),
   });
 
-  const router = useRouter();
   const { user } = useAppSelector((state: RootState) => state.userReducer);
 
   const dispath = useAppDispatch();
 
   const [openModal, setOpenModal] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
 
   const detailData = data && data.data;
 
@@ -75,7 +79,7 @@ export default function DetailPetPage({ params }: IDetailPetProps) {
 
     if (!user) {
       toast.info("Please login to use");
-      return;
+      return appService.handleNonLogin(pathname, router);
     }
     if (data.data.pet.like) {
       setOpenModal(true);
@@ -116,7 +120,15 @@ export default function DetailPetPage({ params }: IDetailPetProps) {
     toast.success(`Unfavorited ${data.data.pet.name}`);
     setOpenModal(false);
   };
-  const handleAdopt = () => {};
+  const handleAdopt = async () => {
+    if (!user || !data?.data || !data?.data.pet) {
+      toast.info("Please login to use");
+      return appService.handleNonLogin(pathname, router);
+    }
+
+    dispath(setPetAdopt(data?.data.pet));
+    router.push(links.pets.ask);
+  };
   return (
     <>
       <ContainerContent className="pt-24 pb-8">
@@ -190,7 +202,7 @@ export default function DetailPetPage({ params }: IDetailPetProps) {
               <p
                 className="text-1xl"
                 dangerouslySetInnerHTML={{
-                  __html: detailData?.pet.description.replace(
+                  __html: (detailData?.pet.description || "").replace(
                     /\\n/g,
                     "<br/> <br/>"
                   ),
