@@ -1,7 +1,9 @@
 import axios from "../configs/axios";
-import { IRequestFilterPet } from "@/configs/interface";
+import { IAdoption, IRequestFilterPet } from "@/configs/interface";
 import {
   ApiAdoption,
+  ApiAdoptions,
+  ApiCancelAdoption,
   ApiFilterPets,
   ApiPetAttributes,
   ApiPetDetailPage,
@@ -58,6 +60,50 @@ export const adoptionPet: ApiAdoption = async (data: {
     method: "POST",
     url: "/user/adopts",
     data,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const getAdoptions: ApiAdoptions = async (
+  status: string,
+  page?: number
+) => {
+  const params: { page?: number } = {};
+
+  if (page) {
+    params.page = Number(page) - 1;
+  } else {
+    if (params.page) {
+      delete params.page;
+    }
+  }
+  const res = await axios({
+    method: "GET",
+    url: "/user/adopts",
+    params: {
+      status: status === "0" ? "all" : status,
+      ...params,
+    },
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const cancelAdoptionPet: ApiCancelAdoption = async (data: {
+  id: string;
+  reason: string;
+}) => {
+  const res = await axios({
+    method: "PUT",
+    url: "/user/adopts" + `/${data.id}`,
+    data: {
+      cancelReason: data.reason,
+    },
   });
 
   if (!res) return null;
