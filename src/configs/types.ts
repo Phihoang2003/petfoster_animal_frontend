@@ -45,6 +45,11 @@ export type TypeNotification =
   | "none";
 export type SortType = string | null;
 
+export type TippyChooserType = {
+  id: string;
+  title: string;
+};
+
 export type StateType =
   | "placed"
   | "shipping"
@@ -261,4 +266,21 @@ export type ApiAdoption = (data: {
   userId: string;
   petId: string;
   addressId: number;
+}) => Promise<IBaseResponse<IAdoption>>;
+
+export type LabelAdopt =
+  | "adopted"
+  | "waiting"
+  | "cancelled by admin"
+  | "cancelled by customer"
+  | "registered";
+
+export type ApiAdoptions = (
+  status: string,
+  page?: number
+) => Promise<IBaseResponse<PagiantionResponse<IAdoption>>>;
+
+export type ApiCancelAdoption = (data: {
+  id: string;
+  reason: string;
 }) => Promise<IBaseResponse<IAdoption>>;
