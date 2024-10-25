@@ -8,6 +8,19 @@ export const addCartTolocal = (
   localStorage.setItem(username, JSON.stringify({ ...data, cart: data.cart }));
 };
 
+export const getPaymentFromLocal = (username: string) => {
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+  const store = localStorage?.getItem(username);
+
+  if (!store) {
+    return undefined;
+  }
+
+  return JSON.parse(store);
+};
+
 export const getStoreFromLocal = (username: string) => {
   if (typeof window === "undefined") {
     return undefined;
