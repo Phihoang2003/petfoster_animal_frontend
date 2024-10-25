@@ -6,12 +6,25 @@ import { capitalize } from "@/utils/format";
 import {
   addCartTolocal,
   addPaymetnTolocal,
+  getPaymentFromLocal,
   getStoreFromLocal,
 } from "@/utils/localStorage";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { actionAsyncStorage } from "next/dist/client/components/action-async-storage-instance";
 import { toast } from "react-toastify";
 
+export const getPayment = createAsyncThunk("cart/getPayment", (_, thunkApi) => {
+  const { userReducer } = thunkApi.getState() as RootState;
+
+  const username = userReducer.user?.username;
+  if (!username || username === "") return [];
+
+  const store = getPaymentFromLocal(username);
+
+  if (!store) return [];
+
+  return store.payment as ICart[];
+});
 export const getCart = createAsyncThunk(
   "cart/getCartUser",
   async (_, thunkApi) => {
@@ -364,6 +377,12 @@ export const cart = createSlice({
         payment: [],
       };
     });
+    //getPayment
+    builder.addCase(getPayment.pending, (state, action) => {}),
+      builder.addCase(getPayment.fulfilled, (state, action) => {
+        state.payment = action.payload;
+      }),
+      builder.addCase(getPayment.rejected, (state, action) => {});
   },
 });
 export const { setCheckedAllCartItem } = cart.actions;
