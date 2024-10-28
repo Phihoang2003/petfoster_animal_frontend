@@ -3,8 +3,9 @@ import MenuUser from "@/components/common/common-headers/MenuUser";
 import Navbar from "@/components/common/common-headers/Navbar";
 import { RootState } from "@/configs/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
-import { getCart } from "@/redux/slice/cartsSlice";
+import { getCart, getPayment } from "@/redux/slice/cartsSlice";
 import { fetchUserByToken } from "@/redux/slice/userSlice";
+import firebaseService from "@/services/firebaseService";
 import { addPreviousUrl } from "@/utils/session";
 import { unwrapResult } from "@reduxjs/toolkit";
 import classNames from "classnames";
@@ -43,10 +44,19 @@ export default function Header({ dynamic = true }: IHeaderProps) {
 
       unwrapResult(await action);
 
-      // dispatch(getPayment());
+      dispatch(getPayment());
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
+  useEffect(() => {
+    (async () => {
+      if (!user) return;
+
+      // set user into db on firebase
+      await firebaseService.setUserInBd(user);
+    })();
+  }, [user]);
   return (
     <>
       <header
