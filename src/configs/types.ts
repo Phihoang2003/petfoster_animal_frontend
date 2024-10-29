@@ -6,6 +6,8 @@ import {
   ICart,
   IComment,
   ICommentRequest,
+  IDataFilterPage,
+  IDataRequestFilter,
   IDetailOrder,
   IDetailProduct,
   IDistrictOutside,
@@ -31,6 +33,7 @@ import {
   ISignDataResponse,
   IWardOutside,
   PagiantionResponse,
+  TypesAndBrands,
 } from "@/configs/interface";
 import { store } from "@/redux/store";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -284,3 +287,18 @@ export type ApiCancelAdoption = (data: {
   id: string;
   reason: string;
 }) => Promise<IBaseResponse<IAdoption>>;
+
+export type ApiTypesAndBrands = () => Promise<IBaseResponse<TypesAndBrands>>;
+
+export type ApiFilterPage = (
+  data: IDataRequestFilter
+) => Promise<IBaseResponse<IDataFilterPage>>;
+
+export type ApiUploadImageMessage = (
+  images: ImageType[]
+) => Promise<IBaseResponse<string[]>>;
+
+export type Point = google.maps.LatLngLiteral & {
+  key: string;
+  yourLocation?: boolean;
+};
