@@ -1,14 +1,43 @@
 "use client";
 import ContainerContent from "@/components/common/common-components/ContainerContent";
+import Notifycation from "@/components/common/common-components/notification/Notification";
+import ChatBox from "@/components/pages/chats/ChatBox";
+import { RootState } from "@/configs/types";
 import { dataFooter } from "@/data/footer";
+import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
+import { closeNoty } from "@/redux/slice/appSlice";
+import { contants } from "@/utils/constant";
+import { delay } from "@/utils/functionals";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function Footer() {
+  const { notifycation } = useAppSelector(
+    (state: RootState) => state.appReducer
+  );
+  const { user } = useAppSelector((state: RootState) => state.userReducer);
+
   const [showChatbox, setShowChatbox] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      if (
+        user &&
+        user.role &&
+        !contants.roles.manageRoles.includes(user?.role)
+      ) {
+        await delay(2000);
+        setShowChatbox(true);
+      } else {
+        setShowChatbox(false);
+      }
+    })();
+  }, [user]);
+
+  const dispatch = useAppDispatch();
   return (
     <footer className="bg-[#2F2E2E] pt-12 pb-14 max-w-[100%] overflow-hidden mt-[10%]">
       <ContainerContent className="text-white">
@@ -76,21 +105,21 @@ export default function Footer() {
 
         <div className="bg-white h-[1px] w-full mt-16"></div>
 
-        {/* {showChatbox && (
-            <div className="fixed bottom-[2%] right-[2%] flex flex-col gap-4">
-                <ChatBox />
-            </div>
-        )} */}
+        {showChatbox && (
+          <div className="fixed bottom-[2%] right-[2%] flex flex-col gap-4">
+            <ChatBox />
+          </div>
+        )}
         <div className="flex items-center justify-center py-14">
           <p>{dataFooter.coppyRight}</p>
         </div>
 
-        {/* <Notifycation
-            onClose={() => {
-                dispath(closeNoty());
-            }}
-            {...notifycation}
-        /> */}
+        <Notifycation
+          onClose={() => {
+            dispatch(closeNoty());
+          }}
+          {...notifycation}
+        />
       </ContainerContent>
     </footer>
   );
