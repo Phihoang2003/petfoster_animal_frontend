@@ -3,6 +3,7 @@ import {
   adorableReducer,
   appReducer,
   cartReducer,
+  chatReducer,
   userReducer,
 } from "@/redux/slice";
 import { app } from "@/redux/slice/appSlice";
@@ -15,6 +16,7 @@ export const store = configureStore({
     cartReducer,
     appReducer,
     adoptReducer,
+    chatReducer,
   },
 });
 setupListeners(store.dispatch);
