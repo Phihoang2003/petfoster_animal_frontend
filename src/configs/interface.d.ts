@@ -486,3 +486,58 @@ export interface IAdoptPetNotification extends IPet {
   username: string;
   displayName: string;
 }
+
+export interface TypesAndBrands {
+  types: IFilter[];
+  brands: IFilter[];
+}
+
+export interface IDataRequestFilter {
+  brand?: string;
+  stock?: boolean;
+  minPrice?: string;
+  maxPrice?: string;
+  typeName?: string;
+  page?: string;
+  sort?: string;
+  productName?: string;
+}
+
+export interface IDataFilterPage {
+  filterProducts: FilterProduct[];
+  pages: number;
+}
+
+export interface IConversation {
+  users: string[];
+  newMessage: string;
+  sendAt: Timestamp;
+  gim: boolean;
+  seenMessage: boolean;
+}
+
+export interface IUserFirebase {
+  username: string;
+  avartar: string;
+  lassSeen: Date;
+  online?: boolean;
+  keywords: string[];
+  conversationId?: string;
+  displayname?: string;
+}
+
+export interface IMessage {
+  id: string;
+  convertsationId: string;
+  message: string;
+  sendAt: Date;
+  username: string;
+  currentUser: string;
+  recall: boolean;
+  seen: boolean;
+  images?: string[];
+  type?: "message" | "order" | "map";
+  orderId?: string;
+  location?: Point;
+  address?: IAddress | string;
+}
