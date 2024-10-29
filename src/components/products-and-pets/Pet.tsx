@@ -4,19 +4,84 @@ import { links } from "@/data/links";
 import { capitalize, stringToUrl } from "@/utils/format";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import React, { useState } from "react";
+import React, { MouseEvent, useState } from "react";
 import Image from "next/image";
 import WrapperAnimation from "@/components/animations/WrapperAnimation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartBorder } from "@fortawesome/free-regular-svg-icons";
 import classNames from "classnames";
+import { useAppSelector } from "@/hooks/reduxHooks";
+import { RootState } from "@/configs/types";
+import { toast } from "react-toastify";
+import { favorite } from "@/apis/pets";
+import { contants } from "@/utils/constant";
+import { delay } from "@/utils/functionals";
+import firebaseService from "@/services/firebaseService";
+import WrapperDialog from "@/components/dialogs/WrapperDialog";
+import { appService } from "@/services/appService";
+import { usePathname, useRouter } from "next/navigation";
 
 export interface IPetProps {
   data: IPet;
 }
 export default function Pet({ data }: IPetProps) {
   const [isLike, setIsLike] = useState(data.like);
+
+  const { user } = useAppSelector((state: RootState) => state.userReducer);
+  const pathName = usePathname();
+  const router = useRouter();
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleLike = async (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (!user) {
+      toast.info("Please login to use");
+
+      return appService.handleNonLogin(pathName, router);
+    }
+
+    if (isLike) {
+      setOpenModal(true);
+    } else {
+      await handleFavorite();
+    }
+  };
+
+  const handleFavorite = async (like = true) => {
+    try {
+      const response = await favorite(data.id as string);
+
+      if (!response || response.errors) {
+        toast.warn(contants.messages.errors.handle);
+        return;
+      }
+
+      setIsLike(like);
+
+      if (like) {
+        await handlePublishNotification();
+      }
+    } catch (error) {
+      toast.error(contants.messages.errors.server);
+    }
+  };
+
+  const handlePublishNotification = async () => {
+    if (!user) return;
+
+    await delay(1000);
+    await firebaseService.publistFavoriteNotification(data, user);
+  };
+
+  const handleUnfavorite = async () => {
+    await handleFavorite(false);
+    toast.success(`Unfavorited ${data.name}`);
+    setOpenModal(false);
+  };
 
   return (
     <>
@@ -35,7 +100,10 @@ export default function Pet({ data }: IPetProps) {
               unoptimized={true}
             />
 
-            <WrapperAnimation className="absolute top-5 right-5 cursor-pointer">
+            <WrapperAnimation
+              onClick={handleLike}
+              className="absolute top-5 right-5 cursor-pointer"
+            >
               <FontAwesomeIcon
                 className={classNames(" w-5 h-5", {
                   "text-fill-heart": isLike,
@@ -117,6 +185,30 @@ export default function Pet({ data }: IPetProps) {
           </div>
         </motion.div>
       </Link>
+
+      {openModal && (
+        <WrapperDialog open={openModal} setOpen={setOpenModal}>
+          <div className="p-6 flex flex-col gap-4 items-center text-black-main">
+            Do you want to unfavorite <b className="capitalize">{data.name}</b>
+            <div className="flex items-center justify-between text-sm">
+              <WrapperAnimation
+                onClick={() => setOpenModal(false)}
+                hover={{}}
+                className="py-2 px-6 rounded-full hover:bg-[rgba(0,0,0,.2)] transition-all ease-linear cursor-pointer hover:text-white"
+              >
+                Cancel
+              </WrapperAnimation>
+              <WrapperAnimation
+                onClick={handleUnfavorite}
+                hover={{}}
+                className="py-2 px-6 rounded-full hover:bg-[rgba(0,0,0,.2)] transition-all ease-linear cursor-pointer hover:text-white text-red-primary"
+              >
+                Unfavorite
+              </WrapperAnimation>
+            </div>
+          </div>
+        </WrapperDialog>
+      )}
     </>
   );
 }
