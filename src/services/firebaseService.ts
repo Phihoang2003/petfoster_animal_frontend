@@ -1,8 +1,10 @@
+import { uploadImagesMessage } from "@/apis/images";
 import { db } from "@/configs/firebase";
 import {
   IAdoption,
   IAdoptPetNotification,
   IDetailOrder,
+  IMessage,
   INotification,
   IPet,
   IPostDetail,
@@ -10,8 +12,10 @@ import {
   IProfile,
   IPublistNotification,
 } from "@/configs/interface";
+import { ImageType } from "@/configs/types";
 import { links } from "@/data/links";
 import { contants } from "@/utils/constant";
+import { generateKeywords } from "@/utils/firebaseUtils";
 import { paseDataNotification, stringToUrl } from "@/utils/format";
 import {
   addDoc,
@@ -595,6 +599,230 @@ const publistCancelAdoptPetNotification = async (
   }
 };
 
+const queryGetConversationForCurrentUser = (
+  usernameUser: string | undefined
+) => {
+  return query(
+    collection(db, "conversations"),
+    where("users", "array-contains", usernameUser)
+  );
+};
+
+const generateQueryGetMessages = (conversationId: string) => {
+  return query(
+    collection(db, "messages"),
+    where("conversationId", "==", conversationId),
+    orderBy("sendAt", "asc")
+  );
+};
+
+const getUserByUsername = (username: string | null) => {
+  if (!username) return;
+
+  return query(collection(db, "users"), where("username", "==", username));
+};
+
+const setUserInBd = async (user: IProfile) => {
+  try {
+    await setDoc(
+      doc(db, "users", user.username),
+      {
+        username: user.username,
+        lassSeen: serverTimestamp(),
+        avartar: user.avatar || contants.avartarDefault,
+        online: true,
+        keywords: generateKeywords(user.username),
+        displayname: user.displayName || user.username,
+      },
+      { merge: true } // just update what is change
+    );
+  } catch (error) {
+    console.log(error);
+    console.log("LOGIN: Error setting user info in DB");
+  }
+};
+
+const addConversation = async (usernameUser: string) => {
+  const response = await addDoc(collection(db, "conversations"), {
+    users: [contants.usernameAdmin, usernameUser],
+    newMessage: null,
+    sendAt: null,
+    gim: false,
+    seenMessage: false,
+  });
+
+  try {
+    await setDoc(
+      doc(db, "users", usernameUser),
+      {
+        conversationId: response.id,
+      },
+      { merge: true } // just update what is change
+    );
+  } catch (error) {
+    console.log("LOGIN: Error setting user info in DB");
+  }
+
+  return response;
+};
+
+const handleImages = async (differentData: { images?: ImageType[] }) => {
+  let images: string[] | null = null;
+  let linksResponse: string[] = [];
+
+  if (differentData?.images && differentData.images.length > 0) {
+    const imagesRaw = differentData.images.filter((item) => {
+      return item.data;
+    });
+
+    if (imagesRaw.length > 0) {
+      // call api here
+
+      try {
+        const response = await uploadImagesMessage(imagesRaw);
+
+        if (!response.errors && response.data.length > 0) {
+          linksResponse = [...response.data];
+        }
+      } catch (error) {
+        console.log("error in handleImages file firebase service: ", error);
+      }
+    }
+
+    const imagesLink = differentData.images.filter((item) => {
+      return !item.data;
+    });
+
+    if (linksResponse.length > 0) {
+      images = [...linksResponse];
+    }
+
+    const imageLinkAfterMap = imagesLink.map((item) => {
+      return item.link;
+    });
+
+    if (!images) {
+      images = [...imageLinkAfterMap];
+    } else {
+      images = [...images, ...imageLinkAfterMap];
+    }
+  }
+
+  return images;
+};
+
+const handleSendMessageToUser = async (
+  value: string,
+  conversationId: string,
+  username: string,
+  differentData?: { images?: ImageType[]; orderId?: string },
+  type = "message"
+) => {
+  let images: string[] | null = null;
+
+  if (differentData && differentData.images) {
+    images = await handleImages(differentData);
+  }
+
+  return await addDoc(collection(db, "messages"), {
+    conversationId: conversationId,
+    currentUser: username,
+    message: value,
+    sendAt: serverTimestamp(),
+    username: username,
+    recall: false,
+    seen: false,
+    images: images,
+    type: type,
+  });
+};
+
+const setNewMessageConversation = async (
+  conversationId: string,
+  newMessageId: string
+) => {
+  try {
+    await setDoc(
+      doc(db, "conversations", conversationId),
+      {
+        newMessage: newMessageId,
+        sendAt: serverTimestamp(),
+        seenMessage: false,
+      },
+      { merge: true } // just update what is change
+    );
+  } catch (error) {
+    console.log("setNewMessageConversation: Error setting user info in DB");
+  }
+};
+
+const setRecallMessage = async (id: string) => {
+  try {
+    await setDoc(
+      doc(db, "messages", id),
+      {
+        recall: true,
+      },
+      { merge: true } // just update what is change
+    );
+  } catch (error) {
+    console.log("setNewMessageConversation: Error setting user info in DB");
+  }
+};
+
+const handleSendMap = async (
+  conversationId: string,
+  username: string,
+  data: { address: IMessage["address"]; location: IMessage["location"] },
+  isAdmin = false
+) => {
+  const newMessage = await addDoc(collection(db, "messages"), {
+    conversationId: conversationId,
+    currentUser: username,
+    message: null,
+    sendAt: serverTimestamp(),
+    username: isAdmin ? contants.usernameAdmin : username,
+    recall: false,
+    seen: false,
+    images: null,
+    orderId: null,
+    type: "map",
+    ...data,
+  });
+
+  const idNewMessage = newMessage.id;
+
+  await firebaseService.setNewMessageConversation(conversationId, idNewMessage);
+
+  return newMessage;
+};
+
+const handleSendOrder = async (
+  conversationId: string,
+  username: string,
+  differentData?: { images?: ImageType[]; orderId?: string },
+  type = "order"
+) => {
+  let images: string[] | null = null;
+
+  if (differentData && differentData.images) {
+    images = await handleImages(differentData);
+  }
+
+  return await addDoc(collection(db, "messages"), {
+    conversationId: conversationId,
+    currentUser: username,
+    message: null,
+    sendAt: serverTimestamp(),
+    username: username,
+    recall: false,
+    seen: false,
+    images: images,
+    orderId: differentData?.orderId,
+    type: type,
+  });
+};
+
 const firebaseService = {
   setLastseen,
   publistPostsNotification,
@@ -606,12 +834,22 @@ const firebaseService = {
   publistFavoriteNotification,
   publistAdoptPetNotification,
   publistCancelAdoptPetNotification,
+  addConversation,
+  handleSendMessageToUser,
+  setNewMessageConversation,
+  setRecallMessage,
+  handleSendMap,
+  handleSendOrder,
+  setUserInBd,
 
   queries: {
     getAllNotifications,
     getNotificationDetails,
     copyDocumentWithNewID,
     getNotifications,
+    queryGetConversationForCurrentUser,
+    generateQueryGetMessages,
+    getUserByUsername,
   },
 };
 export default firebaseService;
