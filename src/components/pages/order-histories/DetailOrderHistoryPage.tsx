@@ -106,7 +106,7 @@ export default function DetailOrderHistoryPage({
         footer={
           <div className="w-full flex text-violet-primary justify-center mt-12">
             <Link
-              href={"/other-history"}
+              href={"/order-history"}
               className="hover:underline flex items-center gap-4 font-medium"
             >
               <span>Back to my order</span>
