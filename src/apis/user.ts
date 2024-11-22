@@ -1,4 +1,5 @@
 import {
+  ApiActionRecentViews,
   ApiActionSearchHistories,
   ApiChangePassword,
   ApiCreateCartUser,
@@ -11,10 +12,13 @@ import {
   ApiGetCurUser,
   ApiGetCurUserWithUsername,
   ApiGetDefaultAddress,
+  ApiGetFavorite,
+  ApiGetRecentViews,
   ApiGetSearchHistories,
   ApiHandleAddresses,
   ApiHistory,
   ApiLogin,
+  ApiLoginWithGoogle,
   ApiPayment,
   ApiRefreshVerifyCode,
   ApiRegister,
@@ -413,5 +417,60 @@ export const createReview: ApiCreateReivew = async (data: IRequestReview) => {
 
   if (!res) return null;
 
+  return res?.data;
+};
+
+export const getRecentViews: ApiGetRecentViews = async () => {
+  const res = await axios({
+    method: "GET",
+    url: "user/recent-views",
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const updateRecentViews: ApiActionRecentViews = async (id: string) => {
+  const res = await axios({
+    method: "PUT",
+    url: "user/recent-views/" + id,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const getFavorite: ApiGetFavorite = async (page?: string | null) => {
+  const params: { page?: string } = {};
+
+  if (!page && params.page) {
+    delete params.page;
+  } else if (page) {
+    params.page = page;
+  }
+
+  const res = await axios({
+    method: "GET",
+    url: "user/pets/favourites",
+    params,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const loginWithGoogle: ApiLoginWithGoogle = async (data) => {
+  const res = await axios({
+    method: "POST",
+    url: "login-google",
+    data,
+  });
+
+  if (!res) return null;
+
+  setTokenToCookie(res?.data.token);
   return res?.data;
 };
