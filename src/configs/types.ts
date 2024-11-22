@@ -1,6 +1,7 @@
 import {
   ApiDivision,
   IAdoption,
+  IApiBestSeller,
   IApiTakeAction,
   IBaseResponse,
   ICart,
@@ -12,6 +13,7 @@ import {
   IDetailProduct,
   IDistrictOutside,
   IFormChangePassword,
+  IHomepage,
   IImagePost,
   IInfoAddress,
   IOrder,
@@ -24,6 +26,7 @@ import {
   IPost,
   IPostDetail,
   IPostRequest,
+  IProduct,
   IProfile,
   IProvinceOutside,
   IRequestFilterPet,
@@ -34,6 +37,7 @@ import {
   IWardOutside,
   PagiantionResponse,
   TypesAndBrands,
+  UserLoginWithGoogleFormType,
 } from "@/configs/interface";
 import { store } from "@/redux/store";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -302,3 +306,23 @@ export type Point = google.maps.LatLngLiteral & {
   key: string;
   yourLocation?: boolean;
 };
+
+export type ApiBestSellerType = (
+  page: number | undefined
+) => Promise<IBaseResponse<IApiBestSeller>>;
+
+export type ApiGetRecentViews = () => Promise<IBaseResponse<IProduct[]>>;
+
+export type ApiActionRecentViews = (
+  id: string
+) => Promise<IBaseResponse<IProduct[]>>;
+
+export type ApiHomePage = () => Promise<IBaseResponse<IHomepage>>;
+
+export type ApiGetFavorite = (
+  page?: string | null
+) => Promise<IBaseResponse<PagiantionResponse<IPet>>>;
+
+export type ApiLoginWithGoogle = (
+  data: UserLoginWithGoogleFormType
+) => Promise<ISignDataResponse>;

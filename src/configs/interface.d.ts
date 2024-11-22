@@ -541,3 +541,28 @@ export interface IMessage {
   location?: Point;
   address?: IAddress | string;
 }
+
+export interface IApiBestSeller {
+  data: IProduct[];
+  pages: number;
+}
+
+export interface IImpact {
+  image: string;
+  quantity: string;
+  title: string;
+  prefix?: string;
+}
+
+export interface IHomepage {
+  impactOfYear: IImpact[];
+  pets: IPet[];
+  postsPreview: IPost[];
+}
+
+export type UserLoginWithGoogleFormType = {
+  username: string;
+  uuid: string;
+  avartar: string;
+  email: string;
+};
