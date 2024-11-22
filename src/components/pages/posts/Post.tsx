@@ -17,6 +17,7 @@ import {
   faVideo,
 } from "@fortawesome/free-solid-svg-icons";
 import PostDetailDialog from "@/components/dialogs/posts/PostDetailDialog";
+import { DetailPostContext } from "@/components/pages/adorable-snapshots/AdorableSnapshotsPage";
 export interface IPostProps {
   variant?: "rounded" | "circle";
   data: IPost;

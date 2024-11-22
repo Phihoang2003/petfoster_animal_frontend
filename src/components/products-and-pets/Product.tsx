@@ -1,17 +1,31 @@
 "use client";
+import { updateRecentViews } from "@/apis/user";
 import { IProduct } from "@/configs/interface";
 import { links } from "@/data/links";
+import { contants } from "@/utils/constant";
 import { capitalize, stringToUrl, toCurrency, toGam } from "@/utils/format";
 import { Rating } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { toast } from "react-toastify";
 
 export interface IProductProps {
   data: IProduct;
 }
 export default function Product({ data }: IProductProps) {
-  const handleClickProduct = () => {};
+  const handleClickProduct = async () => {
+    try {
+      const response = await updateRecentViews(data.id as string);
+
+      if (!response || response.errors) {
+        toast.warn(contants.messages.errors.handle);
+        return;
+      }
+    } catch (error) {
+      console.log("Product: " + error);
+    }
+  };
   return (
     <div className="flex flex-col items-center hover:shadow-primary pb-[21px] transition-all ease-linear max-h-[468px] rounded">
       <div className="w-full h-3/5 min-h-[305px] relative">
