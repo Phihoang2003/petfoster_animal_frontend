@@ -1,5 +1,7 @@
 import {
+  ApiBestSellerType,
   ApiFilterPage,
+  ApiHomePage,
   ApiTakeActionType,
   ApiTypesAndBrands,
 } from "@/configs/types";
@@ -32,6 +34,33 @@ export const filterPage: ApiFilterPage = async (data: IDataRequestFilter) => {
     method: "GET",
     url: "filter-product",
     params: data,
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const bestSellers: ApiBestSellerType = async (
+  page: number | undefined
+) => {
+  const res = await axios({
+    method: "GET",
+    url: "take-action/best-sellers",
+    params: {
+      page: page || 0,
+    },
+  });
+
+  if (!res) return null;
+
+  return res?.data;
+};
+
+export const homepage: ApiHomePage = async () => {
+  const res = await axios({
+    method: "GET",
+    url: "/home-pages",
   });
 
   if (!res) return null;
