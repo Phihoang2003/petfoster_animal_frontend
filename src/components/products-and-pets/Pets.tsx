@@ -1,4 +1,5 @@
 "use client";
+import DivAnimation from "@/components/animations/DivAnimation";
 import MainButton from "@/components/buttons/MainButton";
 import ContainerContent from "@/components/common/common-components/ContainerContent";
 import Pet from "@/components/products-and-pets/Pet";
@@ -44,8 +45,12 @@ export default function Pets({
         </h2>
       )}
       <div className="w-full grid md:grid-cols-3 lg:grid-cols-4 gap-[20px] gap-y-4">
-        {memoData.map((pet) => {
-          return <Pet key={pet.id} data={pet} />;
+        {memoData.map((pet, index) => {
+          return (
+            <DivAnimation delay={index * 0.2} key={pet.id}>
+              <Pet key={pet.id} data={pet} />;
+            </DivAnimation>
+          );
         })}
       </div>
       {bottom === "load-more" && (
