@@ -1,6 +1,13 @@
+import { loginWithGoogle } from "@/apis/user";
 import RoundedButton from "@/components/buttons/RoundedButton";
 import SocialButton from "@/components/buttons/SocialButton";
 import ContainerContent from "@/components/common/common-components/ContainerContent";
+import { auth } from "@/configs/firebase";
+import { links } from "@/data/links";
+import { useAppDispatch } from "@/hooks/reduxHooks";
+import { setToken } from "@/redux/slice/userSlice";
+import { contants } from "@/utils/constant";
+import { getPreviousUrl } from "@/utils/session";
 import {
   faSquareFacebook,
   faSquareGooglePlus,
@@ -8,8 +15,14 @@ import {
 import { Box, Grid2, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { FormEventHandler, MouseEventHandler, ReactNode } from "react";
-
+import React, {
+  FormEventHandler,
+  MouseEventHandler,
+  ReactNode,
+  useEffect,
+} from "react";
+import { useSignInWithGoogle } from "react-firebase-hooks/auth";
+import { toast } from "react-toastify";
 export interface IBoxSignProps {
   onSubmit?: FormEventHandler<HTMLFormElement>;
   children: ReactNode;
@@ -34,8 +47,66 @@ export default function BoxSign({
   showForgot = true,
   showReverify,
 }: IBoxSignProps) {
+  const router = useRouter();
+
+  const dispatch = useAppDispatch();
+
+  const [signInWithGoogle, userGg, loadingGg, errorGg] =
+    useSignInWithGoogle(auth);
   const handleLoginWithFacebook = () => {};
-  const handleLoginWithGoogle = () => {};
+  useEffect(() => {
+    if (!userGg) return;
+
+    (async () => {
+      try {
+        const res = await loginWithGoogle({
+          uuid: userGg.user.uid,
+          avartar: userGg.user.photoURL || "",
+          username: userGg.user.displayName || "",
+          email: userGg.user.email || "",
+        });
+
+        if (res.errors && res.message === "401") {
+          toast.warning(
+            "Your account has not been verified. Please check your email"
+          );
+          return;
+        }
+
+        if (res.errors && Object.keys(res.errors).length > 0) {
+          toast.error(contants.messages.errors.loginWithFacebook);
+
+          return;
+        }
+
+        // all good
+        handleForward();
+        dispatch(setToken(res.token));
+      } catch (error) {
+        console.log("error in login page: " + error);
+        toast.error(contants.messages.errors.server);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userGg]);
+
+  const handleLoginWithGoogle = () => {
+    signInWithGoogle();
+  };
+
+  const handleForward = () => {
+    const prevUrl = getPreviousUrl();
+    if (prevUrl) {
+      router.push(prevUrl);
+    } else {
+      router.push(links.home);
+    }
+  };
+
+  if (errorGg) {
+    toast.error(contants.messages.errors.loginWithFacebook);
+    return;
+  }
 
   return (
     <ContainerContent className="pt-24 text-black-main">
