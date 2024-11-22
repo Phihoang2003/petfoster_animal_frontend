@@ -6,6 +6,7 @@ import {
   getCommentWithPost,
   getDetailPost,
   getPosts,
+  hightlightPost,
   likeComment,
   likePost,
 } from "@/apis/posts";
@@ -15,7 +16,7 @@ import MiniLoading from "@/components/common/loadings/MiniLoading";
 import MediaPostDetailMobile from "@/components/dialogs/posts/MediaPostDetailMobile";
 import MediasPostDetail from "@/components/dialogs/posts/MediasPostDetail";
 import WrapperDialog from "@/components/dialogs/WrapperDialog";
-import { IComment } from "@/configs/interface";
+import { IComment, IPost } from "@/configs/interface";
 import { RootState } from "@/configs/types";
 import { reportReason } from "@/data/reason";
 import { useAppSelector } from "@/hooks/reduxHooks";
@@ -44,7 +45,7 @@ import { useQueryState } from "nuqs";
 import React, {
   FormEvent,
   useCallback,
-  useEffect,
+  useContext,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -61,6 +62,7 @@ import { toast } from "react-toastify";
 import { EmojiClickData } from "emoji-picker-react";
 import { links } from "@/data/links";
 import firebaseService from "@/services/firebaseService";
+import { DetailPostContext } from "@/components/pages/adorable-snapshots/AdorableSnapshotsPage";
 
 export interface IPostDetailDialogProps {
   open: boolean;
@@ -80,6 +82,8 @@ export default function PostDetailDialog({
   const [openShares, setOpenShares] = useState(false);
   const [reply, setReply] = useState<IComment | null>(null);
   const [loadingComment, setLoadingComment] = useState(false);
+  const context = useContext(DetailPostContext);
+
   const rawData = useQuery({
     queryKey: ["postDetailDialog", uuid],
     queryFn: () => {
@@ -256,7 +260,9 @@ export default function PostDetailDialog({
       }
 
       rawData.refetch();
+
       setLike((prev) => !prev);
+      context.refetch();
     } catch (error) {
       return toast.warn(contants.messages.errors.server);
     }
