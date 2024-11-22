@@ -1,9 +1,12 @@
 "use client";
+import { getRecentViews } from "@/apis/user";
 import BoxTitle from "@/components/boxs/BoxTitle";
 import ProductRecent from "@/components/products-and-pets/ProductRecent";
-import { takeActionPageData } from "@/data/take-action";
+import { RootState } from "@/configs/types";
+import { useAppSelector } from "@/hooks/reduxHooks";
+import { useQuery } from "@tanstack/react-query";
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 export interface IProductRencentProps {
   title: string;
@@ -15,9 +18,31 @@ export default function ProductRecents({
 }: IProductRencentProps) {
   const [isHideScroll, setIsHideScroll] = useState(true);
   const [isClient, setIsClient] = useState(false);
+
+  const { user } = useAppSelector((state: RootState) => state.userReducer);
+
+  const recentViews = useQuery({
+    queryKey: ["getRecentViews"],
+    queryFn: () => {
+      if (!user) return;
+      return getRecentViews();
+    },
+  });
+  console.log("recentViews", recentViews);
+
+  const recentViewData = useMemo(() => {
+    if (!recentViews.data?.data) return [];
+
+    return recentViews.data.data;
+  }, [recentViews.data]);
+
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  if (recentViews.error || !user) {
+    return;
+  }
   return (
     isClient && (
       <BoxTitle
@@ -39,12 +64,12 @@ export default function ProductRecents({
             }
           )}
         >
-          {takeActionPageData.recents.map((product) => {
+          {recentViewData.map((product) => {
             return <ProductRecent key={product.id} data={product} />;
           })}
         </div>
 
-        {takeActionPageData.recents.length <= 0 && (
+        {recentViewData.length <= 0 && (
           <div className="text-black-main text-lg font-medium flex items-center gap-2 justify-center">
             <p>You have not viewed any products yet</p>
           </div>
