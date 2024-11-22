@@ -1,11 +1,12 @@
 "use client";
-import { hightlightOfUserPost, hightlightPost } from "@/apis/posts";
+import { hightlightPost } from "@/apis/posts";
 import BoxPost from "@/components/boxs/posts/BoxPost";
 import BoxPostHighlight from "@/components/boxs/posts/BoxPostHighlight";
 import InfinityPosts from "@/components/boxs/posts/InfinityPosts";
 import PrimaryPostButton from "@/components/buttons/PrimaryPostButton";
 import SearchInput from "@/components/common/inputs/SearchInput";
 import PostDetailDialog from "@/components/dialogs/posts/PostDetailDialog";
+import { IPost } from "@/configs/interface";
 import { RootState } from "@/configs/types";
 import { links } from "@/data/links";
 import { useAppDispatch, useAppSelector } from "@/hooks/reduxHooks";
@@ -14,7 +15,12 @@ import { appService } from "@/services/appService";
 import { useQuery } from "@tanstack/react-query";
 import { notFound, usePathname, useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
+
+export const DetailPostContext = createContext<{
+  data: IPost[] | undefined;
+  refetch: () => void;
+}>({ data: undefined, refetch: () => {} });
 
 export default function AdorableSnapshotsPage() {
   const [search, setSearch] = useState("");
@@ -46,10 +52,12 @@ export default function AdorableSnapshotsPage() {
   }
   useEffect(() => {
     if (uuid && !autoOpenPostDetail && autoOpen === "auto") {
+      console.log("Mở dialog, dữ liệu rawData:", rawData.data);
       setAutoOpenPostDetail(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uuid]);
+
   return (
     <div className="pt-12">
       <div className="flex flex-col md:flex-row md:gap-0 gap-5 items-center justify-between mb-10">
@@ -80,10 +88,13 @@ export default function AdorableSnapshotsPage() {
           />
         </form>
       </div>
-      <BoxPostHighlight data={data} title="HIGHLIGHT POSTS" />
-      <BoxPost title="OTHER POSTS" className="mt-20">
-        <InfinityPosts />
-      </BoxPost>
+      <DetailPostContext.Provider value={{ data, refetch: rawData.refetch }}>
+        <BoxPostHighlight data={data} title="HIGHLIGHT POSTS" />
+
+        <BoxPost title="OTHER POSTS" className="mt-20">
+          <InfinityPosts />
+        </BoxPost>
+      </DetailPostContext.Provider>
 
       {autoOpenPostDetail && (
         <PostDetailDialog
