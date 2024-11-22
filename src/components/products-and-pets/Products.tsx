@@ -8,6 +8,7 @@ import { links } from "@/data/links";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import Product from "@/components/products-and-pets/Product";
+import DivAnimation from "@/components/animations/DivAnimation";
 export interface IProductsProps {
   id?: string;
   data: IProduct[];
@@ -59,8 +60,12 @@ export default function Products({
       {!loading && data && data.length > 0 && (
         <>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-y-6">
-            {data.map((product) => {
-              return <Product key={product.id} data={product} />;
+            {data.map((product, index) => {
+              return (
+                <DivAnimation delay={index * 0.2} key={product.id}>
+                  <Product key={product.id} data={product} />;
+                </DivAnimation>
+              );
             })}
           </div>
           {/* {pagination && <Pagination pages={totalPage || 1} onPage={onPage} />} */}
