@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+### PETFOSTER ANNIMAL
 
-## Getting Started
+![image](https://github.com/user-attachments/assets/f0983eec-9b36-4489-8d89-a11548c1b2b8)
 
-First, run the development server:
+![image](https://github.com/user-attachments/assets/000fb5cf-0619-438e-8eaa-79eb5bf4d498)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![image](https://github.com/user-attachments/assets/d3fbd3b7-9052-4c52-be28-d75ded2d6243)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![image](https://github.com/user-attachments/assets/d810da83-0a6c-4533-a37b-c3deddce5028)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+![image](https://github.com/user-attachments/assets/9302011d-e9ba-4565-b08b-40fd0fb55b34)
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+![image](https://github.com/user-attachments/assets/b11d429b-1dc8-4227-8952-07d88bbf5351)
 
-## Learn More
+![image](https://github.com/user-attachments/assets/69270ef3-c0be-4e61-b23b-879e3c783285)
 
-To learn more about Next.js, take a look at the following resources:
+![image](https://github.com/user-attachments/assets/46164533-3e30-4e61-b34c-819c4b3a6c2e)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+![image](https://github.com/user-attachments/assets/69eb8229-a52f-4f8e-a6db-31c43dfbd80d)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+![image](https://github.com/user-attachments/assets/93406357-c2a1-4cad-9ee6-9cddc0dcece4)
 
-## Deploy on Vercel
+![image](https://github.com/user-attachments/assets/a6750537-7963-4e5c-8119-1d069e58fd1c)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+![image](https://github.com/user-attachments/assets/f812dcc9-31de-4c98-92c4-f1c43c131545)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+![image](https://github.com/user-attachments/assets/3c670322-cb25-4e75-8369-2ed7d0df50c7)
+
+![image](https://github.com/user-attachments/assets/9007dcd6-aac8-4c44-a6a9-65486b7d6c1d)
+
+![image](https://github.com/user-attachments/assets/9d0df00b-f237-46c7-94b5-d27633ba0c3b)
+
+![image](https://github.com/user-attachments/assets/6f4ed6cf-7c67-4c0f-81a0-f784e26c7250)
+
+![image](https://github.com/user-attachments/assets/96a4860a-5f11-4e98-bcaa-9c1d5f012770)
+
+![image](https://github.com/user-attachments/assets/6d246568-82ac-4f4e-9db2-a4326f25f8c5)
+
+![image](https://github.com/user-attachments/assets/a0a8155f-26a8-4f40-8e06-f61cbc02dfa0)
+
+![image](https://github.com/user-attachments/assets/ffe33906-0d44-45ad-8347-3713a23d4ef8)
+
+![image](https://github.com/user-attachments/assets/4257ad25-34f1-4d83-b07d-5cbe3dabaf43)
+
+![image](https://github.com/user-attachments/assets/c41bd5e5-9811-46ee-b272-bfd49d1b31e6)
+
+![image](https://github.com/user-attachments/assets/af840662-05b1-48fb-bd40-e68e8f0dab81)
+
+![image](https://github.com/user-attachments/assets/c6648fdc-6c0d-4cc5-bd06-cbb9271fcf42)
+
+![image](https://github.com/user-attachments/assets/2b4c089f-d5ad-43b5-b13f-5b4df401eb8d)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
